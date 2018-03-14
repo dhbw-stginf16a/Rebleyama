@@ -1,0 +1,2 @@
+# Branching/Merging-Concept
+We use simple feature branches. Create a new branch for every merge request. The name of the branch should start with the number of the main according issue and continue with a descriptive text, e. g. "21_extend_readme_file". A pull request must have at least two reviewers. Please delete unused feature branches. As a rule of thumb, the person who created the branch should be responsible for deleting it.
