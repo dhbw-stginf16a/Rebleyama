@@ -1,1 +1,1 @@
-# Rebleyama
+# Rebleyama – A simple strategic game
