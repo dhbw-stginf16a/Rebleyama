@@ -21,3 +21,13 @@ buildDir = new File(rootProject.projectDir, "build/" + project.name)
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+sonarqube {
+    properties {
+        property "sonar.projectName", "Rebleyama Client"
+        //property "sonar.projectKey", "Rebleyama:client"
+	property "sonar.host.url", "https://sonarcloud.io"
+	property "sonar.organization", "thorekr-github"
+    }
+}
+
