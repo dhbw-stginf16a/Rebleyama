@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'eclipse'
+    id "org.sonarqube" version "2.6.2"
+}
+
+group = 'de.dhbw.rebleyama.client'
+version = "1.0"
+mainClassName = "de.rebleyama.client.Main"
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
+    
+repositories {
+    jcenter()
+}
+
+buildDir = new File(rootProject.projectDir, "build/" + project.name)
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8

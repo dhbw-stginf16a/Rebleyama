@@ -6,30 +6,31 @@
  * user guide available at https://docs.gradle.org/4.6/userguide/tutorial_java_projects.html
  */
 
-plugins {
-    // Apply the java plugin to add support for Java
-    id 'java'
-
-    // Apply the application plugin to add support for building an application
-    id 'application'
-
-    // Use sonarqube lintint service for some more fancy graphs
-    id "org.sonarqube" version "2.6"
+task run {
+    dependsOn "client:run"
 }
 
-// Define the main class for the application
-mainClassName = 'App'
-
-dependencies {
-    // This dependency is found on compile classpath of this component and consumers.
-
-    // Use JUnit test framework
-    testCompile 'junit:junit:4.12'
+task build {
+    dependsOn "client:build"
 }
 
-// In this section you declare where to find the dependencies of your project
-repositories {
-    // Use jcenter for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+task assemble {
+    dependsOn "client:assemble"
+}
+
+task check {
+    dependsOn "client:check"
+}
+
+task sonarqube {
+    dependsOn "client:sonarqube"
+}
+
+ subprojects {
+    task "create-dirs" {
+        doLast{
+            sourceSets*.java.srcDirs*.each { it.mkdirs() }
+            sourceSets*.resources.srcDirs*.each { it.mkdirs() }
+        }
+    }
 }
