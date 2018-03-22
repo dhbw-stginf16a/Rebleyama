@@ -22,12 +22,28 @@ buildDir = new File(rootProject.projectDir, "build/" + project.name)
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+
+def getCurrentGitBranch() {
+    def gitBranch = "Unknown branch"
+    try {
+        def workingDir = new File("${project.projectDir}")
+        def result = 'git rev-parse --abbrev-ref HEAD'.execute(null, workingDir)
+        result.waitFor()
+        if (result.exitValue() == 0) {
+            gitBranch = result.text.trim()
+        }
+    } catch (e) {
+    }
+    return gitBranch
+}
+
 sonarqube {
     properties {
         property "sonar.projectName", "Rebleyama Client"
-        //property "sonar.projectKey", "Rebleyama:client"
+        property "sonar.projectKey", "Rebleyama:client"
 	property "sonar.host.url", "https://sonarcloud.io"
 	property "sonar.organization", "thorekr-github"
+	property "sonar.branch.name", getCurrentGitBranch()
     }
 }
 
