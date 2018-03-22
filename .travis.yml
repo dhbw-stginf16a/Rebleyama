@@ -2,15 +2,6 @@ dist: trusty
 language: java
 jdk:
   - oraclejdk8
-  - openjdk8
-
-addons:
-  sonarcloud:
-    organization: "thorekr-github"
-    login:
-      secure: "W+MVHsEvQPqOzJmuzIdZ2rDvYXBDhnngBvKIecU5Ol8/lDhuS7ux/lTnaQ0qRNH/M49Q8PgyqTKGuzxE9x3HmRe+8RKvLK8hlOY3835SIz6DrcQ4OvsrIJG52tqOQqYOf1TCmPeKuxoTL6GH6ALkxG953Rf2J4F+bqtvLI3YxDqftPvHvcbJf9urfsXpvBB+r5BsbGaxJEMHWuiuTS2samyveBA8GRzYPhHBUbqG7u/vA11cNN7Fd6/MH/S96yIcuvGA+8InBfKkoY8sJS3rp/V64OkOGVZY0JbtF1/awYuKgspMBFMBsFDjetqMnicopULATGwDZ4aEZYeEsvH/4O5gJ/YbUyWkdXKNiMrqDQlFzhnlmC+2wbhxY1Oq+WxCJolpFxxkz3IjD9C64U+NA0jsySk3FIp+bfQADDVcsI88AyMXR1sttYsXIYM1e0+dKayfJR3LbDa/pSQqLvizDgxLEKYOrIkWFxMDZXaq4BRYZy4vdqYCbWg1QEOwtHcwIVWycF6SVzfEBLsad91p7YJTOe59vYqRh/VeP9wbjA9Ad+P0T23Jg6M3ktPrwOE2sMTWeO5aCiHSyxYbS0R6udowML4bdOp8IjxKkkRm0O+ctt982ByBd5Htf3CFmfFMujVUj1DniuyOE30qwDRLuph+o0t8fmLYPtFvvNkNGK4="
-    branches:
-      - .*
 
 script:
   - './gradlew check'

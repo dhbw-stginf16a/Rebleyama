@@ -44,6 +44,7 @@ sonarqube {
 	property "sonar.host.url", "https://sonarcloud.io"
 	property "sonar.organization", "thorekr-github"
 	property "sonar.branch.name", getCurrentGitBranch()
+	property "sonar.login", System.env.SONARTOKEN
     }
 }
 
