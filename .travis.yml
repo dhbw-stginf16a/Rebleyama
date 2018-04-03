@@ -1,21 +1,16 @@
 dist: trusty
 language: java
 jdk:
-- oraclejdk8
-- openjdk8
+  - oraclejdk8
 
-addons:
-  sonarcloud:
-    organization: thorekr-github
-    token:
-      secure: CmwRgugLPdmChhKd7HokK+ggLm/iu12OEuQuv4fToVG7MTyK1A/uREWFc6JGGTjnBdu3gVgXLMjFbyOEWJeOpUzgVamoAcXI/kYpl6aKJ2yjfQjijL+dG1iVoIZl75YITk0ZbnBV4VTJUufKrpILj0cfc4I+EMILRy8XfpLmt6DBQA8trhFYhILeSLlMjNBCDTR141/wub1LPnqHSWlIct9wdI9IaSPJk3wY4n5m6rr9+ro6D4KaIVDLl29OIUeKAhkSEeTcXKSkd5RMkUta6SHNvP/6pemgQ8DcaVcvzqIKYPJpHlE1p/6y5w9K+EWxzV7HgZxZTiN1yaR8jJlw5VxQXXiUNGTgxDSzLfbZ4KjwvFwcmDLwpQ47RJkWrc+dckSXW1Z6gR/vvNVTF6OjmU3PBc/xomVwq0b5rZwQ5Pj1YBoZnDkdUpjMK49+c7jpKw9xJCl9M+VOSAgnrbk3t1znyHktFmQXwFGH9fP02vbkCuXbeIpZVYNANbcXjaVq7vkdkqFHvJhMo2ZXUV5JqBKaH63FJ3/asUAClyEBW1HGVBS6/1xGpSs6cDuwNJM9rihfqtxG+55M4pgpPkF5/EicTe7UDXcKrE8gCh+B3owULRnnsiC1emEe+uiHYAFaFfaMSKV4PWTwJ7r1UOoTqYw8OCC/02HihZ+2oTnXtGw=
-
-after_success:
-  - ./gradlew sonarqube
+script:
+  - './gradlew check'
+  - './gradlew sonarqube'
 
 cache:
   directories:
-  - "$HOME/.m2/repository"
-  - "$HOME/.sonar/cache"
-  - "$HOME/.gradle"
-  - ".gradle"
+    - "$HOME/.m2/repository"
+    - "$HOME/.sonar/cache"
+    - "$HOME/.gradle"
+    - ".gradle"
+
