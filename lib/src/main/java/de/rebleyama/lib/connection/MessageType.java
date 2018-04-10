@@ -5,30 +5,34 @@ package de.rebleyama.lib.connection;
  * For reference please see the according wiki (https://github.com/dhbw-stginf16a/Rebleyama/wiki)
  */
 public enum MessageType {
-  /**
-   * Client-Sever Handshake
-   */
-  HANDSHAKE,
+    /**
+     * Client-Sever Handshake
+     */
+    HANDSHAKE,
 
-  /**
-   * Client-Server Heartbeat
-   */
-  HEARTBEAT,
+    /**
+     * Client-Server Heartbeat
+     */
+    HEARTBEAT,
 
-  /**
-   * Client request of the current game state object
-   */
-  GAMESTATEREQUEST,
+    /**
+     * Client request of the current game state object
+     */
+    GAMESTATEREQUEST,
 
-  /**
-   * Update of the game status continuously send by the server on each updates
-   */
-  GAMESTATEUPDATE;
+    /**
+     * Update of the game status continuously send by the server on each updates
+     */
+    GAMESTATEUPDATE,
 
+    /**
+     * The whole gamestate object to replace the previous one since it ran out of sync
+     */
+    GAMESTATEREPLACE;
 
-  private byte flag;
+    private byte flag;
 
-  private MessageType() {
-    this.flag = (byte) this.ordinal();
-  }
+    MessageType() {
+        this.flag = (byte) this.ordinal();
+    }
 }
