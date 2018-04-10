@@ -7,7 +7,7 @@ plugins {
 
 group = 'de.dhbw.rebleyama.client'
 version = "1.0"
-mainClassName = "de.rebleyama.client.Main"
+mainClassName = "de.rebleyama.client.DesktopLauncher"
 
 ext {
     appName = "rebleyama"
