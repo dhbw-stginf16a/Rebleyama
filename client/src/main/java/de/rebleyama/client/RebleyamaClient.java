@@ -67,13 +67,13 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     @Override
     public boolean keyUp(int keycode) {
         if(keycode == Input.Keys.LEFT)
-            camera.translate(-400,0);
+            camera.translate(-250,0);
         if(keycode == Input.Keys.RIGHT)
-            camera.translate(400,0);
+            camera.translate(250,0);
         if(keycode == Input.Keys.UP)
-            camera.translate(0,-400);
+            camera.translate(0,250);
         if(keycode == Input.Keys.DOWN)
-            camera.translate(0,400);
+            camera.translate(0,-250);
         if(keycode == Input.Keys.EQUALS)
             camera.zoom -= 0.02;
         if(keycode == Input.Keys.MINUS)
