@@ -3,11 +3,11 @@ package de.rebleyama.lib.game.resources;
 /**
  * A table that contains the standard max amount of the resources.
  */
-public class LookupTable {
+public class ResourceStandardAmountLookupTable {
     /**
      * Stub, you shall not create an instance of this class
      */
-    private LookupTable() {
+    private ResourceStandardAmountLookupTable() {
         throw new IllegalStateException("Creating an instance of this class is not allowed.");
     }
     /**

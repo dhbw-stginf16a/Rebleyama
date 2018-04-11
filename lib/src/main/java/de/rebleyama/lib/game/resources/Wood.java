@@ -5,6 +5,6 @@ package de.rebleyama.lib.game.resources;
  */
 public class Wood extends Resource {
     public Wood() {
-        super(LookupTable.AMOUNT_WOOD);
+        super(ResourceStandardAmountLookupTable.AMOUNT_WOOD);
     }
 }

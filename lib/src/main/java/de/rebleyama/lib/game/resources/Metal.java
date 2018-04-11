@@ -5,6 +5,6 @@ package de.rebleyama.lib.game.resources;
  */
 public class Metal extends Resource {
     public Metal() {
-        super(LookupTable.AMOUNT_METAL);
+        super(ResourceStandardAmountLookupTable.AMOUNT_METAL);
     }
 }
