@@ -7,7 +7,9 @@ public class LookupTable {
     /**
      * Stub, you shall not create an instance of this class
      */
-    private LookupTable() {}
+    private LookupTable() {
+        throw new IllegalStateException("Creating an instance of this class is not allowed.");
+    }
     /**
      * The standard amount of wood.
      */
