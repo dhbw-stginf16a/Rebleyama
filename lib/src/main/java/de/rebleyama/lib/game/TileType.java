@@ -1,5 +1,12 @@
-package de.rebleyama.lib;
+package de.rebleyama.lib.game;
 
+import de.rebleyama.lib.game.resources.Resource;
+import de.rebleyama.lib.game.resources.Stone;
+import de.rebleyama.lib.game.resources.Wood;
+
+/**
+ * Represents the type information about a tile.
+ */
 public enum TileType {
     /**
      * Grassland

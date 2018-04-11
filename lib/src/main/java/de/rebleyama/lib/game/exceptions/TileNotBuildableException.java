@@ -1,4 +1,4 @@
-package de.rebleyama.lib;
+package de.rebleyama.lib.game.exceptions;
 
 /**
  * Thrown when user tried to place a TilePlacable on a unbuildable Tile.

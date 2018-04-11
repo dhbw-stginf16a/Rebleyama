@@ -1,4 +1,4 @@
-package de.rebleyama.lib;
+package de.rebleyama.lib.game.resources;
 
 /**
  * A table that contains the standard max amount of the resources.

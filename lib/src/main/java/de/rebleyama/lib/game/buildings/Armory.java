@@ -1,4 +1,4 @@
-package de.rebleyama.lib;
+package de.rebleyama.lib.game.buildings;
 
 /**
  * A class that represents an armory. An armory can be used to produce soldiers.

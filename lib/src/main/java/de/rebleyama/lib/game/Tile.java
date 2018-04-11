@@ -1,4 +1,8 @@
-package de.rebleyama.lib;
+package de.rebleyama.lib.game;
+
+import de.rebleyama.lib.game.buildings.TilePlacable;
+import de.rebleyama.lib.game.exceptions.TileNotBuildableException;
+import de.rebleyama.lib.game.resources.Resource;
 
 /**
  * Represents a tile of the map.
