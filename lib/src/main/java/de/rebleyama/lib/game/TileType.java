@@ -39,6 +39,22 @@ public enum TileType {
         @Override public boolean isBuildable() { return false; }
         @Override public Resource getNewAssociatedResource() { return null; }
         @Override public boolean isWalkable() { return false; }
+    },
+    /**
+     * Desert, resembles grasslands, but with a sand texture
+     */
+    DESERT {
+        @Override public boolean isBuildable() { return true; }
+        @Override public Resource getNewAssociatedResource() { return null; }
+        @Override public boolean isWalkable() { return true; }
+    },
+    /**
+     * Water that can be passed
+     */
+    SHALLOW_WATER {
+        @Override public boolean isBuildable() { return false; }
+        @Override public Resource getNewAssociatedResource() { return null; }
+        @Override public boolean isWalkable() { return true; }
     };
 
     /**
