@@ -7,6 +7,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -46,6 +47,9 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
 	@Override
 	public void render() {
+
+        //handle Input
+        handleInput();
 		//clear background
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl20.glEnable(GL20.GL_BLEND);
@@ -61,6 +65,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
+
 	}
 
 	@Override
@@ -121,5 +126,26 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 	@Override
 	public void dispose() {
 		// dispose of all the native resources
-	}
+    }
+    
+    private void handleInput() {
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            camera.zoom += 0.1;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
+            camera.zoom -= 0.1;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            camera.translate(-25,0);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            camera.translate(25,0);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            camera.translate(0,-25);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            camera.translate(0,25);
+        }
+    }
 }
