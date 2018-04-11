@@ -14,6 +14,7 @@ public enum TileType {
     GRASSLANDS {
         @Override public boolean isBuildable() { return true; }
         @Override public Resource getNewAssociatedResource() { return null; }
+        @Override public boolean isWalkable() { return true; }
     },
     /**
      * Forest, provides Wood
@@ -21,6 +22,7 @@ public enum TileType {
     FOREST {
         @Override public boolean isBuildable() { return false; }
         @Override public Resource getNewAssociatedResource() { return new Wood(); }
+        @Override public boolean isWalkable() { return true; }
     },
     /**
      * Mountain, provides Stone
@@ -28,6 +30,7 @@ public enum TileType {
     MOUNTAINS {
         @Override public boolean isBuildable() { return false; }
         @Override public Resource getNewAssociatedResource() { return new Stone(); }
+        @Override public boolean isWalkable() { return false; }
     },
     /**
      * River
@@ -35,6 +38,7 @@ public enum TileType {
     RIVER {
         @Override public boolean isBuildable() { return false; }
         @Override public Resource getNewAssociatedResource() { return null; }
+        @Override public boolean isWalkable() { return false; }
     };
 
     /**
@@ -51,4 +55,10 @@ public enum TileType {
      *         {@code null} if a Tile of that {@link TileType} never has a {@link Resource}.
      */
     public abstract Resource getNewAssociatedResource();
+
+    /**
+     * Not every tile is walkable by a unit. This method returns whether a tile of that Type can be entered.
+     * @return {@code true} if walkable, {@code false} if not.
+     */
+    public abstract boolean isWalkable();
 }

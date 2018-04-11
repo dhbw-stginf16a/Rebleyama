@@ -97,4 +97,10 @@ public class Tile {
     public Resource getResource() {
         return res;
     }
+
+    /**
+     * Returns whether {@link de.rebleyama.lib.game.units.MovableUnit}s are allowed to enter this tile.
+     * @return {@code true} if walkable, {@code false} if not.
+     */
+    public boolean isWalkable() { return type.isWalkable(); }
 }
