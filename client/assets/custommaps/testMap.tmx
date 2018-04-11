@@ -5,7 +5,7 @@
   <property name="enemyTint" type="color" value="#ffa33636"/>
  </properties>
  <tileset firstgid="1" name="outdoor" tilewidth="16" tileheight="16" tilecount="288" columns="24">
-  <image source="../textures/tileMapTestMap.png" width="384" height="192"/>
+  <image source="../textures/tiles/tileMapTestMap.png" width="384" height="192"/>
   <terraintypes>
    <terrain name="Grass" tile="150"/>
    <terrain name="Dirt" tile="100"/>
