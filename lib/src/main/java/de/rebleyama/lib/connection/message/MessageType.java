@@ -1,4 +1,4 @@
-package de.rebleyama.lib.connection;
+package de.rebleyama.lib.connection.message;
 
 /**
  * Message types for communication between client and server
@@ -21,12 +21,12 @@ public enum MessageType {
     GAMESTATEREQUEST,
 
     /**
-     * Update of the game status continuously send by the server on each updates
+     * Update of the game status continuously send by the server to the clients when an update occured
      */
     GAMESTATEUPDATE,
 
     /**
-     * The whole gamestate object to replace the previous one since it ran out of sync
+     * The whole game state object to replace the previous one since it ran out of sync
      */
     GAMESTATEREPLACE;
 
