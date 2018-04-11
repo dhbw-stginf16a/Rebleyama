@@ -28,7 +28,12 @@ public enum MessageType {
     /**
      * The whole game state object to replace the previous one since it ran out of sync
      */
-    GAMESTATEREPLACE;
+    GAMESTATEREPLACE,
+
+    /**
+     * In case of a single player game this allows the client to shut down the server.
+     */
+    SERVERINSTRUCTION;
 
     private byte flag;
 
