@@ -33,7 +33,10 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 		camera = new OrthographicCamera();
         camera.setToOrtho(false,w,h);
 		camera.update();
-		
+        camera.position.x = 10240;
+        camera.position.y = 10240;
+
+
         //load the map
         //also available: ../client/assets/custommaps/testMap.tmx
         tiledMap = new TmxMapLoader().load("../client/assets/custommaps/default.tmx");
@@ -55,7 +58,8 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         camera.update();
 		
 		//start up map renderer
-		tiledMapRenderer.setView(camera);
+
+        tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
 	}
 
