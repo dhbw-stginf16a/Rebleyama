@@ -44,9 +44,12 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
 	@Override
 	public void render() {
-
+        //prevent camera from going out of bounds
+        stayInBounds();
         //handle Input
-        handleInput();
+        handleMouseMovementInput();
+        handleKeyMovementInput();
+        handleKeyZoomInput();
 		//clear background
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl20.glEnable(GL20.GL_BLEND);
@@ -71,26 +74,11 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
     @Override
     public boolean keyUp(int keycode) {
-        if(keycode == Input.Keys.LEFT)
-            camera.translate(-250,0);
-        if(keycode == Input.Keys.RIGHT)
-            camera.translate(250,0);
-        if(keycode == Input.Keys.UP)
-            camera.translate(0,250);
-        if(keycode == Input.Keys.DOWN)
-            camera.translate(0,-250);
-        if(keycode == Input.Keys.EQUALS)
-            camera.zoom -= 0.02;
-        if(keycode == Input.Keys.MINUS)
-            camera.zoom += 0.02;
-        if(keycode == Input.Keys.NUM_1)
-            tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
         return false;
     }
 
     @Override
     public boolean keyTyped(char character) {
-
         return false;
     }
 
@@ -116,6 +104,12 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
     @Override
     public boolean scrolled(int amount) {
+        float effectiveViewportWidth = camera.viewportWidth * camera.zoom;
+        
+        if (((effectiveViewportWidth < 20480) || amount < 0) && ((effectiveViewportWidth > 480) || amount > 0)) {
+            camera.zoom += (0.3*amount);
+        }
+
         return false;
     }
 
@@ -124,24 +118,67 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 		// dispose of all the native resources
     }
     
-    private void handleInput() {
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            camera.zoom += 0.1;
+    private void handleMouseMovementInput() {
+        float mousePositionX = Gdx.input.getX(); 
+        float mousePositionY = Gdx.input.getY();
+        float windowWidth = Gdx.graphics.getWidth();
+        float windowHeight = Gdx.graphics.getHeight();
+
+        if (mousePositionY <= windowHeight/20) {
+            camera.translate(0,25*camera.zoom);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
-            camera.zoom -= 0.1;
+        if (mousePositionY >= windowHeight - windowHeight/20) {
+            camera.translate(0,-25*camera.zoom);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+        if (mousePositionX >= windowWidth - windowWidth/20) {
+            camera.translate(25*camera.zoom,0);
+        }
+        if (mousePositionX <= windowWidth/20) {
+            camera.translate(-25*camera.zoom,0);
+        }
+    }
+
+    private void handleKeyMovementInput() {
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
             camera.translate(-25,0);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             camera.translate(25,0);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
             camera.translate(0,-25);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
             camera.translate(0,25);
+        }
+    }
+
+    private void handleKeyZoomInput() {
+        float effectiveViewportWidth = camera.viewportWidth * camera.zoom;
+
+        if (Gdx.input.isKeyPressed(Input.Keys.EQUALS) && (effectiveViewportWidth > 480)) {
+            camera.zoom -= 0.1;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.MINUS) && (effectiveViewportWidth < 20480)) {
+            camera.zoom += 0.1;
+        }
+    }
+
+    private void stayInBounds() {
+        float effectiveViewportWidth = camera.viewportWidth * camera.zoom;
+		float effectiveViewportHeight = camera.viewportHeight * camera.zoom;
+
+        if (camera.position.x < 0 + effectiveViewportWidth/2) {
+            camera.position.x = 0 + effectiveViewportWidth/2;
+        }
+        if (camera.position.x > 20480 - effectiveViewportWidth/2) {
+            camera.position.x = 20480 - effectiveViewportWidth/2;
+        }
+        if (camera.position.y < 0 + effectiveViewportHeight/2) {
+            camera.position.y = 0 + effectiveViewportHeight/2;
+        }
+        if (camera.position.y > 20480 - effectiveViewportHeight/2) {
+            camera.position.y = 20480 - effectiveViewportHeight/2;
         }
     }
 }
