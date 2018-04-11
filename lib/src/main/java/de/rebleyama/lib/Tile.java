@@ -58,12 +58,16 @@ public class Tile {
      * @param element The thing that should be placed.
      * @throws TileNotBuildableException Thrown when the TileType forbids placing something on the tile.
      */
-    public void placeOnTile(TilePlacable element) throws TileNotBuildableException {
+    public void placeOnTile(TilePlacable element) {
         if (!isBuildable()) {
             throw new TileNotBuildableException("This tile is unbuildable; placing something here is not allowed.");
         }
 
         elementOnTile = element;
+    }
+
+    public TilePlacable getTilePlacable() {
+        return elementOnTile;
     }
 
     /**

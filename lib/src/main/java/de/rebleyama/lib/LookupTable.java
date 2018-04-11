@@ -5,15 +5,19 @@ package de.rebleyama.lib;
  */
 public class LookupTable {
     /**
+     * Stub, you shall not create an instance of this class
+     */
+    private LookupTable() {}
+    /**
      * The standard amount of wood.
      */
-    public static final int amountWood = 5000;
+    public static final int AMOUNT_WOOD = 5000;
     /**
      * The standard amount of stone.
      */
-    public static final int amountStone = 3000;
+    public static final int AMOUNT_STONE = 3000;
     /**
      * The standard amount of metal.
      */
-    public static final int amountMetal = 2000;
+    public static final int AMOUNT_METAL = 2000;
 }
