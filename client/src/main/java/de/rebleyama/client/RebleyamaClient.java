@@ -49,8 +49,9 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 		camera.update();
 		
 		//load the map
-		//tiledMap = new TmxMapLoader().load("../client/assets/custommaps/orthogonal-outside.tmx");
-        tiledMap = new TmxMapLoader().load("../client/assets/custommaps/starter.tmx");
+        tiledMap = new TmxMapLoader().load("../client/assets/custommaps/default.tmx");
+        //call for testMap (pregenerated terrain, only used for visual confirmation that rendering is working)
+        //tiledMap = new TmxMapLoader().load("../client/assets/custommaps/testMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 		Gdx.input.setInputProcessor(this);
 	}
