@@ -49,7 +49,8 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 		camera.update();
 		
 		//load the map
-		tiledMap = new TmxMapLoader().load("../client/assets/custommaps/orthogonal-outside.tmx");
+		//tiledMap = new TmxMapLoader().load("../client/assets/custommaps/orthogonal-outside.tmx");
+        tiledMap = new TmxMapLoader().load("../client/assets/custommaps/starter.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 		Gdx.input.setInputProcessor(this);
 	}
@@ -80,13 +81,13 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     @Override
     public boolean keyUp(int keycode) {
         if(keycode == Input.Keys.LEFT)
-            camera.translate(-32,0);
+            camera.translate(-400,0);
         if(keycode == Input.Keys.RIGHT)
-            camera.translate(32,0);
+            camera.translate(400,0);
         if(keycode == Input.Keys.UP)
-            camera.translate(0,-32);
+            camera.translate(0,-400);
         if(keycode == Input.Keys.DOWN)
-            camera.translate(0,32);
+            camera.translate(0,400);
         if(keycode == Input.Keys.NUM_1)
             tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
         return false;
