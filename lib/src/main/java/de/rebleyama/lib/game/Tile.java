@@ -22,9 +22,11 @@ public class Tile {
     }
 
     /**
-     * Transforms the tile to a new type. If a false preserveResource, the Tile will get a new instance of the resource associated to the new TileType.
+     * Transforms the tile to a new type. If a false preserveResource,
+     * the Tile will get a new instance of the resource associated to the new TileType.
      * @param type The new type of the tile.
-     * @param preserveResource If set to true, the former resource will not be replaced. THAT COULD LEAD TO CONSISTENCY ERRORS, HANDLE WITH CARE!
+     * @param preserveResource If set to true, the former resource will not be replaced.
+     *                        THAT COULD LEAD TO CONSISTENCY ERRORS, HANDLE WITH CARE!
      */
     public void setType(TileType type, boolean preserveResource) {
         this.type = type;

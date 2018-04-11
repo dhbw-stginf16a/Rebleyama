@@ -18,7 +18,8 @@ public class ResourceCollectedEvent extends EventObject {
          */
         COLLECTED,
         /**
-         * The resource did run out while collecting. Collecting again will lead to a {@link ResourceAlreadyRanOutException}.
+         * The resource did run out while collecting.
+         * Collecting again will lead to a {@link ResourceAlreadyRanOutException}.
          */
         RANOUT,
     }

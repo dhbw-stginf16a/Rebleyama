@@ -6,7 +6,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 /**
- * The representation of a resource. You can however not directly create an instance of this class. Please create a child class that sets the max amount.
+ * The representation of a resource. You can however not directly create an instance of this class.
+ * Please create a child class that sets the max amount.
  */
 public abstract class Resource {
     /**
@@ -52,7 +53,9 @@ public abstract class Resource {
 
     /**
      * Decrease the amount of the resource. Will invoke the event listeners.
-     * @param amount specifies how much should be collected. If {@code amount > resourceAmount}, only the current resource amount will be collected and the type of the Event will be set to the {@link ResourceCollectedEvent.Type} {@code RANOUT}.
+     * @param amount specifies how much should be collected. If {@code amount > resourceAmount},
+     *               only the current resource amount will be collected and the type of the Event
+     *               will be set to the {@link ResourceCollectedEvent.Type} {@code RANOUT}.
      * @throws ResourceAlreadyRanOutException Thrown when the resource already ran out before collecting.
      * @throws IllegalArgumentException Thrown when the given amount is negative.
      */

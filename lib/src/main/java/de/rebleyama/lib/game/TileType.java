@@ -45,8 +45,10 @@ public enum TileType {
     public abstract boolean isBuildable();
 
     /**
-     * A tile can contain a resource. The TileType is a factory for its associated resource. You can call this method to get back that resource.
-     * @return A new instance of the full {@link Resource} that belongs on that TileType. {@code null} if a Tile of that {@link TileType} never has a {@link Resource}.
+     * A tile can contain a resource. The TileType is a factory for its associated resource.
+     * You can call this method to get back that resource.
+     * @return A new instance of the full {@link Resource} that belongs on that TileType.
+     *         {@code null} if a Tile of that {@link TileType} never has a {@link Resource}.
      */
     public abstract Resource getNewAssociatedResource();
 }
