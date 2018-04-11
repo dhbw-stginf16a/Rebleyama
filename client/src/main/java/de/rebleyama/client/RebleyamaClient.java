@@ -74,6 +74,10 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
             camera.translate(0,-400);
         if(keycode == Input.Keys.DOWN)
             camera.translate(0,400);
+        if(keycode == Input.Keys.EQUALS)
+            camera.zoom -= 0.02;
+        if(keycode == Input.Keys.MINUS)
+            camera.zoom += 0.02;
         if(keycode == Input.Keys.NUM_1)
             tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
         return false;
