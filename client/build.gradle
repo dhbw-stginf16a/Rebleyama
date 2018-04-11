@@ -7,11 +7,25 @@ plugins {
 
 group = 'de.dhbw.rebleyama.client'
 version = "1.0"
-mainClassName = "de.rebleyama.client.Main"
+mainClassName = "de.rebleyama.client.DesktopLauncher"
+
+ext {
+    appName = "rebleyama"
+    gdxVersion = '1.9.8'
+    roboVMVersion = '2.3.3'
+    box2DLightsVersion = '1.4'
+    ashleyVersion = '1.7.0'
+    aiVersion = '1.8.0'
+}
 
 dependencies {
     testCompile 'junit:junit:4.12'
     compile project(":lib")
+    compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+    compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
 }
     
 repositories {
