@@ -18,17 +18,33 @@ public class TileStructureGenerator {
         throw new IllegalStateException("You are not allowed to construct an instance of this file.");
     }
 
-    public static final int TILESET_CODE_COAL = 0;
-    public static final int TILESET_CODE_GRASSLANDS = 1;
-    public static final int TILESET_CODE_IRON = 2;
-    public static final int TILESET_CODE_STONE = 3;
-    public static final int TILESET_CODE_WATER = 4;
+    /**
+     * ID of Coal Tiles
+     */
+    public static final int TILESET_CODE_COAL = 1;
+    /**
+     * ID of Grass Tiles
+     */
+    public static final int TILESET_CODE_GRASSLANDS = 2;
+    /**
+     * ID of Iron Tiles
+     */
+    public static final int TILESET_CODE_IRON = 3;
+    /**
+     * ID of Stone Tiles
+     */
+    public static final int TILESET_CODE_STONE = 4;
+    /**
+     * ID of Water Tiles
+     */
+    public static final int TILESET_CODE_WATER = 5;
 
     /**
      * Generate a list of lists of Tiles.
      * @param tiledMap The tiledMap that we should get the tile information from.
-     * @return A list of lists of Tiles. The index of the outer index is the row,
-     *         the index of the inner index the column.
+     * @return A list of lists of Tiles. Please note that the coordinate system between
+     *         libGDX and Tiled differs: (0;0) is the lower left corner in libGDX, while in
+     *         Tiled, it is the upper left corner. This method will use libGDX indexes.
      */
     public static List<List<Tile>> generateTiles(TiledMap tiledMap) {
         //Get the layer
@@ -46,9 +62,9 @@ public class TileStructureGenerator {
         final int height = tileLayer.getHeight();
         final int width = tileLayer.getWidth();
 
-        for (int x = 0; x < height; ++x) {
+        for (int x = 0; x < width; ++x) {
             List<Tile> row = new ArrayList<>();
-            for (int y = 0; y < width; y++) {
+            for (int y = 0; y < height; y++) {
                 TileType tileType;
                 //get ID of the tile of the associated cell
                 switch(tileLayer.getCell(x, y).getTile().getId()) {
