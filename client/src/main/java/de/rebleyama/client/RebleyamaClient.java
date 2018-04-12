@@ -12,17 +12,25 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+
 import java.util.logging.*;
+
+import javax.sound.midi.MidiDevice.Info;
 
 public class RebleyamaClient extends ApplicationAdapter implements InputProcessor {
 	
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 	private TiledMapRenderer tiledMapRenderer;
-	private TiledMap tiledMap;
+    private TiledMap tiledMap;
+    private static final Logger ClientLogger = Logger.getLogger(RebleyamaClient.class.getName());
+    private final Handler console = new ConsoleHandler();
 
 	@Override
 	public void create () {
+
+        ClientLogger.setLevel(Level.INFO);
+        ClientLogger.addHandler(console);
 
 		batch = new SpriteBatch();
 
@@ -101,11 +109,16 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
 /**
  * Stub method for recognizing keypress
- * This triggers when screen is touched
+ * This triggers when screen is touched, also the method that handles mouse input
  * 
  */
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        //If left mouse button is clicked
+        if (button == Input.Buttons.LEFT) {
+            onLeftMouseDown(screenX, screenY);
+            return true;
+        }
         return false;
     }
 
@@ -153,6 +166,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         */
         if (((effectiveViewportWidth < 20480) || amount < 0) && ((effectiveViewportWidth > 480) || amount > 0)) {
             camera.zoom += (0.3*amount);
+            return true;
         }
 
         return false;
@@ -163,7 +177,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
      */
 	@Override
 	public void dispose() {
-		tiledMap.dispose();
+        tiledMap.dispose();
 		batch.dispose();
     }
     
@@ -191,16 +205,16 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     private void handleKeyMovementInput() {
         //if key is pressed, move camera accordingly
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-            camera.translate(-25,0);
+            camera.translate(-25*camera.zoom,0);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-            camera.translate(25,0);
+            camera.translate(25*camera.zoom,0);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
-            camera.translate(0,-25);
+            camera.translate(0,-25*camera.zoom);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-            camera.translate(0,25);
+            camera.translate(0,25*camera.zoom);
         }
     }
 
@@ -242,5 +256,13 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         if (camera.position.y > 20480 - effectiveViewportHeight/2) {
             camera.position.y = 20480 - effectiveViewportHeight/2;
         }
+    }
+
+    private void onLeftMouseDown(int mousePositionX, int mousePositionY) {
+        float mousePositionRelativeToMapX = camera.position.x + mousePositionX;
+        float mousePositionRelativeToMapY = camera.position.y + mousePositionY;
+        
+        ClientLogger.info("mousePositionRelativeToMapX: " + mousePositionRelativeToMapX);
+        ClientLogger.info("mousePositionRelativeToMapY: " + mousePositionRelativeToMapY);
     }
 }
