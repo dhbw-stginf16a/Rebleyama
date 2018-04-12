@@ -18,11 +18,11 @@ public class TileStructureGenerator {
         throw new IllegalStateException("You are not allowed to construct an instance of this file.");
     }
 
-    public final int TILESET_CODE_COAL = 0;
-    public final int TILESET_CODE_GRASSLANDS = 1;
-    public final int TILESET_CODE_IRON = 2;
-    public final int TILESET_CODE_STONE = 3;
-    public final int TILESET_CODE_WATER = 4;
+    public static final int TILESET_CODE_COAL = 0;
+    public static final int TILESET_CODE_GRASSLANDS = 1;
+    public static final int TILESET_CODE_IRON = 2;
+    public static final int TILESET_CODE_STONE = 3;
+    public static final int TILESET_CODE_WATER = 4;
 
     /**
      * Generate a list of lists of Tiles.
@@ -30,7 +30,7 @@ public class TileStructureGenerator {
      * @return A list of lists of Tiles. The index of the outer index is the row,
      *         the index of the inner index the column.
      */
-    public List<List<Tile>> generateTiles(TiledMap tiledMap) {
+    public static List<List<Tile>> generateTiles(TiledMap tiledMap) {
         //Get the layer
         final TiledMapTileLayer tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Ground");
 
