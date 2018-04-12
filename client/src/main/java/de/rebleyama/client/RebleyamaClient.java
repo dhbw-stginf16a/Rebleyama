@@ -63,53 +63,94 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
 		//update the camera
         camera.update();
-		
-		//start up map renderer
 
+		//start up map renderer
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
-
-	}
-
+    }
+    
+/**
+ * Stub method for recognizing keypress
+ * This triggers when any key is pressed down
+ * @param keycode keycode of the key that was pressed
+ */
 	@Override
     public boolean keyDown(int keycode) {
         return false;
     }
 
+/**
+ * Stub method for recognizing keypress
+ * This triggers when any key is released
+ * @param keycode keycode of the key that was released
+ */
     @Override
     public boolean keyUp(int keycode) {
         return false;
     }
 
+/**
+ * Stub method for recognizing keypress
+ * This triggers when any key is typed (pressed and released)
+ * @param keycode keycode of the key that was typed
+ */
     @Override
     public boolean keyTyped(char character) {
         return false;
     }
 
+/**
+ * Stub method for recognizing keypress
+ * This triggers when screen is touched
+ * 
+ */
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         return false;
     }
 
+/**
+ * Stub method for recognizing keypress
+ * This triggers when screen is released
+ */
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         return false;
     }
 
+/**
+ * Stub method for recognizing keypress
+ * This triggers when the finger is dragged across the screen
+ */
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         return false;
     }
 
+/**
+ * Stub method for recognizing keypress
+ * This triggers when the mouse is moved
+ */
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
         return false;
     }
-
+   
+/**
+ * Stub method for recognizing keypress
+ * This triggers when the scrollwheel is scrolled
+ * @param amount amount that the scrollwheel was moved
+ */
     @Override
     public boolean scrolled(int amount) {
+        /*calculate the effective area of the map that is shown on screen (only calculating width
+        because it will always be larger than height as soon as we enforce 16:9 aspect ration)*/
         float effectiveViewportWidth = camera.viewportWidth * camera.zoom;
         
+        /*check if the area shown on screen is still within the minimum (480 px -> 12 fields) and the
+        maximum (20480 px -> 512 fields) bounds. If it is not, camera is not zoomed unless the zoom amount
+        is going to change the effective area shown away from the bound 
+        */
         if (((effectiveViewportWidth < 20480) || amount < 0) && ((effectiveViewportWidth > 480) || amount > 0)) {
             camera.zoom += (0.3*amount);
         }
@@ -128,6 +169,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         float windowWidth = Gdx.graphics.getWidth();
         float windowHeight = Gdx.graphics.getHeight();
 
+        //if mouse is in a 5% range of any of the edges of the window, move the camera accordingly
         if (mousePositionY <= windowHeight/20) {
             camera.translate(0,25*camera.zoom);
         }
@@ -143,6 +185,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     }
 
     private void handleKeyMovementInput() {
+        //if key is pressed, move camera accordingly
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
             camera.translate(-25,0);
         }
@@ -158,8 +201,14 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     }
 
     private void handleKeyZoomInput() {
+        /*calculate the effective area of the map that is shown on screen (only calculating width
+        because it will always be larger than height as soon as we enforce 16:9 aspect ration)*/
         float effectiveViewportWidth = camera.viewportWidth * camera.zoom;
 
+        /*check if the area shown on screen is still within the minimum (480 px -> 12 fields) and the
+        maximum (20480 px -> 512 fields) bounds. If it is not, camera is not zoomed unless the zoom amount
+        is going to change the effective area shown away from the bound 
+        */
         if (Gdx.input.isKeyPressed(Input.Keys.EQUALS) && (effectiveViewportWidth > 480)) {
             camera.zoom -= 0.1;
         }
@@ -169,9 +218,14 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     }
 
     private void stayInBounds() {
+        //calculate the effective area of the map that is shown on screen
         float effectiveViewportWidth = camera.viewportWidth * camera.zoom;
 		float effectiveViewportHeight = camera.viewportHeight * camera.zoom;
 
+        /*Check if camera position is at any coordinate out of the boundaries of our 512x512 tile map.
+        If it is, set it to the corresponding edge. Since this method is called in the render() method,
+        this is checked for every frame.
+        */
         if (camera.position.x < 0 + effectiveViewportWidth/2) {
             camera.position.x = 0 + effectiveViewportWidth/2;
         }
