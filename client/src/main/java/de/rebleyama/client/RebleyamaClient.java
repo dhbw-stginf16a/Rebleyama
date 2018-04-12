@@ -14,7 +14,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import java.util.logging.*;
 
-public class RebleyamaClient extends ApplicationAdapter implements InputProcessor{
+public class RebleyamaClient extends ApplicationAdapter implements InputProcessor {
 	
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
@@ -92,7 +92,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 /**
  * Stub method for recognizing keypress
  * This triggers when any key is typed (pressed and released)
- * @param keycode keycode of the key that was typed
+ * @param character character that was typed
  */
     @Override
     public boolean keyTyped(char character) {
@@ -158,9 +158,13 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         return false;
     }
 
+    /**
+     * dispose of all the native resources we allocated in create()
+     */
 	@Override
 	public void dispose() {
-		// dispose of all the native resources
+		tiledMap.dispose();
+		batch.dispose();
     }
     
     private void handleMouseMovementInput() {
