@@ -1,5 +1,7 @@
 package de.rebleyama.server;
 
+import de.rebleyama.server.connection.MessageBroker;
+
 public class Main {
 
     private Main() {
@@ -7,6 +9,11 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        //Empty because fuck SonarLint
+        // Initialize the message broker
+
+        MessageBroker messageBroker = new MessageBroker(12345);
+
+        messageBroker.setRunning(true);
+        new Thread(messageBroker).start();
     }
 }
