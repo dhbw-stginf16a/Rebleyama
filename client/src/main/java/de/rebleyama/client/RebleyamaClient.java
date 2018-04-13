@@ -35,9 +35,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 	@Override
 	public void create () {
 
-        ClientLogger.setLevel(Level.INFO);
-        ClientLogger.addHandler(console);
-
 		batch = new SpriteBatch();
 
 		//get the window size for the camera
