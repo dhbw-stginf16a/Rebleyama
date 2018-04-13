@@ -13,9 +13,9 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import de.rebleyama.lib.utils.TileStructureGenerator;
 import de.rebleyama.lib.game.Tile;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 import java.util.List;
+
 import java.util.logging.*;
 
 
@@ -34,6 +34,9 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
 	@Override
 	public void create () {
+
+        ClientLogger.setLevel(Level.INFO);
+        ClientLogger.addHandler(console);
 
 		batch = new SpriteBatch();
 
