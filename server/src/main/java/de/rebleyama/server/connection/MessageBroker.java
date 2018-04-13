@@ -10,13 +10,13 @@ import de.rebleyama.lib.connection.message.*;
  * by writing received data into the according queues and sending
  * out data from the input queue.
  */
-public class MessageBroker {
-  private int port;
-  private String listenAddress;
-  private boolean isRunning;
-  DatagramChannel channel;
-  private ByteBuffer receiveBuffer;
-  private ByteBuffer sendBuffer;
+public class MessageBroker implements Runnable {
+    private int port;
+    private String listenAddress;
+    private boolean isRunning;
+    private DatagramChannel channel;
+    private ByteBuffer receiveBuffer;
+    private ByteBuffer sendBuffer;
 
     /**
      * Initializes a message broker.
@@ -32,7 +32,6 @@ public class MessageBroker {
             this.channel = DatagramChannel.open();
             this.channel.socket().bind(new InetSocketAddress(this.port));
             this.channel.configureBlocking(false);
-            this.isRunning = true;
         } catch (Exception e) {
             // Dont care
             System.err.println(e);
@@ -61,6 +60,18 @@ public class MessageBroker {
             if (this.channel.read(this.receiveBuffer) > 0) {
                 // Set to read
                 receiveBuffer.flip();
+                ByteArrayInputStream(byte[] receiveBuffer);
+                switch (receiveBuffer.get(0)){
+                    case MessageType.HANDSHAKE:
+                        // clientHandshake(receiveBuffer);
+                        break;
+                    case MessageType.HEARTBEAT:
+                        // clientHearbeat(receiveBuffer);
+                        break;
+                    default:
+                        // Not yet implemented
+                        // Do nothing
+                }
 
                 // Set to write again
                 receiveBuffer.flip();
@@ -79,21 +90,21 @@ public class MessageBroker {
     }
 
     /**
+     * Function to toggle the worker
+     * @param newStatus The new status of the worker (isRunning)
+     */
+    public void setRunning(boolean newStatus) {
+        this.isRunning = newStatus;
+    }
+
+    /**
      * Continuously processes data to be received and sent.
      */
-    public void worker() {
-        // Continuously read and send
+    @Override
+    public void run() {
         while (this.isRunning){
             readData();
             sendData();
         }
     }
-
-    /**
-     * Function to toggle the worker
-     * @param newStatus The new status of the worker (isRunning)
-     */
-    public void setRunning(boolean newStatus) {
-    this.isRunning = newStatus;
-  }
 }
