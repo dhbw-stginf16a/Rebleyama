@@ -5,24 +5,13 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.*;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-
-
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.*;
 
 public class RebleyamaClient extends ApplicationAdapter implements InputProcessor {
 
@@ -31,15 +20,12 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     private TiledMapRenderer tiledMapRenderer;
     private TiledMap tiledMap;
 
-    //TODO docu minimap test 1
+    //Global Variable of window for Mini,ap, UI Skin, UI Stage and Pixmap for Minimap
     private Stage stage;
     private Skin skin;
     private Pixmap pixmap;
     private Window mapwindow;
 
-
-    //Holding Buttons/Mouse
-    private boolean mouseMoving = false;
 
     @Override
     public void create() {
@@ -61,23 +47,26 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         tiledMap = new TmxMapLoader().load("../client/assets/custommaps/default.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
-        //TODO docu
+        //Calls method that is responsible to create UI elements
         createUI();
-        //TODO docu, order important, multiinput, ui needs to be first
+        //Creation of a Multiplexer which allows multi layer event handling (UI Layer and TiledMap Layer) (UI layer needs to be first ORDER IS IMPORTANT)
         InputMultiplexer im = new InputMultiplexer(stage, this);
         Gdx.input.setInputProcessor(im);
 
     }
 
-    //TODO doc, test
+    /**
+     * Create Method for UI Elements
+     */
     private void createUI() {
-        //TODO NOTES - Besprechen mit Jan Robin:
+        //TODO NOTES
         // MAP ALL INPUTS TO INPUT PROCESSOR - raise issue
         // where to find skins - raise issue
         // processing of events done -> return true else retun false
         // correcte farb werte von paul bekommen
         // render minimap every time new... (record changes)(make pixmal global etc.)
-
+        // keep aspect ratio maybe later
+        // enum
 
         //setup skin, stage, input
         skin = new Skin(Gdx.files.internal("assets/uiskin/skin/uiskin.json"));
@@ -91,34 +80,42 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
     }
 
-    //TODO DOCU
+    /**
+     * Creates a windows with a minimap in it
+     */
     private void createMinimap() {
+        //create window
         mapwindow = new Window("Map", skin);
-
+        //set postion of window (-size)
         mapwindow.setPosition(Gdx.graphics.getWidth()-200, Gdx.graphics.getHeight()-200);
-
+        //set size of window
         mapwindow.setSize(200, 200);
-        //resizable TODO keep aspect ratio maybe later
+        //allow the window to be resized
         mapwindow.setResizable(true);
-        //pixmap can be used for rendering and noting changes
+        //call method that creates a pixmap of our tiledmap
         pixmap = createPixmap();
+        //fill inside of window with minimap
         mapwindow.add(new Image(new TextureRegion(new Texture(pixmap))));
-
-        //matrix mit allem benötigt was auf der karte ist
-
+        //add minimap to ui stage
         stage.addActor(mapwindow);
     }
 
-    //TODO docu
+    /**
+     * creates a pixmap of our tiledmap
+     * A pixmap is similar to a bitmap or bufferedimage
+     * @return Pixmap of our Tiledmap
+     */
     private Pixmap createPixmap() {
+        //create Pixmap
         pixmap = new Pixmap(512, 512, Pixmap.Format.RGBA8888);
-
+        //get our tiledMap layer
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-
+        //loop through all map (for each tile)
         for (int x = 0; x < layer.getWidth(); x++) {
-
             for (int y = 0; y < layer.getHeight(); y++) {
+                //get current cell id
                 int tmp = layer.getCell(x, y).getTile().getId();
+                //set color of pixmap pixel similar to the color of the tile on our tiledmap
                 if (tmp != -1) {
                     //TODO replace with dict/enum like access list
                     switch (tmp) {
@@ -147,6 +144,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
             }
 
         }
+        //return pixmap
         return pixmap;
 
     }
@@ -160,7 +158,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         handleKeyZoomInput();
         handleMouseMovementInput();
 
-        //TODO clear background
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl20.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -180,25 +177,41 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         stage.draw();
     }
 
-    //TODO docu
+    /**
+     * Resize event which triggers on size change of client window
+     * @param width
+     * @param height
+     */
     @Override
     public void resize(int width, int height) {
+        //calls method to resize for Minimap window (can be used for other too)
         resizeWindow(width,height);
+        //update viewport of stage
+        stage.getViewport().update(width, height, true);
 
 
     }
-    //TODO DOCU
+
+    /**
+     * resize ui Stage and positions minimap window relative to last position on new window size
+     * @param width after resize
+     * @param height after resize
+     */
     public void resizeWindow(int width, int height){
-        int oldheight = stage.getViewport().getScreenHeight()-200;
-        int oldwidth = stage.getViewport().getScreenWidth()-200;
+        //get old client window height (-size of window for "correct" coordinate system)
+        float oldheight = stage.getViewport().getScreenHeight()-mapwindow.getHeight();
+        float oldwidth = stage.getViewport().getScreenWidth()-mapwindow.getWidth();
+        //get old position of minimap window
         float oldheightWindow = mapwindow.getY();
         float oldwidthWindow = mapwindow.getX();
+        //calculate old relative position on screen
         float relativheight = oldheightWindow/oldheight;
         float relativwidth = oldwidthWindow/oldwidth;
+        //calculate new position after resize
         float newheightWindow = (height-200) * relativheight;
         float newwidthWindow = (width-200) * relativwidth;
+        //set new position
         mapwindow.setPosition(newwidthWindow,newheightWindow);
-        stage.getViewport().update(width, height, true);
     }
 
     /**
@@ -211,7 +224,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         skin.dispose();
         stage.dispose();
         pixmap.dispose();
-
 
     }
 
