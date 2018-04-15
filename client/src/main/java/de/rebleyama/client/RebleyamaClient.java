@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 
+
 public class RebleyamaClient extends ApplicationAdapter implements InputProcessor {
 
     private SpriteBatch batch;
@@ -26,6 +27,8 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     private Pixmap pixmap;
     private Window mapwindow;
 
+    //creation of array for Minimap Colors
+    private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE)};
 
     @Override
     public void create() {
@@ -60,13 +63,13 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
      */
     private void createUI() {
         //TODO NOTES
-        // MAP ALL INPUTS TO INPUT PROCESSOR - raise issue
         // where to find skins - raise issue
         // processing of events done -> return true else retun false
         // correcte farb werte von paul bekommen
         // render minimap every time new... (record changes)(make pixmal global etc.)
         // keep aspect ratio maybe later
-        // enum
+        // change to daniels tiletype style in switch case
+        // next: Esc öffnet option menü -> Map -> big map + minimap only part of mixmap + auschnitt
 
         //setup skin, stage, input
         skin = new Skin(Gdx.files.internal("assets/uiskin/skin/uiskin.json"));
@@ -87,7 +90,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         //create window
         mapwindow = new Window("Map", skin);
         //set postion of window (-size)
-        mapwindow.setPosition(Gdx.graphics.getWidth()-200, Gdx.graphics.getHeight()-200);
+        mapwindow.setPosition((float) (Gdx.graphics.getWidth() - 200), (float) (Gdx.graphics.getHeight() - 200));
         //set size of window
         mapwindow.setSize(200, 200);
         //allow the window to be resized
@@ -103,47 +106,33 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     /**
      * creates a pixmap of our tiledmap
      * A pixmap is similar to a bitmap or bufferedimage
+     *
      * @return Pixmap of our Tiledmap
      */
     private Pixmap createPixmap() {
         //create Pixmap
-        pixmap = new Pixmap(512, 512, Pixmap.Format.RGBA8888);
+        int minimapXY = 512;
+        pixmap = new Pixmap(minimapXY, minimapXY, Pixmap.Format.RGBA8888);
         //get our tiledMap layer
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
         //loop through all map (for each tile)
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
                 //get current cell id
-                int tmp = layer.getCell(x, y).getTile().getId();
+                int tmpid = layer.getCell(x, y).getTile().getId();
                 //set color of pixmap pixel similar to the color of the tile on our tiledmap
-                if (tmp != -1) {
-                    //TODO replace with dict/enum like access list
-                    switch (tmp) {
-                        case 1:
-                            pixmap.drawPixel(x, y, Color.rgba8888(Color.DARK_GRAY));
-                            break;
-                        case 2:
-                            pixmap.drawPixel(x, y, Color.rgba8888(Color.FOREST));
-                            break;
-                        case 3:
-                            pixmap.drawPixel(x, y, Color.rgba8888(Color.LIGHT_GRAY));
-                            break;
-                        case 4:
-                            pixmap.drawPixel(x, y, Color.rgba8888(Color.GRAY));
-                            break;
-                        case 5:
-                            pixmap.drawPixel(x, y, Color.rgba8888(Color.BLUE));
-                            break;
-                        default:
-                            pixmap.drawPixel(x, y, Color.rgba8888(Color.ORANGE));
-                            break;
-                    }
-
+                if (tmpid <= minimapcolors.length) {
+                    pixmap.drawPixel(x, minimapXY -y, minimapcolors[tmpid-1]);
+                } else {
+                    //Changer Logger/Error exception if uniform method is used
+                    Gdx.app.log("Minimap","ERROR - Color ID Unknown. ID: "+tmpid);
                 }
 
             }
 
         }
+
+
         //return pixmap
         return pixmap;
 
@@ -179,13 +168,14 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
     /**
      * Resize event which triggers on size change of client window
-     * @param width
-     * @param height
+     *
+     * @param width Width after resize has happened
+     * @param height height after resize has happened
      */
     @Override
     public void resize(int width, int height) {
         //calls method to resize for Minimap window (can be used for other too)
-        resizeWindow(width,height);
+        resizeWindow(width, height);
         //update viewport of stage
         stage.getViewport().update(width, height, true);
 
@@ -194,24 +184,25 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
     /**
      * resize ui Stage and positions minimap window relative to last position on new window size
-     * @param width after resize
+     *
+     * @param width  after resize
      * @param height after resize
      */
-    public void resizeWindow(int width, int height){
+    private void resizeWindow(int width, int height) {
         //get old client window height (-size of window for "correct" coordinate system)
-        float oldheight = stage.getViewport().getScreenHeight()-mapwindow.getHeight();
-        float oldwidth = stage.getViewport().getScreenWidth()-mapwindow.getWidth();
+        float oldheight = stage.getViewport().getScreenHeight() - mapwindow.getHeight();
+        float oldwidth = stage.getViewport().getScreenWidth() - mapwindow.getWidth();
         //get old position of minimap window
         float oldheightWindow = mapwindow.getY();
         float oldwidthWindow = mapwindow.getX();
         //calculate old relative position on screen
-        float relativheight = oldheightWindow/oldheight;
-        float relativwidth = oldwidthWindow/oldwidth;
+        float relativheight = oldheightWindow / oldheight;
+        float relativwidth = oldwidthWindow / oldwidth;
         //calculate new position after resize
-        float newheightWindow = (height-200) * relativheight;
-        float newwidthWindow = (width-200) * relativwidth;
+        float newheightWindow = (height - 200) * relativheight;
+        float newwidthWindow = (width - 200) * relativwidth;
         //set new position
-        mapwindow.setPosition(newwidthWindow,newheightWindow);
+        mapwindow.setPosition(newwidthWindow, newheightWindow);
     }
 
     /**
@@ -273,16 +264,10 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
      * Stub method for recognizing keypress
      * This triggers when screen is touched
      */
-    int testn;
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (button == Input.Buttons.LEFT) {
-            testn += 1;
-            Gdx.app.log("Click", "Clicked" + testn);
-            return true;
-        }
-        return false;
+         return false;
     }
 
     /**
