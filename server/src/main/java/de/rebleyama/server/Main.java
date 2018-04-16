@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args) {
         // Initialize the message broker
 
-        MessageBroker messageBroker = new MessageBroker(12345);
+        MessageBroker messageBroker = new MessageBroker(21012);
 
         messageBroker.setRunning(true);
         new Thread(messageBroker).start();

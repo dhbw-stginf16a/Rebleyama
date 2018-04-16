@@ -3,6 +3,9 @@ package de.rebleyama.server.connection;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.net.InetSocketAddress;
+import java.util.Random;
+
+import de.rebleyama.lib.BytesUtil;
 import de.rebleyama.lib.connection.message.*;
 
 /**
@@ -52,6 +55,19 @@ public class MessageBroker implements Runnable {
     }
 
     /**
+     * Generates a new client ID and spawns a client worker
+     * @return new client ID
+     */
+    private byte initializeNewClient() {
+        Random rand = new Random();
+        int clientId = rand.nextInt(253) + 1;
+
+        // Spawn worker process here
+
+        return (byte) clientId;
+    }
+
+    /**
      * Reads data from the datagram buffer and writes them into the according queue
      */
     private void readData() {
@@ -59,14 +75,21 @@ public class MessageBroker implements Runnable {
         try {
             if (this.channel.read(this.receiveBuffer) > 0) {
                 // Set to read
-                receiveBuffer.flip();
-                ByteArrayInputStream(byte[] receiveBuffer);
-                switch (receiveBuffer.get(0)){
-                    case MessageType.HANDSHAKE:
-                        // clientHandshake(receiveBuffer);
+                this.receiveBuffer.flip();
+
+                switch (MessageType.toMessageType((this.receiveBuffer.get(0)))) {
+                    case HANDSHAKE:
+                        HandshakeMessage clientHandshakeMessage = (HandshakeMessage) BytesUtil.toObject(this.receiveBuffer.array());
+                        HandshakeMessage serverHandshakeMessage = new HandshakeMessage(initializeNewClient());
+                        // TODO write response to send queue
                         break;
-                    case MessageType.HEARTBEAT:
-                        // clientHearbeat(receiveBuffer);
+
+                    case HEARTBEAT:
+                        HeartbeatMessage clientHeartbeatMessage = (HeartbeatMessage) BytesUtil.toObject(this.receiveBuffer.array());
+
+                        // TODO: REPLACE with actual serialization of the game state object
+                        HeartbeatMessage serverHeartbeatMeassage = new HeartbeatMessage(clientHeartbeatMessage.getClientId(), "this could be your commercial");
+                        // TODO: write response to send queue
                         break;
                     default:
                         // Not yet implemented
