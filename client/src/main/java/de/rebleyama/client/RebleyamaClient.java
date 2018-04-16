@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
@@ -32,10 +33,12 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     private Window miniMapWindow;
     private Window mapWindow;
     private Window escMenuWindow;
+    private Image map;
+    private Image minimap;
 
 
-    //creation of array for Minimap Colors
-    private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE)};
+    //creation of array for Minimap Colors, last color is an error color
+    private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE),Color.rgba8888(Color.RED)};
 
     @Override
     public void create() {
@@ -73,11 +76,12 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         // where to find skins - raise issue
         // processing of events done -> return true else retun false
         // correcte farb werte von paul bekommen
-        // change to daniels tiletype style in switch case
+        // daniels datenstrukturen einbauen
+        // multithreading for render?
 
-        // Minimap neu + Big Map (+ m hinzufügen)
+
+        // Minimap neu
         // keep aspect ratio maybe later
-        // render minimap every time new... (record changes)(make pixmal global etc.)
 
 
         //setup skin, stage, input
@@ -102,12 +106,11 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         final TextButton buttonMiniMap = new TextButton("MiniMap", skin);
         final TextButton buttonMap = new TextButton("Map", skin);
         final TextButton buttonExit = new TextButton("Continue", skin);
-        final TextButton buttonX = new TextButton("X", skin);
         final TextButton change = new TextButton("ChangePixel_TEST", skin);
 
 
         escMenuWindow = new Window("Menu", skin);
-        escMenuWindow.getTitleTable().add(buttonX).height(escMenuWindow.getPadTop());
+        createXButton(escMenuWindow);
         escMenuWindow.row().fill().expandX();
         escMenuWindow.add(buttonMap);
         escMenuWindow.row();
@@ -124,14 +127,14 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         buttonMiniMap.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                miniMapWindow.setVisible(!buttonMiniMap.isChecked());
+                miniMapWindow.setVisible(!miniMapWindow.isVisible());
             }
         });
 
         buttonMap.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                mapWindow.setVisible(buttonMap.isChecked());
+                mapWindow.setVisible(!mapWindow.isVisible());
             }
         });
         buttonExit.addListener(new ClickListener() {
@@ -141,32 +144,61 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
             }
         });
 
+        change.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                //update pixmaps
+                for (int x = 0; x < 100; x++) {
+                    for (int y = 0; y < 100; y++) {
+                        tilechanged(x, y, 6);
+                    }
+                }
+                //update drawable inside windows
+                minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minipixmap))));
+                map.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(bigpixmap))));
+
+
+            }
+        });
+    }
+
+    /**
+     * method to create X button for window
+     * @param window in which a X button shall be created
+     */
+    private void createXButton(Window window){
+        //create button
+        final TextButton buttonX = new TextButton("X", skin);
+        //ad butto to top bar of window
+        window.getTitleTable().add(buttonX).height(window.getPadTop());
+        //setup event listener for X button
         buttonX.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                escMenuWindow.setVisible(false);
-            }
-        });
-
-        change.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor){
-                for (int x = 0; x < 100; x++) {
-                    for (int y = 0; y < 100; y++) {
-                        tilechanged(x, y, 5);
-                    }
-                }
+                window.setVisible(false);
             }
         });
     }
 
     /**
      * function to change the pixel of pixmaps
-     * @param x coordinate
-     * @param y coordinate
+     *
+     * @param x         coordinate
+     * @param y         coordinate
      * @param newtileid new tile type id
      */
-    public void tilechanged(int x, int y, int newtileid){
+    private void tilechanged(int x, int y, int newtileid) {
+        //get color
+        int tmpColor = minimapcolors[newtileid - 1];
+        minipixmap.drawPixel(x, minipixmap.getWidth() - y, tmpColor);
+        //create a rectangle of 2px x 2px
+        bigpixmap.drawPixel(x, bigpixmap.getWidth() - y, tmpColor);
+
+        bigpixmap.drawPixel(x + 1, bigpixmap.getWidth() - y, tmpColor);
+
+        bigpixmap.drawPixel(x, bigpixmap.getWidth() - y + 1, tmpColor);
+
+        bigpixmap.drawPixel(y + 1, bigpixmap.getWidth() - y + 1, tmpColor);
 
     }
 
@@ -191,9 +223,15 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         //call method that creates a pixmap of our tiledmap
         minipixmap = createPixmap(512, false);
 
+        //create image
+        minimap = new Image();
+        minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minipixmap))));
+
+
         //fill inside of window with minimap
-        miniMapWindow.add(new Image(new TextureRegion(new Texture(minipixmap))));
+        miniMapWindow.add(minimap);
         //add minimap to ui stage
+        createXButton(miniMapWindow);
         stage.addActor(miniMapWindow);
     }
 
@@ -205,9 +243,12 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         mapWindow = new Window("Map", skin);
         //call method that creates a pixmap of our tiledmap
         bigpixmap = createPixmap(1024, true);
+        //create image
+        map = new Image();
+        map.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(bigpixmap))));
 
-        //fill inside of window with minimap
-        mapWindow.add(new Image(new TextureRegion(new Texture(bigpixmap))));
+        //fill inside of window with image
+        mapWindow.add(map);
         //set size to 80% of resolution
         mapWindow.setSize((float) (Gdx.graphics.getWidth() * 0.8), (float) (Gdx.graphics.getHeight() * 0.8));
 
@@ -216,6 +257,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
         //add minimap to ui stage
         stage.addActor(mapWindow);
+        createXButton(mapWindow);
         mapWindow.setVisible(false);
 
     }
@@ -252,11 +294,11 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
                         //create a rectangle of 2px x 2px
                         tmppixmap.drawPixel(pX, minimapXY - pY, tmpColor);
 
-                        tmppixmap.drawPixel(pX+1, minimapXY - pY, tmpColor);
+                        tmppixmap.drawPixel(pX + 1, minimapXY - pY, tmpColor);
 
                         tmppixmap.drawPixel(pX, minimapXY - ++pY, tmpColor);
 
-                        tmppixmap.drawPixel(pX+1, minimapXY - pY, tmpColor);
+                        tmppixmap.drawPixel(pX + 1, minimapXY - pY, tmpColor);
                     }
                 } else {
                     //Changer Logger/Error exception if uniform method is used
@@ -265,7 +307,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
                 pY++;
             }
-            pX+=2;
+            pX += 2;
         }
         Gdx.app.log("test", pX + "   " + pY);
         //tmppixmap gets disposed by java
