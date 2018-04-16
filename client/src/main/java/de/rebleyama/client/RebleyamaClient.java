@@ -6,12 +6,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-
 
 
 public class RebleyamaClient extends ApplicationAdapter implements InputProcessor {
@@ -21,11 +24,15 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     private TiledMapRenderer tiledMapRenderer;
     private TiledMap tiledMap;
 
-    //Global Variable of window for Mini,ap, UI Skin, UI Stage and Pixmap for Minimap
+    //Global Variable of window for Minimap, map, esc menu, UI Skin, UI Stage and Pixmap for Minimap
     private Stage stage;
     private Skin skin;
-    private Pixmap pixmap;
-    private Window mapwindow;
+    private Pixmap minipixmap;
+    private Pixmap bigpixmap;
+    private Window miniMapWindow;
+    private Window mapWindow;
+    private Window escMenuWindow;
+
 
     //creation of array for Minimap Colors
     private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE)};
@@ -66,10 +73,12 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         // where to find skins - raise issue
         // processing of events done -> return true else retun false
         // correcte farb werte von paul bekommen
-        // render minimap every time new... (record changes)(make pixmal global etc.)
-        // keep aspect ratio maybe later
         // change to daniels tiletype style in switch case
-        // next: Esc öffnet option menü -> Map -> big map + minimap only part of mixmap + auschnitt
+
+        // Minimap neu + Big Map (+ m hinzufügen)
+        // keep aspect ratio maybe later
+        // render minimap every time new... (record changes)(make pixmal global etc.)
+
 
         //setup skin, stage, input
         skin = new Skin(Gdx.files.internal("assets/uiskin/skin/uiskin.json"));
@@ -79,64 +88,176 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
         // Calls method that creates the minimap
         createMinimap();
+        createESCMenu();
+        createMap();
 
 
+    }
+
+    /**
+     * creates an window which opens/closes if ESC is pressed
+     */
+    private void createESCMenu() {
+        //declare Window
+        final TextButton buttonMiniMap = new TextButton("MiniMap", skin);
+        final TextButton buttonMap = new TextButton("Map", skin);
+        final TextButton buttonExit = new TextButton("Continue", skin);
+        final TextButton buttonX = new TextButton("X", skin);
+        final TextButton change = new TextButton("ChangePixel_TEST", skin);
+
+
+        escMenuWindow = new Window("Menu", skin);
+        escMenuWindow.getTitleTable().add(buttonX).height(escMenuWindow.getPadTop());
+        escMenuWindow.row().fill().expandX();
+        escMenuWindow.add(buttonMap);
+        escMenuWindow.row();
+        escMenuWindow.add(buttonMiniMap);
+        escMenuWindow.row();
+        escMenuWindow.add(change);
+        escMenuWindow.row();
+        escMenuWindow.add(buttonExit);
+        escMenuWindow.pack();
+        escMenuWindow.setPosition((float) (Gdx.graphics.getWidth() / 2.0) - escMenuWindow.getWidth() / 2, (float) (Gdx.graphics.getHeight() / 2.0) - escMenuWindow.getHeight() / 2);
+        stage.addActor(escMenuWindow);
+        escMenuWindow.setVisible(false);
+        //create Listener
+        buttonMiniMap.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                miniMapWindow.setVisible(!buttonMiniMap.isChecked());
+            }
+        });
+
+        buttonMap.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                mapWindow.setVisible(buttonMap.isChecked());
+            }
+        });
+        buttonExit.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                escMenuWindow.setVisible(false);
+            }
+        });
+
+        buttonX.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                escMenuWindow.setVisible(false);
+            }
+        });
+
+        change.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                //TODO change pixels on map
+            }
+        });
     }
 
     /**
      * Creates a windows with a minimap in it
      */
     private void createMinimap() {
-        //create window
-        mapwindow = new Window("Map", skin);
+
+        //TODO make constant size + chose correct sizes (200)
+        // create window
+        miniMapWindow = new Window("Minimap", skin);
         //set postion of window (-size)
-        mapwindow.setPosition((float) (Gdx.graphics.getWidth() - 200), (float) (Gdx.graphics.getHeight() - 200));
+        miniMapWindow.setPosition((float) (Gdx.graphics.getWidth() - 200), (float) (Gdx.graphics.getHeight() - 200));
+
         //set size of window
-        mapwindow.setSize(200, 200);
+        miniMapWindow.setSize(200, 200);
+
+
         //allow the window to be resized
-        mapwindow.setResizable(true);
+        miniMapWindow.setResizable(true);
+
         //call method that creates a pixmap of our tiledmap
-        pixmap = createPixmap();
+        minipixmap = createPixmap(512, false);
+
         //fill inside of window with minimap
-        mapwindow.add(new Image(new TextureRegion(new Texture(pixmap))));
+        miniMapWindow.add(new Image(new TextureRegion(new Texture(minipixmap))));
         //add minimap to ui stage
-        stage.addActor(mapwindow);
+        stage.addActor(miniMapWindow);
     }
+
+    /**
+     * create a window with a large map in it
+     */
+    private void createMap() {
+        //create window
+        mapWindow = new Window("Map", skin);
+        //call method that creates a pixmap of our tiledmap
+        bigpixmap = createPixmap(1024, true);
+
+        //fill inside of window with minimap
+        mapWindow.add(new Image(new TextureRegion(new Texture(bigpixmap))));
+        //set size to 80% of resolution
+        mapWindow.setSize((float) (Gdx.graphics.getWidth() * 0.8), (float) (Gdx.graphics.getHeight() * 0.8));
+
+        //set postion of window in the middle
+        mapWindow.setPosition((float) (Gdx.graphics.getWidth() / 2.0) - mapWindow.getWidth() / 2, (float) (Gdx.graphics.getHeight() / 2.0) - mapWindow.getHeight() / 2);
+
+        //add minimap to ui stage
+        stage.addActor(mapWindow);
+        mapWindow.setVisible(false);
+
+    }
+
 
     /**
      * creates a pixmap of our tiledmap
      * A pixmap is similar to a bitmap or bufferedimage
      *
-     * @return Pixmap of our Tiledmap
+     * @param minimapXY xy height/width of pixmap
+     * @param big       boolen if the big or small map shall be created
      */
-    private Pixmap createPixmap() {
+    private Pixmap createPixmap(int minimapXY, boolean big) {
+        //optional para for size, xy , pixmap (ref or value),
         //create Pixmap
-        int minimapXY = 512;
-        pixmap = new Pixmap(minimapXY, minimapXY, Pixmap.Format.RGBA8888);
+        Pixmap tmppixmap = new Pixmap(minimapXY, minimapXY, Pixmap.Format.RGBA8888);
         //get our tiledMap layer
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
+        //own x/y coordinates for pixmap manipulation
+        int pX = 0;
+        int pY = 1;
         //loop through all map (for each tile)
         for (int x = 0; x < layer.getWidth(); x++) {
+            pY = 0;
             for (int y = 0; y < layer.getHeight(); y++) {
                 //get current cell id
                 int tmpid = layer.getCell(x, y).getTile().getId();
                 //set color of pixmap pixel similar to the color of the tile on our tiledmap
                 if (tmpid <= minimapcolors.length) {
-                    pixmap.drawPixel(x, minimapXY -y, minimapcolors[tmpid-1]);
+                    int tmpColor = minimapcolors[tmpid - 1];
+                    if (!big) {
+                        tmppixmap.drawPixel(x, minimapXY - y, tmpColor);
+                    } else {
+                        //create a rectangle of 2px x 2px
+                        tmppixmap.drawPixel(pX, minimapXY - pY, tmpColor);
+
+                        tmppixmap.drawPixel(pX+1, minimapXY - pY, tmpColor);
+
+                        tmppixmap.drawPixel(pX, minimapXY - ++pY, tmpColor);
+
+                        tmppixmap.drawPixel(pX+1, minimapXY - pY, tmpColor);
+                    }
                 } else {
                     //Changer Logger/Error exception if uniform method is used
-                    Gdx.app.log("Minimap","ERROR - Color ID Unknown. ID: "+tmpid);
+                    Gdx.app.log("Pixmap_creation", "ERROR - Color ID Unknown. ID: " + tmpid);
                 }
 
+                pY++;
             }
-
+            pX+=2;
         }
-
-
-        //return pixmap
-        return pixmap;
-
+        Gdx.app.log("test", pX + "   " + pY);
+        //tmppixmap gets disposed by java
+        return tmppixmap;
     }
+
 
     @Override
     public void render() {
@@ -160,7 +281,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         //start up map renderer
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
-
         // MiniMap Test 1
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
@@ -169,13 +289,16 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     /**
      * Resize event which triggers on size change of client window
      *
-     * @param width Width after resize has happened
+     * @param width  Width after resize has happened
      * @param height height after resize has happened
      */
     @Override
     public void resize(int width, int height) {
         //calls method to resize for Minimap window (can be used for other too)
-        resizeWindow(width, height);
+        resizeWindow(width, height, miniMapWindow);
+        resizeWindow(width, height, escMenuWindow);
+        resizeWindow(width, height, mapWindow);
+
         //update viewport of stage
         stage.getViewport().update(width, height, true);
 
@@ -183,26 +306,33 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     }
 
     /**
-     * resize ui Stage and positions minimap window relative to last position on new window size
+     * resize ui Stage and positions of window relative to last position on new window size
      *
      * @param width  after resize
      * @param height after resize
      */
-    private void resizeWindow(int width, int height) {
-        //get old client window height (-size of window for "correct" coordinate system)
-        float oldheight = stage.getViewport().getScreenHeight() - mapwindow.getHeight();
-        float oldwidth = stage.getViewport().getScreenWidth() - mapwindow.getWidth();
-        //get old position of minimap window
-        float oldheightWindow = mapwindow.getY();
-        float oldwidthWindow = mapwindow.getX();
+    private void resizeWindow(int width, int height, Window window) {
+
+        //get old client window postion (-size of window for "correct" coordinate system)
+        float oldheight = stage.getViewport().getScreenHeight() - window.getHeight();
+        float oldwidth = stage.getViewport().getScreenWidth() - window.getWidth();
+        //get old position of window
+        float oldheightWindow = window.getY();
+        float oldwidthWindow = window.getX();
         //calculate old relative position on screen
         float relativheight = oldheightWindow / oldheight;
         float relativwidth = oldwidthWindow / oldwidth;
-        //calculate new position after resize
-        float newheightWindow = (height - 200) * relativheight;
-        float newwidthWindow = (width - 200) * relativwidth;
+        //resize Map Window to new resolution
+        if (window == mapWindow) {
+            window.setSize((float) (width * 0.8), (float) (height * 0.8));
+        }
+        //calculate new position after resize with new window size
+        float newheightWindow = (height - window.getHeight()) * relativheight;
+        float newwidthWindow = (width - window.getWidth()) * relativwidth;
         //set new position
-        mapwindow.setPosition(newwidthWindow, newheightWindow);
+        window.setPosition(newwidthWindow, newheightWindow);
+
+
     }
 
     /**
@@ -214,8 +344,8 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         batch.dispose();
         skin.dispose();
         stage.dispose();
-        pixmap.dispose();
-
+        minipixmap.dispose();
+        bigpixmap.dispose();
     }
 
     /**
@@ -226,6 +356,18 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
      */
     @Override
     public boolean keyDown(int keycode) {
+        //If ESC is pressed, show Menu
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            escMenuWindow.setVisible(!escMenuWindow.isVisible());
+            return true;
+        }
+        //If m is pressed, show Map
+        if (Gdx.input.isKeyPressed(Input.Keys.M)) {
+            mapWindow.setVisible(!mapWindow.isVisible());
+            return true;
+        }
+
+
         return false;
     }
 
@@ -267,7 +409,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-         return false;
+        return false;
     }
 
     /**
