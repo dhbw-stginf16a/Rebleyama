@@ -38,7 +38,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
 
     //creation of array for Minimap Colors, last color is an error color
-    private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE),Color.rgba8888(Color.RED)};
+    private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE), Color.rgba8888(Color.RED)};
 
     @Override
     public void create() {
@@ -73,12 +73,9 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
      */
     private void createUI() {
         //TODO NOTES
-        // where to find skins - raise issue
-        // processing of events done -> return true else retun false
         // correcte farb werte von paul bekommen
         // daniels datenstrukturen einbauen
         // multithreading for render?
-
 
         // Minimap neu
         // keep aspect ratio maybe later
@@ -89,8 +86,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         stage = new Stage(new ScreenViewport());
 
         //Create UI Elements here
-
-        // Calls method that creates the minimap
         createMinimap();
         createESCMenu();
         createMap();
@@ -164,9 +159,10 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
     /**
      * method to create X button for window
+     *
      * @param window in which a X button shall be created
      */
-    private void createXButton(Window window){
+    private void createXButton(Window window) {
         //create button
         final TextButton buttonX = new TextButton("X", skin);
         //ad butto to top bar of window
