@@ -25,7 +25,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     private TiledMapRenderer tiledMapRenderer;
     private TiledMap tiledMap;
 
-    //Global Variable of window for Minimap, map, esc menu, UI Skin, UI Stage and Pixmap for Minimap
+    //Global Variable for UI
     private Stage stage;
     private Skin skin;
     private Pixmap minipixmap;
@@ -36,10 +36,10 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     private Image map;
     private Image minimap;
 
-
     //creation of array for Minimap Colors, last color is an error color
     private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE), Color.rgba8888(Color.RED)};
 
+    //start create methods
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -177,28 +177,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     }
 
     /**
-     * function to change the pixel of pixmaps
-     *
-     * @param x         coordinate
-     * @param y         coordinate
-     * @param newtileid new tile type id
-     */
-    private void tilechanged(int x, int y, int newtileid) {
-        //get color
-        int tmpColor = minimapcolors[newtileid - 1];
-        minipixmap.drawPixel(x, minipixmap.getWidth() - y, tmpColor);
-        //create a rectangle of 2px x 2px
-        bigpixmap.drawPixel(x, bigpixmap.getWidth() - y, tmpColor);
-
-        bigpixmap.drawPixel(x + 1, bigpixmap.getWidth() - y, tmpColor);
-
-        bigpixmap.drawPixel(x, bigpixmap.getWidth() - y + 1, tmpColor);
-
-        bigpixmap.drawPixel(y + 1, bigpixmap.getWidth() - y + 1, tmpColor);
-
-    }
-
-    /**
      * Creates a windows with a minimap in it
      */
     private void createMinimap() {
@@ -258,7 +236,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
     }
 
-
     /**
      * creates a pixmap of our tiledmap
      * A pixmap is similar to a bitmap or bufferedimage
@@ -310,7 +287,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         return tmppixmap;
     }
 
-
+    //start render methods
     @Override
     public void render() {
         //prevent camera from going out of bounds
@@ -338,6 +315,29 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         stage.draw();
     }
 
+    /**
+     * function to change the pixel of pixmaps
+     *
+     * @param x         coordinate
+     * @param y         coordinate
+     * @param newtileid new tile type id
+     */
+    private void tilechanged(int x, int y, int newtileid) {
+        //get color
+        int tmpColor = minimapcolors[newtileid - 1];
+        minipixmap.drawPixel(x, minipixmap.getWidth() - y, tmpColor);
+        //create a rectangle of 2px x 2px
+        bigpixmap.drawPixel(x, bigpixmap.getWidth() - y, tmpColor);
+
+        bigpixmap.drawPixel(x + 1, bigpixmap.getWidth() - y, tmpColor);
+
+        bigpixmap.drawPixel(x, bigpixmap.getWidth() - y + 1, tmpColor);
+
+        bigpixmap.drawPixel(y + 1, bigpixmap.getWidth() - y + 1, tmpColor);
+
+    }
+
+    //start event methods
     /**
      * Resize event which triggers on size change of client window
      *
@@ -406,6 +406,13 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
      *
      * @param keycode keycode of the key that was pressed
      */
+
+    /**
+     * Stub method for recognizing keypress
+     * This triggers when any key is pressed down
+     *
+     * @param keycode keycode of the key that was pressed down
+     */
     @Override
     public boolean keyDown(int keycode) {
         //If ESC is pressed, show Menu
@@ -458,7 +465,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
      * Stub method for recognizing keypress
      * This triggers when screen is touched
      */
-
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         return false;
@@ -481,7 +487,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         return false;
     }
-
 
     /**
      * Stub method for recognizing keypress
@@ -507,6 +512,10 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         return false;
     }
 
+    //start own input handling methods
+    /**
+     * Handles Key Input for Movement
+     */
     private void handleKeyMovementInput() {
         //if key is pressed, move camera accordingly
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -523,6 +532,9 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         }
     }
 
+    /**
+     * Handles Mouse Input for Movement
+     */
     private void handleMouseMovementInput() {
         float mousePositionX = Gdx.input.getX();
         float mousePositionY = Gdx.input.getY();
@@ -544,6 +556,9 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         }
     }
 
+    /**
+     * Handles Key Input for Zoom
+     */
     private void handleKeyZoomInput() {
         /*calculate the effective area of the map that is shown on screen (only calculating width
         because it will always be larger than height as soon as we enforce 16:9 aspect ration)*/
@@ -561,6 +576,9 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         }
     }
 
+    /**
+     * Handles Camera to stay in bounds
+     */
     private void stayInBounds() {
         //calculate the effective area of the map that is shown on screen
         float effectiveViewportWidth = camera.viewportWidth * camera.zoom;
