@@ -150,10 +150,24 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
         change.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                //TODO change pixels on map
+            public void changed(ChangeEvent event, Actor actor){
+                for (int x = 0; x < 100; x++) {
+                    for (int y = 0; y < 100; y++) {
+                        tilechanged(x, y, 5);
+                    }
+                }
             }
         });
+    }
+
+    /**
+     * function to change the pixel of pixmaps
+     * @param x coordinate
+     * @param y coordinate
+     * @param newtileid new tile type id
+     */
+    public void tilechanged(int x, int y, int newtileid){
+
     }
 
     /**
