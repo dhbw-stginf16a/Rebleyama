@@ -16,13 +16,13 @@ public class ClientManager implements Runnable {
     private byte clientId;
     private boolean clientAlive;
     private BlockingQueue<GameStateUpdate> clientQueue = new LinkedBlockingQueue<>();
-    private final static Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static final Logger log = Logger.getLogger(ClientManager.class.getName());
 
     /**
      * Creates a client manager for the client with the given ID.
      * @param clientId The client ID this thread should take care of.
      */
-    public ClientManager(byte clientId) {
+    ClientManager(byte clientId) {
         this.clientId = clientId;
         this.clientAlive = true;
         try {
@@ -36,7 +36,7 @@ public class ClientManager implements Runnable {
      * Returns the clients worker queue to add new jobs to it.
      * @return the blocking queue for this client worker
      */
-    public BlockingQueue<GameStateUpdate> getclientQueue() {
+    public BlockingQueue<GameStateUpdate> getClientQueue() {
         return this.clientQueue;
     }
 
@@ -50,12 +50,18 @@ public class ClientManager implements Runnable {
             GameStateUpdate update;
             try {
                 update = this.clientQueue.poll(3, TimeUnit.SECONDS);
-                this.clientQueue.remove(update);
-                // do something
-                log.info("Got work package");
+                if ( update != null) {
+                    this.clientQueue.remove(update);
+                    // do something
+                    log.info("Got work package");
+                } else {
+                    // The queue was empty and the timeout hit
+                    log.fine("Queue appears to be empty, listening again");
+                }
 
             } catch (InterruptedException e) {
-                log.fine("Queue appears to be empty");
+                log.warning("An interrupt exception occurred while waiting for updates on the queue");
+                log.warning(e.getMessage());
             }
          }
     }
@@ -65,6 +71,6 @@ public class ClientManager implements Runnable {
      */
     public void stop() {
         this.clientAlive = false;
-        log.info("Requested termination of queue processing<");
+        log.info("Requested termination of client manager with id " + clientId);
     }
 }
