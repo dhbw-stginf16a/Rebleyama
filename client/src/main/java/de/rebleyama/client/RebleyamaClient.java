@@ -7,6 +7,8 @@ import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 
+import javax.sound.midi.MidiDevice.Info;
+
 public class RebleyamaClient extends ApplicationAdapter implements InputProcessor {
 
     private SpriteBatch batch;
@@ -142,12 +144,17 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         return false;
     }
 
-    /**
-     * Stub method for recognizing keypress
-     * This triggers when screen is touched
-     */
+/**
+ * Stub method for recognizing keypress
+ * This triggers when screen is touched, also the method that handles mouse input
+ */
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        //If left mouse button is clicked
+        if (button == Input.Buttons.LEFT) {
+            onLeftMouseDown(screenX, screenY);
+            return true;
+        }
         return false;
     }
 
@@ -292,5 +299,13 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         if (camera.position.y > 20480 - effectiveViewportHeight / 2) {
             camera.position.y = 20480 - effectiveViewportHeight / 2;
         }
+    }
+
+    private void onLeftMouseDown(int mousePositionX, int mousePositionY) {
+        float mousePositionRelativeToMapX = camera.position.x + mousePositionX;
+        float mousePositionRelativeToMapY = camera.position.y + mousePositionY;
+        
+        ClientLogger.info("mousePositionRelativeToMapX: " + mousePositionRelativeToMapX);
+        ClientLogger.info("mousePositionRelativeToMapY: " + mousePositionRelativeToMapY);
     }
 }
