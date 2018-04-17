@@ -5,15 +5,26 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import de.rebleyama.lib.utils.TileStructureGenerator;
+import de.rebleyama.lib.game.Tile;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
+import java.util.List;
+import java.util.logging.*;
 
 
 public class RebleyamaClient extends ApplicationAdapter implements InputProcessor {
+    
+    private static final int TILESIZE = 40;
+    private static final int MAPSIZE_TILES = 512;
+    private static final int MAPSIZE_PIXELS = TILESIZE * MAPSIZE_TILES;    
+    private static final String COORDINATE_LOGGER = "Coordinate Logger";
 
-    private SpriteBatch batch;
-    private OrthographicCamera camera;
-    private TiledMapRenderer tiledMapRenderer;
+	private SpriteBatch batch;
+	private OrthographicCamera camera;
+	private TiledMapRenderer tiledMapRenderer;
     private TiledMap tiledMap;
+    private List<List<Tile>> interactionMap;
 
     //Global Vars for UI
     private ClientUI clientUI;
@@ -33,11 +44,13 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         camera.position.x = 10240;
         camera.position.y = 10240;
 
-
         //load the map
         //also available: ../client/assets/custommaps/testMap.tmx
         tiledMap = new TmxMapLoader().load("../client/assets/custommaps/default.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        interactionMap = TileStructureGenerator.generateTiles(tiledMap);
+        
+        Gdx.input.setInputProcessor(this);
 
         //create ui class
         clientUI = new ClientUI(tiledMap);
@@ -183,16 +196,12 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
      */
     @Override
     public boolean scrolled(int amount) {
-        /*calculate the effective area of the map that is shown on screen (only calculating width
-        because it will always be larger than height as soon as we enforce 16:9 aspect ration)*/
-        float effectiveViewportWidth = camera.viewportWidth * camera.zoom;
-
         /*check if the area shown on screen is still within the minimum (480 px -> 12 fields) and the
         maximum (20480 px -> 512 fields) bounds. If it is not, camera is not zoomed unless the zoom amount
         is going to change the effective area shown away from the bound
         */
-        if (((effectiveViewportWidth < 20480) || amount < 0) && ((effectiveViewportWidth > 480) || amount > 0)) {
-            camera.zoom += (0.3 * amount);
+        if ((((camera.viewportWidth * (camera.zoom + 0.3*amount)) < MAPSIZE_PIXELS) || amount < 0) && (((camera.viewportWidth * (camera.zoom + 0.3*amount)) > 480) || amount > 0)) {
+            camera.zoom += (0.3*amount);
             return true;
         }
 
@@ -258,18 +267,14 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
      * Handles Key Input for Zoom
      */
     private void handleKeyZoomInput() {
-        /*calculate the effective area of the map that is shown on screen (only calculating width
-        because it will always be larger than height as soon as we enforce 16:9 aspect ration)*/
-        float effectiveViewportWidth = camera.viewportWidth * camera.zoom;
-
-        /*check if the area shown on screen is still within the minimum (480 px -> 12 fields) and the
+       /*check if the area shown on screen is still within the minimum (480 px -> 12 fields) and the
         maximum (20480 px -> 512 fields) bounds. If it is not, camera is not zoomed unless the zoom amount
         is going to change the effective area shown away from the bound
         */
-        if (Gdx.input.isKeyPressed(Input.Keys.EQUALS) && (effectiveViewportWidth > 480)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.EQUALS) && ((camera.viewportWidth * (camera.zoom + 0.1)) > 480)) {
             camera.zoom -= 0.1;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.MINUS) && (effectiveViewportWidth < 20480)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.MINUS) && ((camera.viewportWidth * (camera.zoom + 0.1)) < MAPSIZE_PIXELS)) {
             camera.zoom += 0.1;
         }
     }
@@ -289,22 +294,21 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         if (camera.position.x < 0 + effectiveViewportWidth / 2) {
             camera.position.x = 0 + effectiveViewportWidth / 2;
         }
-        if (camera.position.x > 20480 - effectiveViewportWidth / 2) {
-            camera.position.x = 20480 - effectiveViewportWidth / 2;
+        if (camera.position.x > MAPSIZE_PIXELS - effectiveViewportWidth / 2) {
+            camera.position.x = MAPSIZE_PIXELS - effectiveViewportWidth / 2;
         }
         if (camera.position.y < 0 + effectiveViewportHeight / 2) {
             camera.position.y = 0 + effectiveViewportHeight / 2;
         }
-        if (camera.position.y > 20480 - effectiveViewportHeight / 2) {
-            camera.position.y = 20480 - effectiveViewportHeight / 2;
+        if (camera.position.y > MAPSIZE_PIXELS - effectiveViewportHeight / 2) {
+            camera.position.y = MAPSIZE_PIXELS - effectiveViewportHeight / 2;
         }
     }
 
     private void onLeftMouseDown(int mousePositionX, int mousePositionY) {
-        float mousePositionRelativeToMapX = camera.position.x + mousePositionX;
-        float mousePositionRelativeToMapY = camera.position.y + mousePositionY;
-        
-        ClientLogger.info("mousePositionRelativeToMapX: " + mousePositionRelativeToMapX);
-        ClientLogger.info("mousePositionRelativeToMapY: " + mousePositionRelativeToMapY);
+        Gdx.app.log(COORDINATE_LOGGER, "Camera Tile (X): " + camera.position.x/40);
+        Gdx.app.log(COORDINATE_LOGGER, "Mouse (X): " + mousePositionX);
+        Gdx.app.log(COORDINATE_LOGGER, "Camera Tile (Y): " + camera.position.y/40);
+        Gdx.app.log(COORDINATE_LOGGER, "Mouse (Y): " + mousePositionY);
     }
 }
