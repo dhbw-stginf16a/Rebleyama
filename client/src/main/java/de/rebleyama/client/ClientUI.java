@@ -375,13 +375,6 @@ public class ClientUI {
 
 
 }
-//TODO
-// correcte farb werte von paul bekommen
-// daniels datenstrukturen einbauen
-// multithreading for render?
 
-// Minimap neu
-// keep aspect ratio maybe later
-//Change public
-//refactor
-//make constant size for windows
+
+
