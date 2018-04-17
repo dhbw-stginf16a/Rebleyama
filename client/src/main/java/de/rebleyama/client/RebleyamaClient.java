@@ -57,6 +57,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         handleKeyZoomInput();
         handleMouseMovementInput();
 
+        //clear background
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl20.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -71,7 +72,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
 
-        // MiniMap Render Part
+        // UI Render Part
         clientUI.getStage().act(Gdx.graphics.getDeltaTime());
         clientUI.getStage().draw();
     }
@@ -88,17 +89,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     public void resize(int width, int height) {
         clientUI.stageResize(width, height);
     }
-
-    /**
-     * dispose of all the native resources we allocated in create()
-     */
-    @Override
-    public void dispose() {
-        tiledMap.dispose();
-        batch.dispose();
-        clientUI.uiDispose();
-    }
-
 
     /**
      * Stub method for recognizing keypress
@@ -201,6 +191,16 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         }
 
         return false;
+    }
+
+    /**
+     * dispose of all the native resources we allocated in create()
+     */
+    @Override
+    public void dispose() {
+        tiledMap.dispose();
+        batch.dispose();
+        clientUI.dispose();
     }
 
     //start own input handling methods
