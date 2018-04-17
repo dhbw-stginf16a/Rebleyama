@@ -31,14 +31,15 @@ public class ClientUI implements Disposable {
     private Window escMenuWindow;
     private Image map;
     private Image minimap;
+    private Application gdxApp;
 
     //creation of array for Minimap Colors, last color is an error color
     private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE), Color.rgba8888(Color.RED)};
 
     // create methods
-    ClientUI(TiledMap tiledmap) {
+    ClientUI(TiledMap tiledmap, Application gdxApp) {
         this.tiledMap = tiledmap;
-
+        this.gdxApp = gdxApp;
         //Calls method that is responsible to create UI elements
         createUI();
     }
@@ -67,22 +68,26 @@ public class ClientUI implements Disposable {
         final TextButton buttonMap = new TextButton("Map", skin);
         final TextButton buttonExit = new TextButton("Continue", skin);
         final TextButton change = new TextButton("ChangePixel_TEST", skin);
+        final TextButton exit = new TextButton("Exit", skin);
 
 
         escMenuWindow = new Window("Menu", skin);
         createXButton(escMenuWindow);
         escMenuWindow.row().fill().expandX();
         escMenuWindow.add(buttonMap);
-        escMenuWindow.row();
+        escMenuWindow.row().fill().expandX();
         escMenuWindow.add(buttonMiniMap);
-        escMenuWindow.row();
+        escMenuWindow.row().fill().expandX();
         escMenuWindow.add(change);
-        escMenuWindow.row();
+        escMenuWindow.row().fill().expandX();
         escMenuWindow.add(buttonExit);
+        escMenuWindow.row().fill().expandX();
+        escMenuWindow.add(exit);
         escMenuWindow.pack();
         escMenuWindow.setPosition((float) (Gdx.graphics.getWidth() / 2.0) - escMenuWindow.getWidth() / 2, (float) (Gdx.graphics.getHeight() / 2.0) - escMenuWindow.getHeight() / 2);
         stage.addActor(escMenuWindow);
         escMenuWindow.setVisible(false);
+
         //create Listener
         buttonMiniMap.addListener(new ChangeListener() {
             @Override
@@ -110,6 +115,13 @@ public class ClientUI implements Disposable {
             }
         });
 
+        exit.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                gdxApp.exit();
+            }
+        });
+
         change.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -126,6 +138,7 @@ public class ClientUI implements Disposable {
 
             }
         });
+
     }
 
     /**

@@ -39,7 +39,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         //create ui class
-        clientUI = new ClientUI(tiledMap);
+        clientUI = new ClientUI(tiledMap, Gdx.app);
 
         //Creation of a Multiplexer which allows multi layer event handling (UI Layer and TiledMap Layer) (UI layer needs to be first ORDER IS IMPORTANT)
         InputMultiplexer im = new InputMultiplexer(clientUI.getStage(), this);
@@ -108,6 +108,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
             clientUI.uiKeypressed("mapWindow");
             return true;
         }
+Gdx.app.exit();
         return false;
     }
 
@@ -203,6 +204,12 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         clientUI.dispose();
     }
 
+    /**
+     * Allows us to call app exit from every other class more easily
+     */
+    public void exitApp(){
+        Gdx.app.exit();
+    }
     //start own input handling methods
 
     /**
