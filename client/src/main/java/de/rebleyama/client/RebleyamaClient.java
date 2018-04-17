@@ -123,6 +123,9 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 miniMapWindow.setVisible(!miniMapWindow.isVisible());
+                if(miniMapWindow.isVisible()){
+                    miniMapWindow.toFront();
+                }
             }
         });
 
@@ -130,6 +133,9 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 mapWindow.setVisible(!mapWindow.isVisible());
+                if(mapWindow.isVisible()){
+                    mapWindow.toFront();
+                }
             }
         });
         buttonExit.addListener(new ClickListener() {
@@ -251,7 +257,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
         //own x/y coordinates for pixmap manipulation
         int pX = 0;
-        int pY = 1;
+        int pY;
         //loop through all map (for each tile)
         for (int x = 0; x < layer.getWidth(); x++) {
             pY = 0;
@@ -282,7 +288,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
             }
             pX += 2;
         }
-        Gdx.app.log("test", pX + "   " + pY);
         //tmppixmap gets disposed by java
         return tmppixmap;
     }
@@ -400,12 +405,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         bigpixmap.dispose();
     }
 
-    /**
-     * Stub method for recognizing keypress
-     * This triggers when any key is pressed down
-     *
-     * @param keycode keycode of the key that was pressed
-     */
 
     /**
      * Stub method for recognizing keypress
@@ -418,11 +417,17 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         //If ESC is pressed, show Menu
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             escMenuWindow.setVisible(!escMenuWindow.isVisible());
+            if(escMenuWindow.isVisible()){
+                escMenuWindow.toFront();
+            }
             return true;
         }
         //If m is pressed, show Map
         if (Gdx.input.isKeyPressed(Input.Keys.M)) {
             mapWindow.setVisible(!mapWindow.isVisible());
+            if(mapWindow.isVisible()){
+                mapWindow.toFront();
+            }
             return true;
         }
 
