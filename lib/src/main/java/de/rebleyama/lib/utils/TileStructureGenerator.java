@@ -3,7 +3,6 @@ package de.rebleyama.lib.utils;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import de.rebleyama.lib.game.Tile;
 import de.rebleyama.lib.game.TileType;
 
