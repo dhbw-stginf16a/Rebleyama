@@ -7,8 +7,6 @@ import java.util.logging.*;
  * Exposes a logging api to be used within the project
  */
 public class Log {
-    static private FileHandler fileTxt;
-    static private SimpleFormatter formatterTxt;
 
     /**
      * Initializes the Logger
@@ -20,11 +18,14 @@ public class Log {
 
         // set default log level
         logger.setLevel(Level.INFO);
-        fileTxt = new FileHandler("log.txt");
+    }
 
-        // create a TXT formatter
-        formatterTxt = new SimpleFormatter();
-        fileTxt.setFormatter(formatterTxt);
-        logger.addHandler(fileTxt);
+    /**
+     * Allows a function to set a new global log level
+     * @param newLevel The new log level to be used globally
+     */
+    public static void setLogLevel(Level newLevel) {
+        Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+        logger.setLevel(newLevel);
     }
 }
