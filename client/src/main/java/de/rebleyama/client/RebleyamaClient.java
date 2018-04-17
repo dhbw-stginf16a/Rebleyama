@@ -5,13 +5,6 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import de.rebleyama.lib.utils.TileStructureGenerator;
-import de.rebleyama.lib.game.Tile;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-
-import java.util.List;
-import java.util.logging.*;
-
 
 public class RebleyamaClient extends ApplicationAdapter implements InputProcessor {
     
@@ -24,19 +17,19 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 	private OrthographicCamera camera;
 	private TiledMapRenderer tiledMapRenderer;
     private TiledMap tiledMap;
-    private List<List<Tile>> interactionMap;
 
     //Global Vars for UI
     private ClientUI clientUI;
 
-    //start create method
-    @Override
-    public void create() {
-        batch = new SpriteBatch();
+	@Override
+	public void create () {
 
-        //get the window size for the camera
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
+		batch = new SpriteBatch();
+
+		//get the window size for the camera
+		float w = Gdx.graphics.getWidth();
+		float h = Gdx.graphics.getHeight();
+
         //initiate the camera
         camera = new OrthographicCamera();
         camera.setToOrtho(false, w, h);
@@ -48,7 +41,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         //also available: ../client/assets/custommaps/testMap.tmx
         tiledMap = new TmxMapLoader().load("../client/assets/custommaps/default.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-        interactionMap = TileStructureGenerator.generateTiles(tiledMap);
         
         Gdx.input.setInputProcessor(this);
 
