@@ -184,6 +184,7 @@ public class ClientUI implements Disposable {
         minimap = new Image();
         minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minipixmap))));
 
+        //TODO start here
 
         //fill inside of window with minimap
         miniMapWindow.add(minimap);
