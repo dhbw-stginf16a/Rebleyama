@@ -7,7 +7,6 @@ import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 
-import javax.sound.midi.MidiDevice.Info;
 
 public class RebleyamaClient extends ApplicationAdapter implements InputProcessor {
 
