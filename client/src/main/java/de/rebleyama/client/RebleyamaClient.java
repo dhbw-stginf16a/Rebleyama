@@ -108,7 +108,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
             clientUI.uiKeypressed("mapWindow");
             return true;
         }
-Gdx.app.exit();
+        Gdx.app.exit();
         return false;
     }
 
@@ -204,12 +204,7 @@ Gdx.app.exit();
         clientUI.dispose();
     }
 
-    /**
-     * Allows us to call app exit from every other class more easily
-     */
-    public void exitApp(){
-        Gdx.app.exit();
-    }
+
     //start own input handling methods
 
     /**
