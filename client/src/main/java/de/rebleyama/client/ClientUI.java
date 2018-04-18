@@ -1,5 +1,9 @@
 package de.rebleyama.client;
 
+import java.lang.ProcessBuilder.Redirect;
+
+import javax.swing.GroupLayout.Alignment;
+
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -13,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -198,7 +203,7 @@ public class ClientUI implements Disposable {
         ressourceWindow.setPosition((float) (Gdx.graphics.getWidth() - 300), 0);
 
         //set size of window
-        ressourceWindow.setSize(300, 100);
+        ressourceWindow.setSize(400, 100);
 
 
         //allow the window to be resized
@@ -208,7 +213,6 @@ public class ClientUI implements Disposable {
         //fill inside of window with minimap
         ressourceWindow.add();//content needs to be defined
         //add minimap to ui stage
-        createXButton(ressourceWindow);
         stage.addActor(ressourceWindow);
     }
 
@@ -233,25 +237,30 @@ public class ClientUI implements Disposable {
         //fill inside of window with minimap
         buildingWindow.add();//content needs to be defined
         //add minimap to ui stage
-        createXButton(buildingWindow);
         stage.addActor(buildingWindow);
     }
 
-        /**
+    /**
      * Creates a windows with eventlog in it
      */
     private void createEventlogWindow() {
-        String logbookTitle = "Logbook";
+        String logbookEntry = "Thank the stars! What a good harvest!";
 
         // create window
         eventlogWindow = new Window("Logbook", skin);
 
         //set postion of window (-size)
-        eventlogWindow.setPosition((float) (Gdx.graphics.getWidth() - 800), 0);
+        eventlogWindow.setPosition((float) (Gdx.graphics.getWidth() - 1000), 0);
 
         //set size of window
-        eventlogWindow.setSize(500, 100);
+        eventlogWindow.setSize(600, 100);
 
+        //Add some test text to the Logbook
+        //Label label = new Label(logbookEntry, skin);
+        //label.setAlignment(Align.right);
+        eventlogWindow.add(logbookEntry);
+        eventlogWindow.add("\n");
+        eventlogWindow.add("Oh no! Our colony is under attack!");        
 
         //allow the window to be resized
         eventlogWindow.setResizable(false);
@@ -262,7 +271,6 @@ public class ClientUI implements Disposable {
         //fill inside of window with minimap
         eventlogWindow.add();//content needs to be defined
         //add minimap to ui stage
-        createXButton(eventlogWindow);
         stage.addActor(eventlogWindow);
     }
 
