@@ -38,6 +38,10 @@ public class Player {
             return result;
     }
 
+    public String getPlayerName() {
+        return playerName;
+    }
+
     /**
      * Sets the amount of resources to specified value.
      * @param resource The Class of the resource the amount is set
