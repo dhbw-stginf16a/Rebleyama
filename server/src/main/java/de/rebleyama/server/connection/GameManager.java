@@ -1,16 +1,18 @@
 package de.rebleyama.server.connection;
 
+import de.rebleyama.lib.Log;
 import de.rebleyama.lib.gamestate.GameState;
 import de.rebleyama.lib.gamestate.GameStateUpdate;
 
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 
 public class GameManager implements Runnable {
-    private GameState GameState;
+    private GameState gameState;
     private boolean running;
     private BlockingQueue<GameStateUpdate> gameStateUpdates = new LinkedBlockingQueue<>();
+    private static final Logger log = Logger.getLogger(ClientManager.class.getName());
 
 
     /**
@@ -19,8 +21,10 @@ public class GameManager implements Runnable {
      * @param gameState An already initialized game state object.
      */
     GameManager(GameState gameState) {
-        this.GameState = gameState;
+        this.gameState = gameState;
         this.running = true;
+        Log.setup();
+        log.info("Created new game manager");
     }
 
     /**
@@ -42,13 +46,16 @@ public class GameManager implements Runnable {
 
     @Override
     public void run() {
+        log.info("Started game manager thread.");
         while (this.running) {
             // Do something
         }
+        log.info("Shutting down game manager.");
 
     }
 
     public void stop() {
+        log.info("Ordering game manager to terminate.");
         this.running = false;
     }
 }

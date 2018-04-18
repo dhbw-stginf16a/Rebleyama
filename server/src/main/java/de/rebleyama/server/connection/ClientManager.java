@@ -25,19 +25,16 @@ public class ClientManager implements Runnable {
     ClientManager(byte clientId) {
         this.clientId = clientId;
         this.clientAlive = true;
-        try {
-            Log.setup();
-        } catch (IOException e) {
-            log.warning("Couldn't initialize file logging.");
-        }
+        Log.setup();
     }
 
     /**
-     * Returns the clients worker queue to add new jobs to it.
-     * @return the blocking queue for this client worker
+     * Allows the connection manager to add work packages to the client managers queue
+     * @param gameStateUpdate And update to be processed by the client manager
+     * @return Success of the operation
      */
-    public BlockingQueue<GameStateUpdate> getClientQueue() {
-        return this.clientQueue;
+    public boolean addToQueue(GameStateUpdate gameStateUpdate) {
+        return this.clientQueue.add(gameStateUpdate);
     }
 
     /**
@@ -64,6 +61,7 @@ public class ClientManager implements Runnable {
                 log.warning(e.getMessage());
             }
          }
+         log.info("Terminating client manager.");
     }
 
     /**
