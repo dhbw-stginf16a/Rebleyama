@@ -44,7 +44,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         camera.update();
         camera.position.x = 10240;
         camera.position.y = 10240;
-
         //load the map
         //also available: ../client/assets/custommaps/testMap.tmx
         tiledMap = new TmxMapLoader().load("../client/assets/custommaps/default.tmx");
@@ -89,6 +88,8 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         // UI Render Part
         clientUI.getStage().act(Gdx.graphics.getDeltaTime());
         clientUI.getStage().draw();
+        clientUI.renderMiniMap(camera);
+
     }
 
     //start event methods
@@ -122,7 +123,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
             clientUI.uiKeypressed("mapWindow");
             return true;
         }
-        Gdx.app.exit();
         return false;
     }
 

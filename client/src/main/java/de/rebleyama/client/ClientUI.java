@@ -3,7 +3,9 @@ package de.rebleyama.client;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.*;
+import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -40,6 +42,7 @@ public class ClientUI implements Disposable {
     ClientUI(TiledMap tiledmap, Application gdxApp) {
         this.tiledMap = tiledmap;
         this.gdxApp = gdxApp;
+
         //Calls method that is responsible to create UI elements
         createUI();
     }
@@ -51,6 +54,10 @@ public class ClientUI implements Disposable {
         //setup skin, stage, input
         skin = new Skin(Gdx.files.internal("assets/uiskin/skin/uiskin.json"));
         stage = new Stage(new ScreenViewport());
+
+        //create pixmaps
+        bigpixmap = createPixmap(1024, true);
+        minipixmap = createPixmap(512, false);
 
         //Create UI Elements here
         createMinimap();
@@ -177,19 +184,14 @@ public class ClientUI implements Disposable {
         //allow the window to be resized
         miniMapWindow.setResizable(true);
 
-        //call method that creates a pixmap of our tiledmap
-        minipixmap = createPixmap(512, false);
-
         //create image
         minimap = new Image();
-        minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minipixmap))));
-
-        //TODO start here
-
-        //fill inside of window with minimap
+        minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(bigpixmap))));
         miniMapWindow.add(minimap);
-        //add minimap to ui stage
+        //add Xbuton in top bar of minimap
         createXButton(miniMapWindow);
+
+        //add minimap to ui stage
         stage.addActor(miniMapWindow);
     }
 
@@ -200,8 +202,6 @@ public class ClientUI implements Disposable {
         //create window
         mapWindow = new Window("Map", skin);
 
-        //call method that creates a pixmap of our tiledmap
-        bigpixmap = createPixmap(1024, true);
         //create image
         map = new Image();
         map.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(bigpixmap))));
@@ -271,6 +271,34 @@ public class ClientUI implements Disposable {
         return tmppixmap;
     }
 
+    /**
+     * method to render the minimap
+     * @param camera of the client
+     */
+    void renderMiniMap(OrthographicCamera camera){
+        //TODO CHANGE TO TRIGGERD BY CAMERA CHANGE
+        // PRoblem = falsche daten 
+        //width and lenght of minimap postion
+        float transportWidth = (camera.viewportWidth *  camera.zoom)/20;
+        float transportHeight = (camera.viewportHeight *  camera.zoom)/20;
+
+        // x,y of bigmap postion
+        float transposX = ((camera.position.x/10)+1)-transportWidth;
+        float transposY = ((camera.position.y/10)+1)-transportHeight;
+
+
+        Pixmap minimapPart = new Pixmap((int)transportWidth,(int)transportHeight, Pixmap.Format.RGBA8888);
+        gdxApp.log("Test","Widht: "+transportWidth+"| Height: "+transportHeight+"| X: "+transposX+"| Y:" + transposY);
+
+        for(int x = 0; x<=transportWidth;x++){
+            for(int y = 0; y<= transportHeight;y++){
+                minimapPart.drawPixel(x,y, bigpixmap.getPixel((int)transposX+x, (int)transposY+y));
+            }
+        }
+        minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minimapPart))));
+        minimapPart.dispose();
+
+    }
     // change methods
 
     /**
@@ -347,8 +375,6 @@ public class ClientUI implements Disposable {
      * @param windowName name of window that shall react
      */
     void uiKeypressed(String windowName) {
-        //TODO REFACTOR
-
         //select which window (please suggest better selector ways)
         if (windowName.equals("mapWindow")) {
             //set Window visible and to front
@@ -376,7 +402,16 @@ public class ClientUI implements Disposable {
         stage.dispose();
         minipixmap.dispose();
         bigpixmap.dispose();
+
     }
+
+    /**
+     * method to update the position of minimap view rectangle
+     * @param posX X position of camera
+     * @param posY Y position of camera
+     * @param zoomLevel Zoom level of camera
+     */
+
 
     // getter/setter
 
@@ -393,4 +428,5 @@ public class ClientUI implements Disposable {
 }
 
 
-
+//TODO make new minimap kind
+//TODO remove minimap mentions
