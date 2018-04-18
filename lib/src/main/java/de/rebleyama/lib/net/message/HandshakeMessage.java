@@ -1,4 +1,4 @@
-package de.rebleyama.lib.connection.message;
+package de.rebleyama.lib.net.message;
 
 /**
  * The Handshake between the client and server where the client receives an id from the server

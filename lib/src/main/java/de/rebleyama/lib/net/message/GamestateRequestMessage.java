@@ -1,4 +1,4 @@
-package de.rebleyama.lib.connection.message;
+package de.rebleyama.lib.net.message;
 
 /**
  * A request sent by the client to receive updates or a replacement of the game state.

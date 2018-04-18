@@ -1,6 +1,6 @@
 package de.rebleyama.server;
 
-import de.rebleyama.server.connection.MessageBroker;
+import de.rebleyama.server.net.MessageManager;
 
 public class Main {
 
@@ -11,9 +11,16 @@ public class Main {
     public static void main(String[] args) {
         // Initialize the message broker
 
-        MessageBroker messageBroker = new MessageBroker(21012);
+        MessageManager messageManager = new MessageManager(21012);
+        messageManager.begin();
 
-        messageBroker.setRunning(true);
-        new Thread(messageBroker).start();
+        try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+        }
+        
+        messageManager.end();
     }
 }
