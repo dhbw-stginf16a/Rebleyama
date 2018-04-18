@@ -1,4 +1,4 @@
-package de.rebleyama.lib.connection.message;
+package de.rebleyama.lib.net.message;
 
 /**
  * Allows a client to send an instruction to the server

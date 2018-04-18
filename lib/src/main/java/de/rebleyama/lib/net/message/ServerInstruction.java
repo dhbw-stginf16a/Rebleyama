@@ -1,4 +1,4 @@
-package de.rebleyama.lib.connection.message;
+package de.rebleyama.lib.net.message;
 
 /**
  * Operative instructions for the server which may be sent by privileged clients.

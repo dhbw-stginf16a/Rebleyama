@@ -1,4 +1,4 @@
-package de.rebleyama.lib.connection.message;
+package de.rebleyama.lib.net.message;
 
 /**
  * Defines a heartbeat message between client and server.

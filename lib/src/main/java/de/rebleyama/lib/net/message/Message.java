@@ -1,4 +1,4 @@
-package de.rebleyama.lib.connection.message;
+package de.rebleyama.lib.net.message;
 
 import java.io.Serializable;
 
@@ -16,5 +16,13 @@ public abstract class Message implements Serializable {
      */
     public byte getClientId() {
         return clientID;
+    }
+
+    /**
+     * Returns the message type
+     * @return message type
+     */
+    public MessageType getMessageType(){
+        return msgType;
     }
 }

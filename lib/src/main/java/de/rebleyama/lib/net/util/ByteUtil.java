@@ -1,4 +1,4 @@
-package de.rebleyama.lib;
+package de.rebleyama.lib.net.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,7 +11,7 @@ import java.io.ObjectOutputStream;
  * @author mledoze
  * FROM: http://www.java2s.com/Code/Java/File-Input-Output/Convertobjecttobytearrayandconvertbytearraytoobject.htm
  */
-public class BytesUtil {
+public class ByteUtil {
 
     public static byte[] toByteArray(Object obj) throws IOException {
         byte[] bytes = null;
