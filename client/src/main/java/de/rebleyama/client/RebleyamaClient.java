@@ -137,15 +137,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
     /**
      * Stub method for recognizing keypress
-     * This triggers when the mouse is moved
-     */
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    /**
-     * Stub method for recognizing keypress
      * This triggers when any key is typed (pressed and released)
      *
      * @param character character that was typed
@@ -187,7 +178,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     }
 
     /**
-     * Stub method for recognizing keypress
+     * Stub method for recognizing mouse movement
      * This triggers when the mouse is moved
      */
     @Override
@@ -223,30 +214,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         tiledMap.dispose();
         batch.dispose();
         clientUI.dispose();
-    }
-
-    //start own input handling methods
-    }
-
-    private void handleMouseMovementInput() {
-        float mousePositionX = Gdx.input.getX();
-        float mousePositionY = Gdx.input.getY();
-        float windowWidth = Gdx.graphics.getWidth();
-        float windowHeight = Gdx.graphics.getHeight();
-
-        //if mouse is in a 5% range of any of the edges of the window, move the camera accordingly
-        if (mousePositionY <= windowHeight / 20) {
-            camera.translate(0, 25 * camera.zoom);
-        }
-        if (mousePositionY >= windowHeight - windowHeight / 20) {
-            camera.translate(0, -25 * camera.zoom);
-        }
-        if (mousePositionX >= windowWidth - windowWidth / 20) {
-            camera.translate(25 * camera.zoom, 0);
-        }
-        if (mousePositionX <= windowWidth / 20) {
-            camera.translate(-25 * camera.zoom, 0);
-        }
     }
 
     /**
