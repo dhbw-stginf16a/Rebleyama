@@ -277,7 +277,7 @@ public class ClientUI implements Disposable {
      */
     void renderMiniMap(OrthographicCamera camera){
         //TODO CHANGE TO TRIGGERD BY CAMERA CHANGE
-        // PRoblem = falsche daten 
+        // PRoblem = falsche daten
         //width and lenght of minimap postion
         float transportWidth = (camera.viewportWidth *  camera.zoom)/20;
         float transportHeight = (camera.viewportHeight *  camera.zoom)/20;
