@@ -13,8 +13,6 @@ import com.badlogic.gdx.utils.Disposable;
 import de.rebleyama.lib.game.Tile;
 import de.rebleyama.lib.game.TileMap;
 import de.rebleyama.lib.game.TileType;
-import de.rebleyama.lib.utils.TileReplacedEvent;
-import de.rebleyama.lib.utils.TileReplacedListener;
 import de.rebleyama.lib.utils.TileStructureGenerator;
 
 //TODO Maybe better extend TiledMap instead?
@@ -166,7 +164,7 @@ public class DataInfusedTileMap extends TileMap implements Disposable {
     /**
      * Returns a representation of the TileMap.
      * @return A TiledMap that represents the current TileMap.
-     * DO NOT CHANGE IT! CHANGING IT WILL LEAD TO INCONSISTENCY!!!!!!!!11!1!!!1111!1elf
+     * DO NOT CHANGE THE CELLS IN IT! THAT WILL LEAD TO INCONSISTENCIES!
      */
     public TiledMap getTiledMap() {
         return tiledMap;
