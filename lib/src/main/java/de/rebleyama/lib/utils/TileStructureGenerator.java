@@ -1,12 +1,10 @@
 package de.rebleyama.lib.utils;
 
-
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import de.rebleyama.lib.game.Tile;
 import de.rebleyama.lib.game.TileMap;
 import de.rebleyama.lib.game.TileType;
-
 /**
  * A class that can be used to construct our Data Structure from a TiledMap
  */
@@ -20,7 +18,7 @@ public class TileStructureGenerator {
         in our game and a mapping to our terrains,
         do not hardcode tile set IDs
     */
-
+  
     /**
      * ID of Coal Tiles
      */
