@@ -5,6 +5,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import de.rebleyama.lib.game.Tile;
+import de.rebleyama.lib.game.TileMap;
 import de.rebleyama.lib.game.TileType;
 
 import java.util.ArrayList;
@@ -40,13 +41,16 @@ public class TileStructureGenerator {
     public static final int TILESET_CODE_WATER = 5;
 
     /**
-     * Generate a list of lists of Tiles.
+     * Generate a TileMap using a TiledMap.
+     * @deprecated Only for debugging and testing purposes.
+     *             Will be removed after generation of TileMaps is no longer needed.
      * @param tiledMap The tiledMap that we should get the tile information from.
      * @return A list of lists of Tiles. Please note that the coordinate system between
      *         libGDX and Tiled differs: (0;0) is the lower left corner in libGDX, while in
      *         Tiled, it is the upper left corner. This method will use libGDX indexes.
      */
-    public static List<List<Tile>> generateTiles(TiledMap tiledMap) {
+    @Deprecated
+    public static TileMap generateTiles(TiledMap tiledMap) {
         //Get the layer
         final TiledMapTileLayer tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Ground");
 
@@ -55,15 +59,14 @@ public class TileStructureGenerator {
             throw new IllegalArgumentException("The specified TiledMap does not contain an appropriate layer!");
         }
 
-        //generate temp object
-        List<List<Tile>> result = new ArrayList<>();
-
         //iterate through the map
         final int height = tileLayer.getHeight();
         final int width = tileLayer.getWidth();
 
+        //generate temp object
+        TileMap result = new TileMap(height, width);
+
         for (int x = 0; x < width; ++x) {
-            List<Tile> row = new ArrayList<>();
             for (int y = 0; y < height; y++) {
                 TileType tileType;
                 //get ID of the tile of the associated cell
@@ -84,14 +87,9 @@ public class TileStructureGenerator {
                     default:
                         throw new UnsupportedOperationException("This tile type is not supported!");
                 }
-                row.add(new Tile(tileType));
+                result.setTile(x, y, new Tile(tileType));
             }
-            //TODO: assert or better always check?
-            assert row.size() == width;
-            result.add(row);
         }
-        //TODO: assert or better always check?
-        assert result.size() == height;
         return result;
     }
 }
