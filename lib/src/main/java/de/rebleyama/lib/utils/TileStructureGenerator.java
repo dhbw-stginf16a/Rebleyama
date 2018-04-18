@@ -1,9 +1,15 @@
 package de.rebleyama.lib.utils;
 
+<<<<<<< HEAD
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
+=======
+
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+>>>>>>> d9abcee1a37b8f4e8f150253e4ad338c865aed95
 import de.rebleyama.lib.game.Tile;
 import de.rebleyama.lib.game.TileType;
 
