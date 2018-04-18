@@ -3,27 +3,23 @@ package de.rebleyama.lib.utils;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import de.rebleyama.lib.game.Tile;
 import de.rebleyama.lib.game.TileMap;
 import de.rebleyama.lib.game.TileType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A class that can be used to construct our Data Structure from a TiledMap
  */
 public class TileStructureGenerator {
-    private TileStructureGenerator() {
+    protected TileStructureGenerator() {
         throw new IllegalStateException("You are not allowed to construct an instance of this file.");
     }
 
     /*
-            TODO provide some kind of metadata/config that contains a list of tiles
-             in our game and a mapping to our terrains,
-             do not hardcode tile set IDs
-         */
+        TODO provide some kind of metadata/config that contains a list of tiles
+        in our game and a mapping to our terrains,
+        do not hardcode tile set IDs
+    */
 
     /**
      * ID of Coal Tiles
@@ -70,8 +66,27 @@ public class TileStructureGenerator {
         final int height = tileLayer.getHeight();
         final int width = tileLayer.getWidth();
 
+
         //generate temp object
-        TileMap result = new TileMap(height, width);
+        TileMap result = new TileMap(width, height);
+
+
+        return result;
+    }
+
+    public static void putTilesInMap(TileMap destination, TiledMap source) {
+
+        //Get the layer
+        final TiledMapTileLayer tileLayer = (TiledMapTileLayer) source.getLayers().get("Ground");
+
+        //check if layer is valid
+        if (tileLayer == null) {
+            throw new IllegalArgumentException("The specified TiledMap does not contain an appropriate layer!");
+        }
+
+        //iterate through the map
+        final int height = tileLayer.getHeight();
+        final int width = tileLayer.getWidth();
 
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; y++) {
@@ -94,9 +109,8 @@ public class TileStructureGenerator {
                     default:
                         throw new UnsupportedOperationException("This tile type is not supported!");
                 }
-                result.setTile(x, y, new Tile(tileType));
+                destination.setTile(x, y, new Tile(tileType));
             }
         }
-        return result;
     }
 }
