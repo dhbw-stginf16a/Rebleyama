@@ -1,5 +1,11 @@
 package de.rebleyama.lib.game;
 
+import de.rebleyama.lib.utils.TileReplacedEvent;
+import de.rebleyama.lib.utils.TileReplacedListener;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * A representation of a map of tiles.
  */
@@ -11,9 +17,11 @@ public class TileMap {
      */
     public TileMap(int width, int height) {
         tileMap = new Tile[width][];
-        for (Tile[] column : tileMap) {
-            column = new Tile[height];
+        for (int i = 0; i < width; ++i) {
+            tileMap[i] = new Tile[height];
         }
+
+        listeners = new ArrayList<>();
     }
 
     /**
@@ -23,10 +31,10 @@ public class TileMap {
      * @param overrideAll if true, will override all tiles. If false, only null will be overridden.
      */
     public void fillNullTiles(TileType type, boolean overrideAll) {
-        for (Tile[] column : tileMap) {
-            for (Tile tile : column) {
-                if (tile == null || overrideAll) {
-                    tile = new Tile(type);
+        for (int x = 0; x < tileMap.length; ++x) {
+            for (int y = 0; y < tileMap[x].length; ++y) {
+                if (tileMap[x][y] == null || overrideAll) {
+                    tileMap[x][y] = new Tile(type);
                 }
             }
         }
@@ -39,7 +47,9 @@ public class TileMap {
      * @param tile the Tile
      */
     public void setTile(int x, int y, Tile tile) {
+        Tile temp = tileMap[x][y];
         tileMap[x][y] = tile;
+        callListeners(new TileReplacedEvent(this, x, y, temp, tile));
     }
 
     /**
@@ -52,5 +62,32 @@ public class TileMap {
         return tileMap[x][y];
     }
 
+    public int getWidth() {
+        return tileMap.length;
+    }
+
+    public int getHeight() {
+        return tileMap[0].length;
+    }
+
+    /**
+     *
+     * @param listener
+     */
+    public void addEventListener(TileReplacedListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeEventListener(TileReplacedListener listener) {
+        listeners.remove(listener);
+    }
+
+    private void callListeners(TileReplacedEvent event) {
+        for (TileReplacedListener listener : listeners) {
+            listener.tileChanged(event);
+        }
+    }
+
     private Tile[][] tileMap;
+    private Collection<TileReplacedListener> listeners;
 }

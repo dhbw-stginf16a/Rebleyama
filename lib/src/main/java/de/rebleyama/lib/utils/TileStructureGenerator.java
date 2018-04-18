@@ -19,6 +19,12 @@ public class TileStructureGenerator {
         throw new IllegalStateException("You are not allowed to construct an instance of this file.");
     }
 
+    /*
+            TODO provide some kind of metadata/config that contains a list of tiles
+             in our game and a mapping to our terrains,
+             do not hardcode tile set IDs
+         */
+
     /**
      * ID of Coal Tiles
      */
@@ -43,7 +49,8 @@ public class TileStructureGenerator {
     /**
      * Generate a TileMap using a TiledMap.
      * @deprecated Only for debugging and testing purposes.
-     *             Will be removed after generation of TileMaps is no longer needed.
+     *             Will be removed after generation of TileMaps is no longer needed
+     *             because maps are no longer loaded with TMX but with auto generation.
      * @param tiledMap The tiledMap that we should get the tile information from.
      * @return A list of lists of Tiles. Please note that the coordinate system between
      *         libGDX and Tiled differs: (0;0) is the lower left corner in libGDX, while in
