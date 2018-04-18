@@ -2,6 +2,7 @@ package de.rebleyama.client;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -16,7 +17,6 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
-
 public class ClientUI implements Disposable {
     //Global Variables from Client CLass
     private TiledMap tiledMap;
@@ -29,8 +29,12 @@ public class ClientUI implements Disposable {
     private Window miniMapWindow;
     private Window mapWindow;
     private Window escMenuWindow;
+    private Window ressourceWindow;
+    private Window buildingWindow;
+    private Window eventlogWindow;
     private Image map;
     private Image minimap;
+    //private BitmapFont font;
 
     //creation of array for Minimap Colors, last color is an error color
     private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE), Color.rgba8888(Color.RED)};
@@ -50,11 +54,15 @@ public class ClientUI implements Disposable {
         //setup skin, stage, input
         skin = new Skin(Gdx.files.internal("assets/uiskin/skin/uiskin.json"));
         stage = new Stage(new ScreenViewport());
+        //font = skin.getFont("large");
 
         //Create UI Elements here
         createMinimap();
         createESCMenu();
         createMap();
+        createRessourceWindow();
+        createBuildingMenuWindow();
+        createEventlogWindow();
 
     }
 
@@ -180,6 +188,85 @@ public class ClientUI implements Disposable {
     }
 
     /**
+     * Creates a windows with ressources in it
+     */
+    private void createRessourceWindow() {
+        // create window
+        ressourceWindow = new Window("Ressources", skin);
+
+        //set postion of window (-size)
+        ressourceWindow.setPosition((float) (Gdx.graphics.getWidth() - 300), 0);
+
+        //set size of window
+        ressourceWindow.setSize(300, 100);
+
+
+        //allow the window to be resized
+        ressourceWindow.setResizable(false);
+        ressourceWindow.setMovable(false);
+
+        //fill inside of window with minimap
+        ressourceWindow.add();//content needs to be defined
+        //add minimap to ui stage
+        createXButton(ressourceWindow);
+        stage.addActor(ressourceWindow);
+    }
+
+    /**
+     * Creates a windows with placable buildings in it
+     */
+    private void createBuildingMenuWindow() {
+        // create window
+        buildingWindow = new Window("Buildings", skin);
+
+        //set postion of window (-size)
+        buildingWindow.setPosition(0, 0);
+
+        //set size of window
+        buildingWindow.setSize(300, 100);
+
+
+        //allow the window to be resized
+        buildingWindow.setResizable(false);
+        buildingWindow.setMovable(false);
+
+        //fill inside of window with minimap
+        buildingWindow.add();//content needs to be defined
+        //add minimap to ui stage
+        createXButton(buildingWindow);
+        stage.addActor(buildingWindow);
+    }
+
+        /**
+     * Creates a windows with eventlog in it
+     */
+    private void createEventlogWindow() {
+        String logbookTitle = "Logbook";
+
+        // create window
+        eventlogWindow = new Window("Logbook", skin);
+
+        //set postion of window (-size)
+        eventlogWindow.setPosition((float) (Gdx.graphics.getWidth() - 800), 0);
+
+        //set size of window
+        eventlogWindow.setSize(500, 100);
+
+
+        //allow the window to be resized
+        eventlogWindow.setResizable(false);
+        eventlogWindow.setMovable(false);
+
+        //font.draw
+
+        //fill inside of window with minimap
+        eventlogWindow.add();//content needs to be defined
+        //add minimap to ui stage
+        createXButton(eventlogWindow);
+        stage.addActor(eventlogWindow);
+    }
+
+    /**
      * create a window with a large map in it
      */
     private void createMap() {
@@ -292,6 +379,9 @@ public class ClientUI implements Disposable {
         resizeWindow(width, height, miniMapWindow);
         resizeWindow(width, height, escMenuWindow);
         resizeWindow(width, height, mapWindow);
+        resizeWindow(width, height, ressourceWindow);
+        resizeWindow(width, height, eventlogWindow);
+        resizeWindow(width, height, buildingWindow);
 
         //update viewport of stage
         stage.getViewport().update(width, height, true);

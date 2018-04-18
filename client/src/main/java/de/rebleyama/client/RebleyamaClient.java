@@ -56,7 +56,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
         //Creation of a Multiplexer which allows multi layer event handling (UI Layer and TiledMap Layer) (UI layer needs to be first ORDER IS IMPORTANT)
         InputMultiplexer inputMultiplexer = new InputMultiplexer(clientUI.getStage(), this, stage);
-		Gdx.input.setInputProcessor(inputMultiplexer);
+            Gdx.input.setInputProcessor(inputMultiplexer);
 
     }
 
