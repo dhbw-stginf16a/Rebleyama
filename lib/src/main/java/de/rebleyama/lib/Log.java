@@ -10,9 +10,8 @@ public class Log {
 
     /**
      * Initializes the Logger
-     * @throws IOException Write to file failed
      */
-    static public void setup() throws IOException {
+    static public void setup() {
         // get the global logger to configure it
         Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
