@@ -4,65 +4,70 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import java.util.logging.*;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 
-public class RebleyamaClient extends Game implements InputProcessor{
-	
-	static SpriteBatch batch;
-	static OrthographicCamera camera;
-	static TiledMapRenderer tiledMapRenderer;
-	private TiledMap tiledMap;
+import de.rebleyama.client.MenuScreen;
 
-	@Override
-	public void create () {
-		setScreen(new MenuScreen(this));
-		batch = new SpriteBatch();
+public class RebleyamaClient extends Game implements InputProcessor {
 
-		//get the window size for the camera
-		float w = Gdx.graphics.getWidth();
-		float h = Gdx.graphics.getHeight();
+    static SpriteBatch batch;
+    static OrthographicCamera camera;
+    static TiledMapRenderer tiledMapRenderer;
+    private TiledMap tiledMap;
 
-		//initiate the camera
-		camera = new OrthographicCamera();
-        camera.setToOrtho(false,w,h);
-		camera.update();
-		
+    @Override
+    public void create() {
+
+        batch = new SpriteBatch();
+        
+        //get the window size for the camera
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+
+        //initiate the camera
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, w, h);
+        camera.update();
+
         //load the map
         //also available: ../client/assets/custommaps/testMap.tmx
         tiledMap = new TmxMapLoader().load("../client/assets/custommaps/default.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-		setScreen(new MenuScreen(this));
-		Gdx.input.setInputProcessor(this);
-	}
 
-	@Override
-	public void render() {
-		
-	}
+        //set Screen to Menu
+        this.setScreen(new MenuScreen(this));
+        Gdx.input.setInputProcessor(this);
+    }
 
-	@Override
+    @Override
+    public void render() {
+        super.render();
+		Gdx.app.log("Render Logger", "logging from Rebleyama Client");
+    }
+
+    @Override
     public boolean keyDown(int keycode) {
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        if(keycode == Input.Keys.LEFT)
-            camera.translate(-400,0);
-        if(keycode == Input.Keys.RIGHT)
-            camera.translate(400,0);
-        if(keycode == Input.Keys.UP)
-            camera.translate(0,-400);
-        if(keycode == Input.Keys.DOWN)
-            camera.translate(0,400);
-        if(keycode == Input.Keys.NUM_1)
+        if (keycode == Input.Keys.LEFT)
+            camera.translate(-400, 0);
+        if (keycode == Input.Keys.RIGHT)
+            camera.translate(400, 0);
+        if (keycode == Input.Keys.UP)
+            camera.translate(0, -400);
+        if (keycode == Input.Keys.DOWN)
+            camera.translate(0, 400);
+        if (keycode == Input.Keys.NUM_1)
             tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
         return false;
     }
@@ -98,8 +103,8 @@ public class RebleyamaClient extends Game implements InputProcessor{
         return false;
     }
 
-	@Override
-	public void dispose() {
-		// dispose of all the native resources
-	}
+    @Override
+    public void dispose() {
+        // dispose of all the native resources
+    }
 }
