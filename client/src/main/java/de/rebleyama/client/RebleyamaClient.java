@@ -13,8 +13,12 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import java.util.logging.*;
 
+import java.util.concurrent.TimeUnit;
+
+
 public class RebleyamaClient extends Game implements InputProcessor{
-	
+	private static final Logger log = Logger.getLogger( RebleyamaClient.class.getName() );
+
 	static SpriteBatch batch;
 	static OrthographicCamera camera;
 	static TiledMapRenderer tiledMapRenderer;
@@ -39,6 +43,13 @@ public class RebleyamaClient extends Game implements InputProcessor{
         tiledMap = new TmxMapLoader().load("../client/assets/custommaps/default.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 		setScreen(new MenuScreen(this));
+
+		try {
+			TimeUnit.SECONDS.sleep(10);
+		} catch (InterruptedException e) {
+
+		}
+
 		Gdx.input.setInputProcessor(this);
 	}
 
