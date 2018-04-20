@@ -6,21 +6,21 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 
 import static org.junit.Assert.assertTrue;
 
 public class ClientManagerTest {
     ClientManager clientManager;
+    GameManager gameManager;
 
     @Before
     public void startClientManager() {
         Log.setLogLevel(Level.FINEST);
         byte clientId = (byte) 1;
-        this.clientManager = new ClientManager(clientId);
-        new Thread(clientManager).start();
+        this.gameManager = gameManager;
+        this.clientManager = new ClientManager(clientId, gameManager);
+        this.clientManager.begin();
     }
 
     @Test
@@ -31,7 +31,7 @@ public class ClientManagerTest {
 
     @After
     public void stopClientManager() {
-        clientManager.stop();
+        clientManager.end();
     }
 
 

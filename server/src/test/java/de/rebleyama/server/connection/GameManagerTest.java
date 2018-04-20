@@ -13,7 +13,7 @@ public class GameManagerTest {
     @Before
     public void startGameManager() {
         this.gameManager = new GameManager();
-        new Thread(gameManager).start();
+        this.gameManager.begin();
     }
 
     @Test
@@ -23,6 +23,6 @@ public class GameManagerTest {
 
     @After
     public void stopGameManager() {
-        this.gameManager.stop();
+        this.gameManager.end();
     }
 }

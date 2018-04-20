@@ -3,18 +3,17 @@ package de.rebleyama.server.connection;
 import de.rebleyama.lib.Log;
 import de.rebleyama.lib.gamestate.GameStateUpdate;
 
-import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
  * Implements the client manager handling connections for each client.
  */
-public class ClientManager implements Runnable {
+public class ClientManager extends Thread {
     private byte clientId;
-    private boolean clientAlive;
+    private boolean running;
+    private GameManager gameManager;
     private BlockingQueue<GameStateUpdate> clientQueue = new LinkedBlockingQueue<>();
     private static final Logger log = Logger.getLogger(ClientManager.class.getName());
 
@@ -22,9 +21,9 @@ public class ClientManager implements Runnable {
      * Creates a client manager for the client with the given ID.
      * @param clientId The client ID this thread should take care of.
      */
-    ClientManager(byte clientId) {
+    public ClientManager(byte clientId, GameManager gameManager) {
+        this.gameManager = gameManager;
         this.clientId = clientId;
-        this.clientAlive = true;
         Log.setup();
     }
 
@@ -38,17 +37,34 @@ public class ClientManager implements Runnable {
     }
 
     /**
-     * Starts the thread to watch and process the task queue
+     * Initializes the client manager as thread.
+     */
+    public void begin() {
+        this.running = true;
+        log.info("Starting game manager");
+        this.start();
+    }
+
+    /**
+     * Orders the client to stop processing the queue so it can be terminated safely.
+     */
+    public void end() {
+        this.running = false;
+        log.info("Requested termination of client manager with id " + clientId);
+        this.interrupt();
+    }
+
+    /**
+     * Starts the thread to watch and process the task queue.
      */
     @Override
     public void run() {
         // read from queue
-        while (this.clientAlive) {
+        while (this.running) {
             GameStateUpdate update;
             try {
-                update = this.clientQueue.poll(3, TimeUnit.SECONDS);
-                if ( update != null) {
-                    this.clientQueue.remove(update);
+                update = this.clientQueue.take();
+                if ( update != null ) {
                     // do something
                     log.info("Got work package");
                 } else {
@@ -62,13 +78,5 @@ public class ClientManager implements Runnable {
             }
          }
          log.info("Terminating client manager.");
-    }
-
-    /**
-     * Orders the client to stop processing the queue so it can be terminated safely.
-     */
-    public void stop() {
-        this.clientAlive = false;
-        log.info("Requested termination of client manager with id " + clientId);
     }
 }
