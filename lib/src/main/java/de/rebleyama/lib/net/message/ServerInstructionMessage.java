@@ -16,4 +16,11 @@ public class ServerInstructionMessage extends Message {
         this.serverInstruction = serverInstruction;
     }
 
+    /**
+     * Returns the containing instruction.
+     * @return The server instruction requested by the client.
+     */
+    public ServerInstruction getServerInstruction() {
+        return serverInstruction;
+    }
 }

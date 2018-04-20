@@ -8,7 +8,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-public class GameManager implements Runnable {
+public class GameManager extends Thread {
     private GameState gameState;
     private boolean running;
     private BlockingQueue<GameStateUpdate> gameStateUpdates = new LinkedBlockingQueue<>();
@@ -20,9 +20,8 @@ public class GameManager implements Runnable {
      * e.g. from a savepoint.
      * @param gameState An already initialized game state object.
      */
-    GameManager(GameState gameState) {
+    public GameManager(GameState gameState) {
         this.gameState = gameState;
-        this.running = true;
         Log.setup();
         log.info("Created new game manager");
     }
@@ -30,7 +29,7 @@ public class GameManager implements Runnable {
     /**
      * Creates a game manager with a blank game state
      */
-    GameManager() {
+    public GameManager() {
         this(new GameState());
     }
 
@@ -43,6 +42,27 @@ public class GameManager implements Runnable {
         return this.gameStateUpdates.add(gameStateUpdate);
     }
 
+    /**
+     * Returns the hash of the current gamestate
+     * @return Hash of the current game state
+     */
+    public String getGameStateHash() {
+        return this.gameState.getHash();
+    }
+
+    public void begin() {
+        this.running = true;
+        log.info("Starting game manager");
+        this.start();
+    }
+
+
+    public void end() {
+        this.running = false;
+        log.info("Ordering game manager to terminate.");
+        this.interrupt();
+    }
+
 
     @Override
     public void run() {
@@ -52,10 +72,5 @@ public class GameManager implements Runnable {
         }
         log.info("Shutting down game manager.");
 
-    }
-
-    public void stop() {
-        log.info("Ordering game manager to terminate.");
-        this.running = false;
     }
 }

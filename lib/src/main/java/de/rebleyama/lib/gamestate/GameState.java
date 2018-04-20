@@ -21,4 +21,13 @@ public class GameState {
         // We will see
         return true;
     }
+
+    /**
+     * Returns a identifiable hash of the current game state.
+     * @return Hash of the current game state
+     */
+    public String getHash() {
+        // TODO: Evaluate efficiency of hashing methods
+        return this.toString();
+    }
 }
