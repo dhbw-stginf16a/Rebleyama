@@ -2,7 +2,7 @@ package de.rebleyama.client.connection;
 
 import java.net.URL;
 
-import de.rebleyama.lib.connection.message.Message;
+import de.rebleyama.lib.net.message.Message;
 
 public class ServerConnection {
 

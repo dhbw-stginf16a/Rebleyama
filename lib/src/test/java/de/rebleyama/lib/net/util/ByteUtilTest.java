@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import de.rebleyama.lib.connection.message.HandshakeMessage;
-import de.rebleyama.lib.connection.message.Message;
-import de.rebleyama.lib.connection.message.MessageType;
+import de.rebleyama.lib.net.message.HandshakeMessage;
+import de.rebleyama.lib.net.message.Message;
+import de.rebleyama.lib.net.message.MessageType;
 
 public class ByteUtilTest {
 

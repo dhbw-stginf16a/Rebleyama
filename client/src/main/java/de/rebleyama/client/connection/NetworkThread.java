@@ -1,15 +1,15 @@
 package de.rebleyama.client.connection;
 
+import de.rebleyama.lib.net.message.HandshakeMessage;
+import de.rebleyama.lib.net.message.Message;
+import de.rebleyama.lib.net.util.ByteUtil;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-
-import de.rebleyama.lib.connection.message.HandshakeMessage;
-import de.rebleyama.lib.connection.message.Message;
-import de.rebleyama.lib.net.util.ByteUtil;
 
 class NetworkThread extends Thread{
 
