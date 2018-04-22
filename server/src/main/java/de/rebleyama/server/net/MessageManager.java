@@ -104,9 +104,9 @@ public class MessageManager extends Thread implements ClientIdCreator {
      */
     public void end() {
         this.gameManager.end();
-        this.clientMap.forEach((clientId, gameManager) -> {
+        this.clientMap.forEach((clientId, clientManager) -> {
             log.info("Requesting termination of client manager " + clientId);
-            gameManager.end();
+            clientManager.end();
         });
         this.running = false;
         this.interrupt();
