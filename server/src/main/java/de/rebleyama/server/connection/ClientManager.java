@@ -2,6 +2,7 @@ package de.rebleyama.server.connection;
 
 import de.rebleyama.lib.Log;
 import de.rebleyama.lib.gamestate.GameStateUpdate;
+import de.rebleyama.lib.net.message.Message;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -14,7 +15,7 @@ public class ClientManager extends Thread {
     private byte clientId;
     private boolean running;
     private GameManager gameManager;
-    private BlockingQueue<GameStateUpdate> clientQueue = new LinkedBlockingQueue<>();
+    private BlockingQueue<Message> clientQueue;
     private static final Logger log = Logger.getLogger(ClientManager.class.getName());
 
     /**
@@ -24,6 +25,7 @@ public class ClientManager extends Thread {
     public ClientManager(byte clientId, GameManager gameManager) {
         this.gameManager = gameManager;
         this.clientId = clientId;
+        this.clientQueue = new LinkedBlockingQueue<>();
         Log.setup();
     }
 
@@ -32,8 +34,8 @@ public class ClientManager extends Thread {
      * @param gameStateUpdate And update to be processed by the client manager
      * @return Success of the operation
      */
-    public boolean addToQueue(GameStateUpdate gameStateUpdate) {
-        return this.clientQueue.add(gameStateUpdate);
+    public boolean addToQueue(Message message) {
+        return this.clientQueue.add(message);
     }
 
     /**
