@@ -31,7 +31,7 @@ public class ClientManager extends Thread {
 
     /**
      * Allows the connection manager to add work packages to the client managers queue
-     * @param gameStateUpdate And update to be processed by the client manager
+     * @param message A message to be processed by the client manager
      * @return Success of the operation
      */
     public boolean addToQueue(Message message) {
@@ -63,7 +63,7 @@ public class ClientManager extends Thread {
     public void run() {
         // read from queue
         while (this.running) {
-            GameStateUpdate update;
+            Message update;
             try {
                 update = this.clientQueue.take();
                 if ( update != null ) {
