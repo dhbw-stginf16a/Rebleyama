@@ -50,6 +50,14 @@ public class GameManager extends Thread {
         return this.gameState.getHash();
     }
 
+    /**
+     * Returns the full current game state object.
+     * @return The current game state object.
+     */
+    public GameState getGameState() {
+        return this.gameState;
+    }
+
     public void begin() {
         this.running = true;
         log.info("Starting game manager");

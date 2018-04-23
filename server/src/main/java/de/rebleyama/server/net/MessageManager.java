@@ -1,15 +1,18 @@
 package de.rebleyama.server.net;
 
+import de.rebleyama.lib.Log;
+import de.rebleyama.lib.net.message.HeartbeatMessage;
+import de.rebleyama.lib.net.message.Message;
+import de.rebleyama.lib.net.message.ServerInstructionMessage;
+import de.rebleyama.server.connection.ClientManager;
+import de.rebleyama.server.connection.GameManager;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
-
-import de.rebleyama.lib.Log;
-import de.rebleyama.lib.net.message.*;
-import de.rebleyama.server.connection.ClientManager;
-import de.rebleyama.server.connection.GameManager;
 
 /**
  * The message broker handling the communication with the client
@@ -21,6 +24,7 @@ public class MessageManager extends Thread implements ClientIdCreator {
     private String listenAddress;
     private boolean running;
     private ServerConnector connector;
+    private BlockingQueue<Message> sendQueue;
     private GameManager gameManager;
     private Map<Byte, ClientManager> clientMap;
     private static final Logger log = Logger.getLogger(ClientManager.class.getName());
@@ -35,6 +39,7 @@ public class MessageManager extends Thread implements ClientIdCreator {
         this.listenAddress = listenAddress;
         this.connector = new ServerConnector(listenAddress, port, this);
         this.clientMap = new HashMap<>();
+        this.sendQueue = new LinkedBlockingQueue<>();
         this.gameManager = new GameManager();
         gameManager.begin();
         this.running = false;
@@ -64,12 +69,9 @@ public class MessageManager extends Thread implements ClientIdCreator {
                 case HEARTBEAT:
                     connector.send(new HeartbeatMessage(message.getClientId(), gameManager.getGameStateHash()));
                     break;
-                case GAMESTATEREPLACE:
-                    // Placeholder
-                    break;
                 case GAMESTATEREQUEST:
-                    break;
-                case GAMESTATEUPDATE:
+                    // Typecast to game state request and let the client manager do the checks
+                    clientMap.get(message.getClientId()).addToQueue(message);
                     break;
                 case SERVERINSTRUCTION:
                     ServerInstructionMessage serverInstructionMessage = (ServerInstructionMessage) message;
@@ -83,10 +85,33 @@ public class MessageManager extends Thread implements ClientIdCreator {
                             break;
                     }
                     break;
+                default:
+                    // The received messages shouldn't be sent by a client.
+                    // Ignore them
+                    log.info("Received non-client message. Ignoring.");
             }
         }
 
-        // TODO proactive sending
+        try {
+            Message sendMessage = sendQueue.take();
+            if ( sendMessage != null) {
+                connector.send(sendMessage);
+            }
+        } catch (InterruptedException e) {
+            log.warning("Send queue take failed");
+            log.warning(e.getMessage());
+        }
+
+    }
+
+
+    /**
+     * Adds a message to the send queue.
+     * @param message The message to be sent
+     * @return Succes of the add operation
+     */
+    public boolean addToSendQueue(Message message) {
+        return this.sendQueue.add(message);
     }
 
     /**
@@ -97,7 +122,6 @@ public class MessageManager extends Thread implements ClientIdCreator {
         this.connector.connect();
         this.start();
     }
-
 
     /**
      * Gracefully terminates all server actions
