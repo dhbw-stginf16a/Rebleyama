@@ -202,24 +202,26 @@ public class ClientUI implements Disposable {
                 oldY = miniMapWindow.getY();
                 oldX = miniMapWindow.getX();
                 oldWidth = miniMapWindow.getWidth();
+                gdxApp.log("test",x+"    "+y);
 
 
                 if((x>0)&&(y>0)&&(oldWidth>128)){
-                    newwidth = 128;
-                    gdxApp.log("test","low"+x+"   "+y);
+                    if(oldWidth-x<128){
+                        newwidth = 128;
+                    }else{
+                        newwidth = oldWidth-x;
+                    }
                 }else if((x<0)&&(y<0)&&(oldWidth<512)){
-                    newwidth = 512;
-                    gdxApp.log("test","jigh"+x+"   "+y);
-
-
+                    if(oldWidth-x>512){
+                        newwidth = 512;
+                    }else{
+                        newwidth = oldWidth-x;
+                    }
                 }
-            }
-
-            @Override
-            public void dragStop(InputEvent event, float x, float y, int pointer) {
                 miniMapWindow.setPosition(oldX+oldWidth-newwidth, oldY+oldWidth-newwidth);
                 miniMapWindow.setSize(newwidth,newwidth);
             }
+
 
 
 
@@ -353,7 +355,7 @@ public class ClientUI implements Disposable {
             }
         }
         minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minipixmap))));
-    //TODO  aspect ratio + show on both maps + multithreading + only update every 30 fps or something+ kommentare und analyise + refactor in own class
+    //TODO  aspect ratio + show on both maps + performance problem offen lassen+ multithreading + only update every 30 fps or something+ kommentare und analyise + refactor in own class
     }
     // change methods
 
