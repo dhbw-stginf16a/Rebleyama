@@ -2,29 +2,29 @@ package de.rebleyama.client;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.GL20;
 
-import java.util.logging.*;
+public class MenuScreen implements Screen {
 
-
-public class MenuScreen extends AbstractScreen {
+	public Game game;
 
 	public MenuScreen(Game game) {
-		super(game);
+		this.game = game;
 	}
 
 	@Override
 	public void show() {
-	
+		//idk
 	}
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(1, 0, 0, 1);
+		Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		BitmapFont font = new BitmapFont();
@@ -34,9 +34,11 @@ public class MenuScreen extends AbstractScreen {
 		font.draw(batch, "Press to start", 200, 200);
 		batch.end();
 
-		if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+			Gdx.app.log("Render Logger", "Switching to GameScreen");
 			game.setScreen(new GameScreen(game));
 		}
+		Gdx.app.log("Render Logger", "logging from menu screen");
 	}
 
 	@Override

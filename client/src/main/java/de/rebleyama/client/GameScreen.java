@@ -17,14 +17,16 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import java.util.logging.*;
 
-public class GameScreen extends AbstractScreen {
+public class GameScreen implements Screen {
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 	private TiledMapRenderer tiledMapRenderer;
 	private TiledMap tiledMap;
-	
+
+	public Game game;
+
 	public GameScreen(Game game) {
-		super(game);
+		this.game = game;
 	}
 
 	@Override
@@ -40,14 +42,16 @@ public class GameScreen extends AbstractScreen {
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		RebleyamaClient.batch.setProjectionMatrix(camera.combined);
+		RebleyamaClient.batch.setProjectionMatrix(RebleyamaClient.camera.combined);
 
 		//update the camera
         RebleyamaClient.camera.update();
 		
 		//start up map renderer
-		RebleyamaClient.tiledMapRenderer.setView(camera);
-        RebleyamaClient.tiledMapRenderer.render();
+		RebleyamaClient.tiledMapRenderer.setView(RebleyamaClient.camera);
+		RebleyamaClient.tiledMapRenderer.render();
+		
+		Gdx.app.log("Render Logger", "logging from game screen");
 	}
 
 	@Override
