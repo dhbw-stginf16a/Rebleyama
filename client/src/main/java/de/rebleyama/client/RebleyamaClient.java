@@ -28,10 +28,10 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
     //Global Vars for UI
     private ClientUI clientUI;
-
+    private int postint;
     @Override
     public void create() {
-
+        postint = 0;
         batch = new SpriteBatch();
 
         //get the window size for the camera
@@ -42,8 +42,8 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         camera = new OrthographicCamera();
         camera.setToOrtho(false, w, h);
         camera.update();
-        camera.position.x = 10240;
-        camera.position.y = 10240;
+
+
         //load the map
         //also available: ../client/assets/custommaps/testMap.tmx
         tiledMap = new TmxMapLoader().load("../client/assets/custommaps/default.tmx");
@@ -60,6 +60,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     }
 
     //start render method
+
 
     @Override
     public void render() {
@@ -85,11 +86,17 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
 
+        clientUI.renderMiniMap(camera);
+
         // UI Render Part
         clientUI.getStage().act(Gdx.graphics.getDeltaTime());
         clientUI.getStage().draw();
-        clientUI.renderMiniMap(camera);
 
+        //post-initialize
+        if(postint == 0){
+            camera.position.set(10240,10240,1);
+            postint++;
+        }
     }
 
     //start event methods
@@ -103,6 +110,8 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     @Override
     public void resize(int width, int height) {
         clientUI.stageResize(width, height);
+        camera.setToOrtho(false, width, height);
+
     }
 
     /**
@@ -308,5 +317,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         Gdx.app.log(COORDINATE_LOGGER, "Mouse (X): " + mousePositionX);
         Gdx.app.log(COORDINATE_LOGGER, "Camera Tile (Y): " + camera.position.y / 40);
         Gdx.app.log(COORDINATE_LOGGER, "Mouse (Y): " + mousePositionY);
+
     }
 }

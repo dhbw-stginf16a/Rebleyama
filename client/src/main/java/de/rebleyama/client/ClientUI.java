@@ -57,7 +57,7 @@ public class ClientUI implements Disposable {
 
         //create pixmaps
         bigpixmap = createPixmap(1024, true);
-        minipixmap = createPixmap(512, false);
+        minipixmap = new Pixmap(512,512, Pixmap.Format.RGBA8888);
 
         //Create UI Elements here
         createMinimap();
@@ -178,7 +178,7 @@ public class ClientUI implements Disposable {
         miniMapWindow.setPosition((float) (Gdx.graphics.getWidth() - 200), (float) (Gdx.graphics.getHeight() - 200));
 
         //set size of window
-        miniMapWindow.setSize(200, 200);
+        miniMapWindow.setSize(256, 256);
 
 
         //allow the window to be resized
@@ -186,13 +186,12 @@ public class ClientUI implements Disposable {
 
         //create image
         minimap = new Image();
-        minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(bigpixmap))));
         miniMapWindow.add(minimap);
         //add Xbuton in top bar of minimap
         createXButton(miniMapWindow);
-
         //add minimap to ui stage
         stage.addActor(miniMapWindow);
+
     }
 
     /**
@@ -276,28 +275,36 @@ public class ClientUI implements Disposable {
      * @param camera of the client
      */
     void renderMiniMap(OrthographicCamera camera){
-        //TODO CHANGE TO TRIGGERD BY CAMERA CHANGE
-        // PRoblem = falsche daten
-        //width and lenght of minimap postion
-        float transportWidth = (camera.viewportWidth *  camera.zoom)/20;
-        float transportHeight = (camera.viewportHeight *  camera.zoom)/20;
+        int minimapXY = 512;
+        int halfwindow = minimapXY/4;
+        float transposX;
+        float transposY;
 
-        // x,y of bigmap postion
-        float transposX = ((camera.position.x/10)+1)-transportWidth;
-        float transposY = ((camera.position.y/10)+1)-transportHeight;
+        //select correct display variant
+        if((camera.position.x/40)<halfwindow) {
+            transposX = 0;
+        }else {
+            transposX = (camera.position.x/40)-halfwindow;
+        }
+
+        if((camera.position.y/40)<65){
+            transposY = 0;
+        }else {
+            transposY = (camera.position.y/40)-halfwindow;
+        }
 
 
-        Pixmap minimapPart = new Pixmap((int)transportWidth,(int)transportHeight, Pixmap.Format.RGBA8888);
-        gdxApp.log("Test","Widht: "+transportWidth+"| Height: "+transportHeight+"| X: "+transposX+"| Y:" + transposY);
+        transposX = transposX*2;
+        transposY = transposY*2;
 
-        for(int x = 0; x<=transportWidth;x++){
-            for(int y = 0; y<= transportHeight;y++){
-                minimapPart.drawPixel(x,y, bigpixmap.getPixel((int)transposX+x, (int)transposY+y));
+        for(int y = 0; y<=minimapXY;y++){
+            for(int x = 0; x<= minimapXY;x++){
+                minipixmap.drawPixel(x,minimapXY-y, bigpixmap.getPixel((int)transposX+x, 1024-((int)transposY+y)));
+
             }
         }
-        minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minimapPart))));
-        minimapPart.dispose();
-
+        minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minipixmap))));
+    //TODO switch to 512 + aspect ratio + show on both maps
     }
     // change methods
 
