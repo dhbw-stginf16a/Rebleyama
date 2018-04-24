@@ -3,9 +3,7 @@ package de.rebleyama.client;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.*;
-import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -13,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -179,17 +178,67 @@ public class ClientUI implements Disposable {
 
         //set size of window
         miniMapWindow.setSize(256, 256);
-
-
-        //allow the window to be resized
-        miniMapWindow.setResizable(true);
-
         //create image
         minimap = new Image();
-        miniMapWindow.add(minimap);
+
         //add Xbuton in top bar of minimap
         createXButton(miniMapWindow);
         //add minimap to ui stage
+
+
+        //512 = max, 256=normal, 128 = min
+
+
+        final TextButton buttonScale = new TextButton("+", skin);
+        buttonScale.addListener(new DragListener(){
+            float oldY;
+            float oldX;
+            float oldWidth;
+            float newwidth;
+
+
+            @Override
+            public void drag(InputEvent event, float x, float y, int pointer) {
+                oldY = miniMapWindow.getY();
+                oldX = miniMapWindow.getX();
+                oldWidth = miniMapWindow.getWidth();
+
+
+                if((x>0)&&(y>0)&&(oldWidth>128)){
+                    newwidth = 128;
+                    gdxApp.log("test","low"+x+"   "+y);
+                }else if((x<0)&&(y<0)&&(oldWidth<512)){
+                    newwidth = 512;
+                    gdxApp.log("test","jigh"+x+"   "+y);
+
+
+                }
+            }
+
+            @Override
+            public void dragStop(InputEvent event, float x, float y, int pointer) {
+                miniMapWindow.setPosition(oldX+oldWidth-newwidth, oldY+oldWidth-newwidth);
+                miniMapWindow.setSize(newwidth,newwidth);
+            }
+
+
+
+
+
+
+
+        });
+
+        Stack stack = new Stack();
+        Table overlay = new Table();
+        stack.add(minimap);
+        overlay.add(buttonScale).expand().bottom().left();
+        stack.add(overlay);
+
+
+
+
+        miniMapWindow.add(stack);
         stage.addActor(miniMapWindow);
 
     }
@@ -281,13 +330,13 @@ public class ClientUI implements Disposable {
         float transposY;
 
         //select correct display variant
-        if((camera.position.x/40)<halfwindow) {
+        if((camera.position.x/40)<halfwindow+1) {
             transposX = 0;
         }else {
             transposX = (camera.position.x/40)-halfwindow;
         }
 
-        if((camera.position.y/40)<65){
+        if((camera.position.y/40)<halfwindow+1){
             transposY = 0;
         }else {
             transposY = (camera.position.y/40)-halfwindow;
@@ -304,7 +353,7 @@ public class ClientUI implements Disposable {
             }
         }
         minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minipixmap))));
-    //TODO switch to 512 + aspect ratio + show on both maps
+    //TODO  aspect ratio + show on both maps + multithreading + only update every 30 fps or something+ kommentare und analyise + refactor in own class
     }
     // change methods
 
@@ -336,7 +385,7 @@ public class ClientUI implements Disposable {
      * @param width  of window after resize
      * @param height of window after resize
      */
-    public void stageResize(int width, int height) {
+    void stageResize(int width, int height) {
         //calls method to resize for Minimap window (can be used for other too)
         resizeWindow(width, height, miniMapWindow);
         resizeWindow(width, height, escMenuWindow);
@@ -375,6 +424,7 @@ public class ClientUI implements Disposable {
 
 
     }
+
 
     /**
      * Reacts on window relevant key presses

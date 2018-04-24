@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 public class RebleyamaClient extends ApplicationAdapter implements InputProcessor {
 
@@ -29,6 +30,8 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     //Global Vars for UI
     private ClientUI clientUI;
     private int postint;
+
+
     @Override
     public void create() {
         postint = 0;
@@ -167,6 +170,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
             onLeftMouseDown(screenX, screenY);
         }
         return false;
+
     }
 
     /**
@@ -186,6 +190,8 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         return false;
     }
+
+
 
     /**
      * Stub method for recognizing mouse movement
