@@ -355,7 +355,9 @@ public class ClientUI implements Disposable {
             }
         }
         minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minipixmap))));
-    //TODO  aspect ratio + show on both maps + performance problem offen lassen+ multithreading + only update every 30 fps or something+ kommentare und analyise + refactor in own class
+    //TODO  show on both maps + performance problem offen lassen+ multithreading + only update every 30 fps or something+ kommentare und analyise + refactor in own class
+    //comment mimimap render, aspect ratio button
+
     }
     // change methods
 
