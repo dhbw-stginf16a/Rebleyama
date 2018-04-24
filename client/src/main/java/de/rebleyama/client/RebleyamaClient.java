@@ -49,7 +49,7 @@ public class RebleyamaClient extends Game implements InputProcessor {
     @Override
     public void render() {
         super.render();
-		Gdx.app.log("Render Logger", "logging from Rebleyama Client");
+		// Gdx.app.log("Render Logger", "logging from Rebleyama Client");
     }
 
     @Override
