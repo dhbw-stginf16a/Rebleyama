@@ -6,21 +6,17 @@ import javax.swing.GroupLayout.Alignment;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class ClientUI implements Disposable {
     //Global Variables from Client CLass
@@ -39,7 +35,8 @@ public class ClientUI implements Disposable {
     private Window eventlogWindow;
     private Image map;
     private Image minimap;
-    //private BitmapFont font;
+    private Image basicHouseButton;
+    private Table eventArea;
 
     //creation of array for Minimap Colors, last color is an error color
     private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE), Color.rgba8888(Color.RED)};
@@ -229,14 +226,17 @@ public class ClientUI implements Disposable {
         //set size of window
         buildingWindow.setSize(300, 100);
 
+        //add a dummy button with the first basic bulding
+        basicHouseButton = new Image(new TextureRegion(new Texture(Gdx.files.internal("assets/textures/buildings/basicHouse.png"))));
+        basicHouseButton.setSize(buildingWindow.getWidth()/5,(float)(buildingWindow.getHeight()/3));
 
         //allow the window to be resized
         buildingWindow.setResizable(false);
         buildingWindow.setMovable(false);
 
         //fill inside of window with minimap
-        buildingWindow.add();//content needs to be defined
-        //add minimap to ui stage
+        buildingWindow.add(basicHouseButton).left();
+        //add buldings menu to ui stage
         stage.addActor(buildingWindow);
     }
 
@@ -248,29 +248,33 @@ public class ClientUI implements Disposable {
 
         // create window
         eventlogWindow = new Window("Logbook", skin);
+        eventArea = new Table(skin);
+        final ScrollPane scroll = new ScrollPane(eventArea, skin);
 
         //set postion of window (-size)
         eventlogWindow.setPosition((float) (Gdx.graphics.getWidth() - 1000), 0);
 
         //set size of window
         eventlogWindow.setSize(600, 100);
+        //eventArea.setWidth(eventlogWindow.getWidth());
 
-        //Add some test text to the Logbook
-        //Label label = new Label(logbookEntry, skin);
-        //label.setAlignment(Align.right);
-        eventlogWindow.add(logbookEntry);
-        eventlogWindow.add("\n");
-        eventlogWindow.add("Oh no! Our colony is under attack!");        
+        //Add some dummy test text to the Logbook
+        eventArea.add(logbookEntry).width(eventlogWindow.getWidth()/100*90);
+        eventArea.row();
+        eventArea.add("Oh no! Our colony is under attack!").width(eventlogWindow.getWidth()/100*90);
+        eventArea.row();
+        eventArea.add("What a good day for a picnic!").width(eventlogWindow.getWidth()/100*90);
+        eventArea.row();
+        eventArea.add("Another sunny day on Rebleyama. What a time to be alive.").width(eventlogWindow.getWidth()/100*95);
+        eventArea.row();
+        eventlogWindow.add(scroll);
+
 
         //allow the window to be resized
         eventlogWindow.setResizable(false);
         eventlogWindow.setMovable(false);
 
-        //font.draw
-
-        //fill inside of window with minimap
-        eventlogWindow.add();//content needs to be defined
-        //add minimap to ui stage
+        //add eventlog to ui stage
         stage.addActor(eventlogWindow);
     }
 
