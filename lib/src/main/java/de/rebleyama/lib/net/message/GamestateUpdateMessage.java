@@ -2,11 +2,13 @@ package de.rebleyama.lib.net.message;
 
 import de.rebleyama.lib.gamestate.GameStateUpdate;
 
+import java.util.LinkedList;
+
 /**
- * Reperesents a gamestate object message to be sent to the client by the server.
+ * Represents a game state object message to be sent to the client by the server.
  */
 public class GamestateUpdateMessage extends Message {
-    private GameStateUpdate stateUpdate;
+    private LinkedList<GameStateUpdate> stateUpdate;
 
 
     /**
@@ -14,7 +16,7 @@ public class GamestateUpdateMessage extends Message {
      * @param clientId the ID of the client to receive the update, 0 means that it should be sent to all clients
      * @param updates The GameStateUpdate Object with a list of objects to be applied to the gamestate
      */
-    public GamestateUpdateMessage(byte clientId, GameStateUpdate updates) {
+    public GamestateUpdateMessage(byte clientId, LinkedList<GameStateUpdate> updates) {
         this.msgType = MessageType.GAMESTATEUPDATE;
         this.clientID = clientId;
         this.stateUpdate = updates;

@@ -1,6 +1,7 @@
 package de.rebleyama.server.connection;
 
 import de.rebleyama.lib.gamestate.GameStateUpdate;
+import de.rebleyama.server.gamestate.GameManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
