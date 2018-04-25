@@ -39,7 +39,7 @@ public class MenuScreen implements Screen {
 	public void render(float delta) {
 		stage = new Stage();
         Gdx.input.setInputProcessor(stage);
-        font = new BitmapFont();
+		font = new BitmapFont();
         skin = new Skin(Gdx.files.internal("assets/vis/skin/x2/uiskin.json"));
         button = new TextButton("Start", skin);
         stage.addActor(button);
