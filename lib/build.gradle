@@ -27,7 +27,7 @@ dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
 
 }
-    
+
 repositories {
     jcenter()
 }
