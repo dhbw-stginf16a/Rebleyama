@@ -13,7 +13,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 
 public class MenuScreen implements Screen {
@@ -24,7 +27,8 @@ public class MenuScreen implements Screen {
     TextButtonStyle textButtonStyle;
     BitmapFont font;
     Skin skin;
-    TextureAtlas buttonAtlas;
+	TextureAtlas buttonAtlas;
+	boolean created = false;
 
 	public MenuScreen(Game game) {
 		this.game = game;
@@ -32,31 +36,45 @@ public class MenuScreen implements Screen {
 
 	@Override
 	public void show() {
-		//idk
+	}
+
+	public void create() {
+		Gdx.app.log("bla", "creating 2");
+
+		//font = new BitmapFont();
+        skin = new Skin(Gdx.files.internal("assets/vis/skin/x2/uiskin.json"));
+		button = new TextButton("Start", skin);
+		button.setPosition(250, 250);
+		
+		stage = new Stage(new ScreenViewport());
+		Gdx.input.setInputProcessor(stage);
+
+		button.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				Gdx.app.log("Render Logger", "Switching to GameScreen");
+				game.setScreen(new GameScreen(game));
+			}
+		});
+
+		stage.addActor(button);
 	}
 
 	@Override
 	public void render(float delta) {
-		stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
-		font = new BitmapFont();
-        skin = new Skin(Gdx.files.internal("assets/vis/skin/x2/uiskin.json"));
-        button = new TextButton("Start", skin);
-        stage.addActor(button);
-
-		stage.draw();
-
-		if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-			Gdx.app.log("Render Logger", "Switching to GameScreen");
-			game.setScreen(new GameScreen(game));
+		if (!created) {
+			Gdx.app.log("bla", "creating");
+			create();
+			created = true;			
 		}
-		
-		// Gdx.app.log("Render Logger", "logging from menu screen");
+
+		stage.act(Gdx.graphics.getDeltaTime());
+		stage.draw();
 	}
 
 	@Override
 	public void resize(int height, int width) {
-	
+		// stage.getViewport().update(width, height, true);
 	}
 
 	@Override
@@ -76,6 +94,6 @@ public class MenuScreen implements Screen {
 
 	@Override
 	public void dispose() {
-	
+		stage.dispose();
 	}
 }

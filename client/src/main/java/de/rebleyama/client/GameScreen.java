@@ -31,7 +31,7 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void show() {
-	
+		Gdx.app.log("Render Logger", "logging from game screen");
 	}
 
 	@Override
