@@ -301,10 +301,10 @@ public class ClientUI implements Disposable {
         final ScrollPane scroll = new ScrollPane(eventArea, skin);
 
         //set postion of window (-size)
-        eventlogWindow.setPosition((float) (Gdx.graphics.getWidth() - 1000), 0);
+        eventlogWindow.setPosition((float) (Gdx.graphics.getWidth() - 980), 0);
 
         //set size of window
-        eventlogWindow.setSize(600, 100);
+        eventlogWindow.setSize(580, 100);
         //eventArea.setWidth(eventlogWindow.getWidth());
 
         //Add some dummy test text to the Logbook
