@@ -6,6 +6,7 @@ import javax.swing.GroupLayout.Alignment;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -36,7 +38,13 @@ public class ClientUI implements Disposable {
     private Image map;
     private Image minimap;
     private Image basicHouseButton;
+    private Image basicWoodIcon;
+    private Image basicIronIcon;
+    private Image basicFoodIcon;
+    private Image basicStoneIcon;
     private Table eventArea;
+    private Table resourceOverview;
+    private TextureAtlas resourceAtlas;
 
     //creation of array for Minimap Colors, last color is an error color
     private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE), Color.rgba8888(Color.RED)};
@@ -56,7 +64,11 @@ public class ClientUI implements Disposable {
         //setup skin, stage, input
         skin = new Skin(Gdx.files.internal("assets/uiskin/skin/uiskin.json"));
         stage = new Stage(new ScreenViewport());
-        //font = skin.getFont("large");
+        
+        //I guess we should eventually move the images into an image atlas
+        //From what I read so far it actually seems super smart and like a very efficient
+        //way to access/render them at multiple places
+        //resourceAtlas = new TextureAtlas("assets/textures/items");
 
         //Create UI Elements here
         createMinimap();
@@ -65,7 +77,6 @@ public class ClientUI implements Disposable {
         createRessourceWindow();
         createBuildingMenuWindow();
         createEventlogWindow();
-
     }
 
     /**
@@ -146,7 +157,7 @@ public class ClientUI implements Disposable {
     private void createXButton(Window window) {
         //create button
         final TextButton buttonX = new TextButton("X", skin);
-        //ad butto to top bar of window
+        //ad button to top bar of window
         window.getTitleTable().add(buttonX).height(window.getPadTop());
         //setup event listener for X button
         buttonX.addListener(new ClickListener() {
@@ -190,26 +201,57 @@ public class ClientUI implements Disposable {
     }
 
     /**
-     * Creates a windows with ressources in it
+     * Creates a windows with resources in it
      */
     private void createRessourceWindow() {
         // create window
         ressourceWindow = new Window("Ressources", skin);
 
-        //set postion of window (-size)
+        //set position of window (-size)
         ressourceWindow.setPosition((float) (Gdx.graphics.getWidth() - 300), 0);
 
         //set size of window
         ressourceWindow.setSize(400, 100);
+        
+        //create table to display the resources
+        resourceOverview = new Table(skin);
+        
+        //get images/textures
+        //see note about texture atlas above
+        //this needs to be made more efficient!
+        basicWoodIcon = new Image(new TextureRegion(new Texture(Gdx.files.internal("assets/textures/items/basicWoodItem.png"))));
+        basicFoodIcon = new Image(new TextureRegion(new Texture(Gdx.files.internal("assets/textures/items/basicFoodItem.png"))));
+        basicIronIcon = new Image(new TextureRegion(new Texture(Gdx.files.internal("assets/textures/items/basicIronItem.png"))));
+        
+        //fill table with available resource types
+        resourceOverview.add(" ").width(ressourceWindow.getWidth()/100*10);
+        resourceOverview.add(" Resource").width(ressourceWindow.getWidth()/100*70);
+        resourceOverview.add("In Store ").width(ressourceWindow.getWidth()/100*20);        
+        resourceOverview.row();
+        resourceOverview.add(basicWoodIcon); //Add wood image
+        resourceOverview.add(" Wood").align(Align.left);
+        resourceOverview.add("666"); //Add stored amount
+        resourceOverview.row();
+        resourceOverview.add(basicIronIcon); //Add iron image
+        resourceOverview.add(" Iron").align(Align.left);
+        resourceOverview.add("5"); //Add stored amount
+        resourceOverview.row();
+        resourceOverview.add(basicFoodIcon); //Add food image
+        resourceOverview.add(" Food").align(Align.left);
+        resourceOverview.add("5"); //Add stored amount
+        //resourceOverview.row();
+        //resourceOverview.add(""); //Add stone image
+        //resourceOverview.add("Stone");
+        //resourceOverview.add(""); //Add stored amount
 
 
         //allow the window to be resized
         ressourceWindow.setResizable(false);
         ressourceWindow.setMovable(false);
 
-        //fill inside of window with minimap
-        ressourceWindow.add();//content needs to be defined
-        //add minimap to ui stage
+        //fill inside of window with the overview table
+        ressourceWindow.add(resourceOverview);//content needs to be defined
+        //add resourceWindow to ui stage
         stage.addActor(ressourceWindow);
     }
 
@@ -229,13 +271,20 @@ public class ClientUI implements Disposable {
         //add a dummy button with the first basic bulding
         basicHouseButton = new Image(new TextureRegion(new Texture(Gdx.files.internal("assets/textures/buildings/basicHouse.png"))));
         basicHouseButton.setSize(buildingWindow.getWidth()/5,(float)(buildingWindow.getHeight()/3));
+        
+        basicHouseButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log("ButtonResponseLog", "Selected the basic house");
+            }
+        });
 
         //allow the window to be resized
         buildingWindow.setResizable(false);
         buildingWindow.setMovable(false);
 
-        //fill inside of window with minimap
-        buildingWindow.add(basicHouseButton).left();
+        //fill inside of window with building options
+        buildingWindow.add(basicHouseButton).align(Align.left);
         //add buldings menu to ui stage
         stage.addActor(buildingWindow);
     }
@@ -259,16 +308,16 @@ public class ClientUI implements Disposable {
         //eventArea.setWidth(eventlogWindow.getWidth());
 
         //Add some dummy test text to the Logbook
-        eventArea.add(logbookEntry).width(eventlogWindow.getWidth()/100*90);
+        eventArea.add(logbookEntry).width(eventlogWindow.getWidth()/100*95);
         eventArea.row();
-        eventArea.add("Oh no! Our colony is under attack!").width(eventlogWindow.getWidth()/100*90);
+        eventArea.add("Oh no! Our colony is under attack!").align(Align.left);
         eventArea.row();
-        eventArea.add("What a good day for a picnic!").width(eventlogWindow.getWidth()/100*90);
+        eventArea.add("What a good day for a picnic!").align(Align.left);
         eventArea.row();
-        eventArea.add("Another sunny day on Rebleyama. What a time to be alive.").width(eventlogWindow.getWidth()/100*95);
+        eventArea.add("Another sunny day on Rebleyama. What a time to be alive.").align(Align.left);
         eventArea.row();
+        
         eventlogWindow.add(scroll);
-
 
         //allow the window to be resized
         eventlogWindow.setResizable(false);
