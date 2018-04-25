@@ -3,9 +3,10 @@ package de.rebleyama.server.net;
 import de.rebleyama.lib.Log;
 import de.rebleyama.lib.net.message.HeartbeatMessage;
 import de.rebleyama.lib.net.message.Message;
+import de.rebleyama.lib.net.message.ServerInstruction;
 import de.rebleyama.lib.net.message.ServerInstructionMessage;
 import de.rebleyama.server.connection.ClientManager;
-import de.rebleyama.server.connection.GameManager;
+import de.rebleyama.server.gamestate.GameManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,9 +60,8 @@ public class MessageManager extends Thread implements ClientIdCreator {
      */
     private void manage() {
         // Read from channel
-
         Message message = connector.receive();
-        if(message != null){
+        if(message != null) {
             switch(message.getMessageType()) {
                 case HANDSHAKE:
                         connector.send(message);
@@ -76,13 +76,9 @@ public class MessageManager extends Thread implements ClientIdCreator {
                 case SERVERINSTRUCTION:
                     ServerInstructionMessage serverInstructionMessage = (ServerInstructionMessage) message;
                     // TODO: Include some kind of permission checking.
-                    switch (serverInstructionMessage.getServerInstruction()) {
-                        case SHUTDOWN:
-                            log.info("Received shutdown message. Shutting down.");
-                            this.end();
-                            break;
-                        default:
-                            break;
+                    if (serverInstructionMessage.getServerInstruction() == ServerInstruction.SHUTDOWN) {
+                        log.info("Received shutdown message. Shutting down.");
+                        this.end();
                     }
                     break;
                 default:
@@ -101,14 +97,13 @@ public class MessageManager extends Thread implements ClientIdCreator {
             log.warning("Send queue take failed");
             log.warning(e.getMessage());
         }
-
     }
 
 
     /**
      * Adds a message to the send queue.
      * @param message The message to be sent
-     * @return Succes of the add operation
+     * @return Success of the add operation
      */
     public boolean addToSendQueue(Message message) {
         return this.sendQueue.add(message);
@@ -158,7 +153,7 @@ public class MessageManager extends Thread implements ClientIdCreator {
         byte clientId = (byte) clientIntId;
 
         // create a new client worker thread
-        this.clientMap.put(clientId, new ClientManager(clientId, this.gameManager));
+        this.clientMap.put(clientId, new ClientManager(clientId, this.gameManager, this));
         this.clientMap.get(clientId).begin();
 
         return clientId;

@@ -1,17 +1,24 @@
-package de.rebleyama.server.connection;
+package de.rebleyama.server.gamestate;
 
 import de.rebleyama.lib.Log;
 import de.rebleyama.lib.gamestate.GameState;
 import de.rebleyama.lib.gamestate.GameStateUpdate;
+import de.rebleyama.server.connection.ClientManager;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 public class GameManager extends Thread {
     private GameState gameState;
+    private Timer gameTimer;
     private boolean running;
-    private BlockingQueue<GameStateUpdate> gameStateUpdates = new LinkedBlockingQueue<>();
+    private BlockingQueue<GameStateUpdate> gameStateUpdates;
+    private static final int CACHE_SIZE = 4;
+    private Map<String, GameStateUpdate> updateCache;
     private static final Logger log = Logger.getLogger(ClientManager.class.getName());
 
 
@@ -22,6 +29,16 @@ public class GameManager extends Thread {
      */
     public GameManager(GameState gameState) {
         this.gameState = gameState;
+        this.gameTimer = new Timer();
+
+        // Make the updateCache a ringbuffer so it won't grow larger than updateCacheSize
+        this.updateCache = new LinkedHashMap<String, GameStateUpdate>() {
+            @Override
+            protected boolean removeEldestEntry(final Map.Entry eldest) {
+                return size() > CACHE_SIZE;
+            }
+        };
+        this.gameStateUpdates = new LinkedBlockingQueue<>();
         Log.setup();
         log.info("Created new game manager");
     }
@@ -43,7 +60,7 @@ public class GameManager extends Thread {
     }
 
     /**
-     * Returns the hash of the current gamestate
+     * Returns the hash of the current game state
      * @return Hash of the current game state
      */
     public String getGameStateHash() {
@@ -62,10 +79,13 @@ public class GameManager extends Thread {
         this.running = true;
         log.info("Starting game manager");
         this.start();
+        // Ensure the game manager is up before starting the timer
+        this.gameTimer.schedule(new GameTimer(this), 0, 3000);
     }
 
 
     public void end() {
+        this.gameTimer.cancel();
         this.running = false;
         log.info("Ordering game manager to terminate.");
         this.interrupt();
@@ -76,9 +96,26 @@ public class GameManager extends Thread {
     public void run() {
         log.info("Started game manager thread.");
         while (this.running) {
-            // Do something
+            GameStateUpdate update;
+            try {
+                update = this.gameStateUpdates.take();
+                if (update != null) {
+                    this.gameState.applyUpdate(update);
+                }
+
+            } catch (InterruptedException e) {
+                log.warning(e.getMessage());
+            }
         }
         log.info("Shutting down game manager.");
 
+    }
+
+    /**
+     * Returns the cache of updates
+     * @return The cached updates
+     */
+    public Map<String, GameStateUpdate> getUpdateCache() {
+        return updateCache;
     }
 }

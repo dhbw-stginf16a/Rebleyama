@@ -18,4 +18,11 @@ public class GamestateRequestMessage extends Message {
         this.clientID = clientId;
     }
 
+    /**
+     * Returns the game state hash of the payload
+     * @return The game state hash sent with the message
+     */
+    public String getGameStateHash() {
+        return gameStateHash;
+    }
 }
