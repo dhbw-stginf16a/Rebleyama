@@ -71,21 +71,15 @@ public class ClientManager extends Thread {
         // read from queue
         while (this.running) {
             Message message;
-            try {
-                message = this.clientQueue.take();
-                if ( message != null ) {
-                    log.info("Got work package");
-                    if (message.getMessageType()  == MessageType.GAMESTATEREQUEST) {
-                        processGamestateRequest((GamestateRequestMessage) message);
-                    }
-                } else {
-                    // The queue was empty and the timeout hit
-                    log.fine("Queue appears to be empty, listening again");
+            message = this.clientQueue.poll();
+            if ( message != null ) {
+                log.info("Got work package");
+                if (message.getMessageType()  == MessageType.GAMESTATEREQUEST) {
+                    processGamestateRequest((GamestateRequestMessage) message);
                 }
-
-            } catch (InterruptedException e) {
-                log.warning("An interrupt exception occurred while waiting for updates on the queue");
-                log.warning(e.getMessage());
+            } else {
+                // The queue was empty and the timeout hit
+                log.fine("Queue appears to be empty, listening again");
             }
          }
          log.info("Terminating client manager.");

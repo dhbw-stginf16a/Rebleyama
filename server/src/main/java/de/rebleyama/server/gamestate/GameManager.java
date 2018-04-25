@@ -80,7 +80,6 @@ public class GameManager extends Thread {
         log.info("Starting game manager");
         this.start();
         // Ensure the game manager is up before starting the timer
-        this.gameTimer.schedule(new GameTimer(this), 0, 3000);
     }
 
 
@@ -94,17 +93,14 @@ public class GameManager extends Thread {
 
     @Override
     public void run() {
+        // Start the timer to produce regular gamestate updates with every tick
+        this.gameTimer.schedule(new GameTimer(this), 0, 3000);
         log.info("Started game manager thread.");
         while (this.running) {
             GameStateUpdate update;
-            try {
-                update = this.gameStateUpdates.take();
-                if (update != null) {
-                    this.gameState.applyUpdate(update);
-                }
-
-            } catch (InterruptedException e) {
-                log.warning(e.getMessage());
+            update = this.gameStateUpdates.poll();
+            if (update != null) {
+                this.gameState.applyUpdate(update);
             }
         }
         log.info("Shutting down game manager.");
