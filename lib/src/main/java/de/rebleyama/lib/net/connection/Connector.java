@@ -9,6 +9,9 @@ import de.rebleyama.lib.net.message.Message;
 
 public abstract class Connector{
 
+
+    public static long HEARTBEAT_INTERVAL_NANOSECONDS = (long)1E9;
+
     protected DatagramChannel udpChannel;
 
     protected SenderThread senderThread;

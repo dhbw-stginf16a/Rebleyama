@@ -42,7 +42,6 @@ public class MessageManager extends Thread implements ClientIdCreator {
         this.clientMap = new HashMap<>();
         this.sendQueue = new LinkedBlockingQueue<>();
         this.gameManager = new GameManager();
-        gameManager.begin();
         this.running = false;
         Log.setup();
     }
@@ -64,7 +63,8 @@ public class MessageManager extends Thread implements ClientIdCreator {
         if(message != null) {
             switch(message.getMessageType()) {
                 case HANDSHAKE:
-                        connector.send(message);
+                    connector.send(message);
+                    log.info("Client Handshake with id: "+ message.getClientId());
                     break;
                 case HEARTBEAT:
                     connector.send(new HeartbeatMessage(message.getClientId(), gameManager.getGameStateHash()));
@@ -88,14 +88,9 @@ public class MessageManager extends Thread implements ClientIdCreator {
             }
         }
 
-        try {
-            Message sendMessage = sendQueue.take();
-            if ( sendMessage != null) {
-                connector.send(sendMessage);
-            }
-        } catch (InterruptedException e) {
-            log.warning("Send queue take failed");
-            log.warning(e.getMessage());
+        Message sendMessage = sendQueue.poll();
+        if ( sendMessage != null) {
+            connector.send(sendMessage);
         }
     }
 
@@ -137,6 +132,7 @@ public class MessageManager extends Thread implements ClientIdCreator {
      */
     @Override
     public void run() {
+        gameManager.begin();
         while (this.running){
             manage();
         }

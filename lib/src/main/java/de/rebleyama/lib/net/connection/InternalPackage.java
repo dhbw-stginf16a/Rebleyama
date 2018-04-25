@@ -10,46 +10,10 @@ import de.rebleyama.lib.net.message.Message;
 import de.rebleyama.lib.net.util.ByteUtil;
 import de.rebleyama.lib.net.util.NetUtil;
 
-// @Deprecated
-// public class Package {
-//     private Message message;
-//     private InetSocketAddress socketAddress;
-
-//     public Package(Message message, InetSocketAddress socketAddress) {
-//         this.socketAddress = socketAddress;
-//         this.message = message;
-//     }
-
-//     /**
-//      * @return the message
-//      */
-//     public Message getMessage() {
-//         return message;
-//     }
-
-//     /**
-//      * @return the socketAddress
-//      */
-//     public InetSocketAddress getSocketAddress() {
-//         return socketAddress;
-//     }
-// }
-
 public class InternalPackage {
     private List<Frame> frameList;
     private Message message;
     private InetSocketAddress socketAddress;
-
-    // InternalPackage(Package origin) {
-    //     this.pack = origin;
-    //     this.message = origin.getMessage();
-    //     try {
-    //         this.frameList = segmentation(this);
-    //     } catch (IOException e) {
-    //         // TODO Auto-generated catch block
-    //         e.printStackTrace();
-    //     }
-    // }
 
     public InternalPackage(Message message){
         this.message = message;
@@ -65,7 +29,7 @@ public class InternalPackage {
         this.frameList = Arrays.asList(frames);
         this.socketAddress = socketAddress;
         try {
-        this.message = desegmentation(this.frameList);
+            this.message = desegmentation(this.frameList);
 		} catch (ClassNotFoundException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

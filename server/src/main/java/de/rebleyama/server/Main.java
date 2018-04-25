@@ -1,5 +1,7 @@
 package de.rebleyama.server;
 
+import java.util.Scanner;
+
 import de.rebleyama.server.net.MessageManager;
 
 public class Main {
@@ -14,12 +16,10 @@ public class Main {
         MessageManager messageManager = new MessageManager(21012);
         messageManager.begin();
 
-        try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-        }
+        Scanner scanner = new Scanner(System.in);
+        while(!scanner.hasNextLine()){}
+        // scanner.nextLine();
+        scanner.close();
         
         messageManager.end();
     }

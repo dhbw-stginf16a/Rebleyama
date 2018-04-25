@@ -16,4 +16,11 @@ public class HeartbeatMessage extends Message {
         this.clientID = clientID;
         this.gameStateHash = gameStateHash;
     }
+
+    /**
+     * @return the gameStateHash
+     */
+    public String getGameStateHash() {
+        return gameStateHash;
+    }
 }

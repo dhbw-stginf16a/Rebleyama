@@ -20,7 +20,9 @@ dependencies {
             'org.junit.jupiter:junit-jupiter-engine:5.1.0',
             'org.junit.vintage:junit-vintage-engine:5.1.0'
     )
-    compile project(":lib")
+    compile (
+            project(":lib")
+    )
 }
 
 test {

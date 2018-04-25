@@ -46,7 +46,6 @@ public class ReceiverThread extends Thread{
                     }
                     collector.frames[frame.getFrameInfo().getSeq()] = frame;
 
-
                     if(collector.isComplete()){
                         InternalPackage internalPackage = new InternalPackage(collector.frames, socketAddress);
                         this.receiverQueue.put(internalPackage);

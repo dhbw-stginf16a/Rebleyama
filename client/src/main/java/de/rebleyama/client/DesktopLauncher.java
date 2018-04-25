@@ -1,18 +1,15 @@
 package de.rebleyama.client;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.DatagramChannel;
-
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-//import de.rebleyama.client.RebleyamaClient;
+import de.rebleyama.client.RebleyamaClient;
 //import de.rebleyama.client.connection.ServerConnection;
 //import de.rebleyama.client.net.ClientConnector;
 //import de.rebleyama.lib.net.message.HandshakeMessage;
 //import de.rebleyama.lib.net.message.Message;
+//import de.rebleyama.client.connection.ServerConnection;
+//import de.rebleyama.client.net.ClientConnector;
 
 public class DesktopLauncher {
 
@@ -65,5 +62,6 @@ public class DesktopLauncher {
 	// 	// TODO Auto-generated catch block
 	// 	e.printStackTrace();
 	// }
-	}
+    }
 }
+
