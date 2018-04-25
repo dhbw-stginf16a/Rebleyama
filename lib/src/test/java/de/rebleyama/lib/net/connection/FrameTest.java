@@ -19,7 +19,7 @@ public class FrameTest{
     }
 
     @Test
-    public void TestFrameSerialization(){
+    void TestFrameSerialization(){
         byte[] payload = new byte[]{1,2,3,4,5,6,7,8,9,0};
         FrameInfo info = FrameInfo.generateNew((short)10, FrameType.MESSAGE);
         Frame frame = new Frame(info, payload);
@@ -33,7 +33,7 @@ public class FrameTest{
     }
 
     @Test
-    public void TestFrameInfoNext(){
+    void TestFrameInfoNext(){
         FrameInfo frameInfo = FrameInfo.generateNew((short)10, FrameType.MESSAGE);
         
         FrameInfo nextFrame = FrameInfo.next(frameInfo);
@@ -42,7 +42,7 @@ public class FrameTest{
     }
 
     @Test
-    public void TestFrameInfoGeneration(){
+    void TestFrameInfoGeneration(){
         FrameInfo frameInfo = FrameInfo.generateNew((short)10, FrameType.MESSAGE);
         FrameInfo frameInfo2 = FrameInfo.generateNew((short)10, FrameType.FRAME_REQUEST);
         

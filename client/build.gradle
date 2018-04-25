@@ -19,13 +19,26 @@ ext {
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
+    testCompileOnly(
+            'junit:junit:4.12'
+    )
+    testImplementation(
+            'org.junit.jupiter:junit-jupiter-api:5.1.0'
+    )
+    testRuntimeOnly(
+            'org.junit.jupiter:junit-jupiter-engine:5.1.0',
+            'org.junit.vintage:junit-vintage-engine:5.1.0'
+    )
     compile project(":lib")
     compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
     compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
     compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
     compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+}
+
+test {
+    useJUnitPlatform()
 }
     
 repositories {

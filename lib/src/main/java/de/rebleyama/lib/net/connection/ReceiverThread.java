@@ -34,6 +34,7 @@ public class ReceiverThread extends Thread{
                     this.receiveBuffer.flip();
                     byte[] data = new byte[this.receiveBuffer.limit()];
                     this.receiveBuffer.get(data);
+                    this.receiveBuffer.clear();
                     Frame frame = Frame.deserialize(data);
 
                     Collector collector;
