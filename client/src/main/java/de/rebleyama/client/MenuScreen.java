@@ -44,7 +44,7 @@ public class MenuScreen implements Screen {
 		//font = new BitmapFont();
         skin = new Skin(Gdx.files.internal("assets/vis/skin/x2/uiskin.json"));
 		button = new TextButton("Start", skin);
-		button.setPosition(250, 250);
+		button.setPosition(350, 225);
 		
 		stage = new Stage(new ScreenViewport());
 		Gdx.input.setInputProcessor(stage);
