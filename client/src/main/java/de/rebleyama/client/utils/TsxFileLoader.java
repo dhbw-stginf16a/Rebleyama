@@ -1,6 +1,7 @@
 package de.rebleyama.client.utils;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapProperties;
@@ -11,9 +12,6 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.XmlReader;
 import de.rebleyama.lib.game.TileType;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,15 +30,15 @@ public class TsxFileLoader {
      * @return A TiledMapTileSet representing the tileset in TSX.
      *         {@code null} if the TSX file is ill-formed or the file does not exist.
      */
-    public static TiledMapTileSet loadFile(File file) {
+    public static TiledMapTileSet loadFile(FileHandle file) {
 
         TiledMapTileSet result = new TiledMapTileSet();
 
         //Open file
-        try (FileInputStream stream = new FileInputStream(file)) {
+        try {
             //start parser
             XmlReader parser = new XmlReader();
-            XmlReader.Element root = parser.parse(stream);
+            XmlReader.Element root = parser.parse(file);
 
             //check if it really is a TSX file
             if (!root.getName().equals("tileset")) {
@@ -58,7 +56,7 @@ public class TsxFileLoader {
             resultProps.put("tilecount", root.getIntAttribute("tilecount"));
             resultProps.put("columns", root.getIntAttribute("columns"));
 
-            Texture tex = loadTileMapImage(file.getParentFile(), root.getChildByName("image"));
+            Texture tex = loadTileMapImage(file.parent(), root.getChildByName("image"));
 
             //Load offsets if necessary
             int xOffset = 0, yOffset = 0;
@@ -119,7 +117,7 @@ public class TsxFileLoader {
                     tilesPerColumn = tileCount / columns;
 
             for (int i = 0; i < tiles.size && i < tileCount; ++i) {
-                TextureRegion tileTex = new TextureRegion(tex, (i % tilesPerColumn) * tileWidth, currentCol * tileHeight, tileWidth, tileHeight);
+                TextureRegion tileTex = new TextureRegion(tex, (i % tilesPerColumn) * tileWidth + xOffset, currentCol * tileHeight + yOffset, tileWidth, tileHeight);
                 if (i % tilesPerColumn == tilesPerColumn - 1) ++currentCol;
                 StaticTiledMapTile tile = new StaticTiledMapTile(tileTex);
                 tile.setId(tiles.get(i).getIntAttribute("id", i));
@@ -127,7 +125,7 @@ public class TsxFileLoader {
 
                 result.putTile(tile.getId(), tile);
             }
-        } catch (IOException | GdxRuntimeException ex) {
+        } catch (GdxRuntimeException ex) {
             return null;
         }
 
@@ -140,11 +138,11 @@ public class TsxFileLoader {
      * @param imageElem
      * @return
      */
-    public static Texture loadTileMapImage(File currentPath, XmlReader.Element imageElem) {
+    public static Texture loadTileMapImage(FileHandle currentPath, XmlReader.Element imageElem) {
         if (!currentPath.isDirectory() || imageElem == null || !imageElem.getName().equals("image")) return null;
 
         try {
-            Texture tex = new Texture(new File(currentPath, imageElem.getAttribute("source")).getAbsolutePath());
+            Texture tex = new Texture(currentPath.child(imageElem.getAttribute("source")));
             //Assert that succeeds if either there is no width or the width is equal to the texture's width
             assert(imageElem.getIntAttribute("width", -1) == -1 ||
                     imageElem.getIntAttribute("width") == tex.getWidth());
