@@ -34,7 +34,7 @@ public class TileMap {
         for (int x = 0; x < tileMap.length; ++x) {
             for (int y = 0; y < tileMap[x].length; ++y) {
                 if (tileMap[x][y] == null || overrideAll) {
-                    tileMap[x][y] = new Tile(type);
+                    tileMap[x][y] = new Tile(type, x, y);
                 }
             }
         }
