@@ -15,6 +15,7 @@ public class DesktopLauncher {
 		config.title = "Rebleyama";
 		config.width = 800;
 		config.height = 480;
+		config.forceExit = false;  // for freeing all resources on close
 		new LwjglApplication(new RebleyamaClient(), config);
 	}
 }

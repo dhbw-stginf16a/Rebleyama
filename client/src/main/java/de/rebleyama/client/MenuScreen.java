@@ -23,7 +23,8 @@ public class MenuScreen implements Screen {
 
 	public Game game;
 	Stage stage;
-    TextButton button;
+    TextButton startButton;
+	TextButton exitButton;
     TextButtonStyle textButtonStyle;
     BitmapFont font;
     Skin skin;
@@ -43,13 +44,16 @@ public class MenuScreen implements Screen {
 
 		//font = new BitmapFont();
         skin = new Skin(Gdx.files.internal("assets/vis/skin/x2/uiskin.json"));
-		button = new TextButton("Start", skin);
-		button.setPosition(350, 225);
+		startButton = new TextButton("Start", skin);
+		startButton.setPosition(350, 225);
+
+		exitButton = new TextButton("Exit", skin);
+		exitButton.setPosition(355, 150);
 		
 		stage = new Stage(new ScreenViewport());
 		Gdx.input.setInputProcessor(stage);
 
-		button.addListener(new ClickListener() {
+		startButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				Gdx.app.log("Render Logger", "Switching to GameScreen");
@@ -57,7 +61,15 @@ public class MenuScreen implements Screen {
 			}
 		});
 
-		stage.addActor(button);
+		exitButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				Gdx.app.exit();
+			}
+		});
+
+		stage.addActor(startButton);
+		stage.addActor(exitButton);
 	}
 
 	@Override
