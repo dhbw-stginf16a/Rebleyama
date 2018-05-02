@@ -1,8 +1,6 @@
 package de.rebleyama.lib.game;
 
-import de.rebleyama.lib.game.resources.Resource;
-import de.rebleyama.lib.game.resources.Stone;
-import de.rebleyama.lib.game.resources.Wood;
+import de.rebleyama.lib.game.resources.*;
 
 /**
  * Represents the type information about a tile.
@@ -55,6 +53,16 @@ public enum TileType {
         @Override public boolean isBuildable() { return false; }
         @Override public Resource getNewAssociatedResource() { return null; }
         @Override public boolean isWalkable() { return true; }
+    },
+    COAL {
+        @Override public boolean isBuildable() { return false; }
+        @Override public Resource getNewAssociatedResource() { return new Coal(); }
+        @Override public boolean isWalkable() { return false; }
+    },
+    IRON {
+        @Override public boolean isBuildable() { return false; }
+        @Override public Resource getNewAssociatedResource() { return new Metal(); }
+        @Override public boolean isWalkable() { return false; }
     };
 
     /**
