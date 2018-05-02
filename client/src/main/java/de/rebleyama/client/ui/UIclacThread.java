@@ -113,7 +113,7 @@ public class UIclacThread extends Thread {
             }
             */
 
-            //TODO show rectangle on both maps + too much tiles on top area of minimap + add thread start/close to all minimap window visiblity settings (map + xbutton + m)
+            //TODO show rectangle on minimaps + too much tiles on top area of minimap + add thread start/close to all minimap window visiblity settings (map + xbutton + m)
 
 
         }
