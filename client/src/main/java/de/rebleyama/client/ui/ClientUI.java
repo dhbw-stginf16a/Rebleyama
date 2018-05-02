@@ -1,4 +1,4 @@
-package de.rebleyama.client;
+package de.rebleyama.client.ui;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
@@ -33,15 +33,15 @@ public class ClientUI implements Disposable {
     private Image map;
     private Image minimap;
     private Application gdxApp;
+    private UIclacThread pixmalcalcer;
 
     //creation of array for Minimap Colors, last color is an error color
     private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE), Color.rgba8888(Color.RED)};
 
     // create methods
-    ClientUI(TiledMap tiledmap, Application gdxApp) {
+    public ClientUI(TiledMap tiledmap, Application gdxApp) {
         this.tiledMap = tiledmap;
         this.gdxApp = gdxApp;
-
         //Calls method that is responsible to create UI elements
         createUI();
     }
@@ -56,7 +56,7 @@ public class ClientUI implements Disposable {
 
         //create pixmaps
         bigpixmap = createPixmap(1024, true);
-        minipixmap = new Pixmap(512,512, Pixmap.Format.RGBA8888);
+        minipixmap = new Pixmap(512, 512, Pixmap.Format.RGBA8888);
 
         //Create UI Elements here
         createMinimap();
@@ -183,14 +183,12 @@ public class ClientUI implements Disposable {
 
         //add Xbuton in top bar of minimap
         createXButton(miniMapWindow);
-        //add minimap to ui stage
 
 
-        //512 = max, 256=normal, 128 = min
-
-
+        //aspect ratio button
         final TextButton buttonScale = new TextButton("+", skin);
-        buttonScale.addListener(new DragListener(){
+        //listener with logic inside
+        buttonScale.addListener(new DragListener() {
             float oldY;
             float oldX;
             float oldWidth;
@@ -202,35 +200,29 @@ public class ClientUI implements Disposable {
                 oldY = miniMapWindow.getY();
                 oldX = miniMapWindow.getX();
                 oldWidth = miniMapWindow.getWidth();
-                gdxApp.log("test",x+"    "+y);
 
-
-                if((x>0)&&(y>0)&&(oldWidth>128)){
-                    if(oldWidth-x<128){
+                //logic for minimap resizing
+                if ((x > 0) && (y > 0) && (oldWidth > 128)) {
+                    if (oldWidth - x < 128) {
                         newwidth = 128;
-                    }else{
-                        newwidth = oldWidth-x;
+                    } else {
+                        newwidth = oldWidth - x;
                     }
-                }else if((x<0)&&(y<0)&&(oldWidth<512)){
-                    if(oldWidth-x>512){
+                } else if ((x < 0) && (y < 0) && (oldWidth < 512)) {
+                    if (oldWidth - x > 512) {
                         newwidth = 512;
-                    }else{
-                        newwidth = oldWidth-x;
+                    } else {
+                        newwidth = oldWidth - x;
                     }
                 }
-                miniMapWindow.setPosition(oldX+oldWidth-newwidth, oldY+oldWidth-newwidth);
-                miniMapWindow.setSize(newwidth,newwidth);
+                miniMapWindow.setPosition(oldX + oldWidth - newwidth, oldY + oldWidth - newwidth);
+                miniMapWindow.setSize(newwidth, newwidth);
             }
-
-
-
-
-
-
 
 
         });
 
+        //stack actor over each other
         Stack stack = new Stack();
         Table overlay = new Table();
         stack.add(minimap);
@@ -238,9 +230,8 @@ public class ClientUI implements Disposable {
         stack.add(overlay);
 
 
-
-
         miniMapWindow.add(stack);
+        //add minimap to ui stage
         stage.addActor(miniMapWindow);
 
     }
@@ -322,43 +313,26 @@ public class ClientUI implements Disposable {
     }
 
     /**
-     * method to render the minimap
-     * @param camera of the client
+     * starts the thread which calculates the pixmap changes
+     *
+     * @param camera of stage view
      */
-    void renderMiniMap(OrthographicCamera camera){
-        int minimapXY = 512;
-        int halfwindow = minimapXY/4;
-        float transposX;
-        float transposY;
+    public void startcalcThread(OrthographicCamera camera) {
 
-        //select correct display variant
-        if((camera.position.x/40)<halfwindow+1) {
-            transposX = 0;
-        }else {
-            transposX = (camera.position.x/40)-halfwindow;
-        }
+        pixmalcalcer = new UIclacThread(camera, minipixmap, bigpixmap, minimap, gdxApp);
 
-        if((camera.position.y/40)<halfwindow+1){
-            transposY = 0;
-        }else {
-            transposY = (camera.position.y/40)-halfwindow;
-        }
-
-
-        transposX = transposX*2;
-        transposY = transposY*2;
-
-        for(int y = 0; y<=minimapXY;y++){
-            for(int x = 0; x<= minimapXY;x++){
-                minipixmap.drawPixel(x,minimapXY-y, bigpixmap.getPixel((int)transposX+x, 1024-((int)transposY+y)));
-
-            }
-        }
-        minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minipixmap))));
-    //TODO  show on both maps + performance problem offen lassen+ multithreading + only update every 30 fps or something+ kommentare und analyise + refactor in own class
-    //comment mimimap render, aspect ratio button
+        pixmalcalcer.begin();
 
     }
+
+    /**
+     * end the thread which calculates the pixmap changes
+     */
+    public void endcalcThread() {
+        pixmalcalcer.end();
+    }
+
+
     // change methods
 
     /**
@@ -389,7 +363,7 @@ public class ClientUI implements Disposable {
      * @param width  of window after resize
      * @param height of window after resize
      */
-    void stageResize(int width, int height) {
+    public void stageResize(int width, int height) {
         //calls method to resize for Minimap window (can be used for other too)
         resizeWindow(width, height, miniMapWindow);
         resizeWindow(width, height, escMenuWindow);
@@ -435,7 +409,7 @@ public class ClientUI implements Disposable {
      *
      * @param windowName name of window that shall react
      */
-    void uiKeypressed(String windowName) {
+    public void uiKeypressed(String windowName) {
         //select which window (please suggest better selector ways)
         if (windowName.equals("mapWindow")) {
             //set Window visible and to front
@@ -465,15 +439,7 @@ public class ClientUI implements Disposable {
         bigpixmap.dispose();
 
     }
-
-    /**
-     * method to update the position of minimap view rectangle
-     * @param posX X position of camera
-     * @param posY Y position of camera
-     * @param zoomLevel Zoom level of camera
-     */
-
-
+    
     // getter/setter
 
     /**
@@ -481,13 +447,9 @@ public class ClientUI implements Disposable {
      *
      * @return Stage that the UI uses
      */
-    Stage getStage() {
+    public Stage getStage() {
         return stage;
     }
 
 
 }
-
-
-//TODO make new minimap kind
-//TODO remove minimap mentions

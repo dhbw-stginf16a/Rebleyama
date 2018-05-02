@@ -13,7 +13,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import de.rebleyama.client.ui.ClientUI;
 
 public class RebleyamaClient extends ApplicationAdapter implements InputProcessor {
 
@@ -58,7 +58,8 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
         //Creation of a Multiplexer which allows multi layer event handling (UI Layer and TiledMap Layer) (UI layer needs to be first ORDER IS IMPORTANT)
         InputMultiplexer inputMultiplexer = new InputMultiplexer(clientUI.getStage(), this, stage);
-		Gdx.input.setInputProcessor(inputMultiplexer);
+        Gdx.input.setInputProcessor(inputMultiplexer);
+        clientUI.startcalcThread(camera);
 
     }
 
@@ -89,15 +90,14 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
 
-        clientUI.renderMiniMap(camera);
 
         // UI Render Part
         clientUI.getStage().act(Gdx.graphics.getDeltaTime());
         clientUI.getStage().draw();
 
         //post-initialize
-        if(postint == 0){
-            camera.position.set(10240,10240,1);
+        if (postint == 0) {
+            camera.position.set(10240, 10240, 1);
             postint++;
         }
     }
@@ -141,6 +141,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     /**
      * Stub method for recognizing keypress
      * This triggers when any key is released
+     *
      * @param keycode keycode of the key that was released
      */
     @Override
@@ -159,10 +160,10 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         return false;
     }
 
-/**
- * Stub method for recognizing keypress
- * This triggers when screen is touched, also the method that handles mouse input
- */
+    /**
+     * Stub method for recognizing keypress
+     * This triggers when screen is touched, also the method that handles mouse input
+     */
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         //If left mouse button is clicked
@@ -192,7 +193,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     }
 
 
-
     /**
      * Stub method for recognizing mouse movement
      * This triggers when the mouse is moved
@@ -205,6 +205,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     /**
      * Stub method for recognizing keypress
      * This triggers when the scrollwheel is scrolled
+     *
      * @param amount amount that the scrollwheel was moved
      */
     @Override
@@ -227,6 +228,8 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
      */
     @Override
     public void dispose() {
+        clientUI.endcalcThread();
+
         tiledMap.dispose();
         batch.dispose();
         clientUI.dispose();
