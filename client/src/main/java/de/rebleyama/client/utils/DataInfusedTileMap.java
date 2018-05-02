@@ -1,5 +1,6 @@
 package de.rebleyama.client.utils;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -41,7 +42,7 @@ public class DataInfusedTileMap extends TileMap implements Disposable {
         tileSet = new TiledMapTileSet();
 
         if (tileMapImage == null) {
-            tileMapImage = new Texture(new FileHandle("../assets/textures/tiles/tilemap.png"));
+            tileMapImage = new Texture(Gdx.files.absolute("C:\\Users\\Jan-Robin Aumann\\OneDrive\\Dokumente\\Duales Studium Angewandte Informatik\\STGINF16A\\Software-Engineering\\Rebleyama\\client\\assets\\textures\\tiles\\tilemap.png"));
         }
 
         if (tileMapImage.getWidth() < TILE_WIDTH) {
