@@ -2,7 +2,6 @@ package de.rebleyama.client.ui;
 
 
 import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -51,9 +50,16 @@ public class UIclacThread extends Thread {
     /**
      * end thread
      */
-    public void end() {
+    public void end()  {
         this.running = false;
+
         this.interrupt();
+        try {
+            this.join();
+        } catch (InterruptedException e) {
+            gdxApp.log("Minimap Calculator Thread", e.toString());
+            this.interrupt();
+        }
     }
 
 
@@ -88,7 +94,12 @@ public class UIclacThread extends Thread {
 
                 }
             }
+
+
             gdxApp.postRunnable(() -> minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minipixmap)))));
+
+
+
 
             /*
 
@@ -102,7 +113,7 @@ public class UIclacThread extends Thread {
             }
             */
 
-            //TODO show on both maps + refactor in own class + too much tiles on top area of minimap
+            //TODO show rectangle on both maps + too much tiles on top area of minimap + add thread start/close to all minimap window visiblity settings (map + xbutton + m)
 
 
         }

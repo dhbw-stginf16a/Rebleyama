@@ -330,6 +330,7 @@ public class ClientUI implements Disposable {
      */
     public void endcalcThread() {
         pixmalcalcer.end();
+
     }
 
 
@@ -438,8 +439,9 @@ public class ClientUI implements Disposable {
         minipixmap.dispose();
         bigpixmap.dispose();
 
+
     }
-    
+
     // getter/setter
 
     /**

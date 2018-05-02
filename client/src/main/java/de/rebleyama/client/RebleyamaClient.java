@@ -230,6 +230,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     public void dispose() {
         clientUI.endcalcThread();
 
+
         tiledMap.dispose();
         batch.dispose();
         clientUI.dispose();
