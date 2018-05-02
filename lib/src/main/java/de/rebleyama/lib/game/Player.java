@@ -1,9 +1,6 @@
 package de.rebleyama.lib.game;
 
-import de.rebleyama.lib.game.resources.Metal;
-import de.rebleyama.lib.game.resources.Resource;
-import de.rebleyama.lib.game.resources.Stone;
-import de.rebleyama.lib.game.resources.Wood;
+import de.rebleyama.lib.game.resources.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +20,7 @@ public class Player {
         resources.put(Metal.class, 0);
         resources.put(Stone.class, 0);
         resources.put(Wood.class, 0);
+        resources.put(Coal.class, 0);
     }
 
     /**
