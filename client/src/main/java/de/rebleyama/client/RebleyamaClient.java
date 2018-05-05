@@ -15,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import de.rebleyama.client.ui.ClientUI;
 
+
 public class RebleyamaClient extends ApplicationAdapter implements InputProcessor {
 
     private static final int TILESIZE = 40;
@@ -30,6 +31,7 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     //Global Vars for UI
     private ClientUI clientUI;
     private int postint;
+
 
 
     @Override
@@ -60,6 +62,8 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         InputMultiplexer inputMultiplexer = new InputMultiplexer(clientUI.getStage(), this, stage);
         Gdx.input.setInputProcessor(inputMultiplexer);
         clientUI.startcalcThread(camera);
+
+
 
     }
 
@@ -94,6 +98,10 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
         // UI Render Part
         clientUI.getStage().act(Gdx.graphics.getDeltaTime());
         clientUI.getStage().draw();
+
+
+
+
 
         //post-initialize
         if (postint == 0) {
@@ -229,11 +237,12 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     @Override
     public void dispose() {
         clientUI.endcalcThread();
-
-
         tiledMap.dispose();
         batch.dispose();
         clientUI.dispose();
+
+
+
     }
 
     /**

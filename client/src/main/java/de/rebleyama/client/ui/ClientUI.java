@@ -35,6 +35,8 @@ public class ClientUI implements Disposable {
     private Application gdxApp;
     private UIclacThread pixmalcalcer;
 
+
+
     //creation of array for Minimap Colors, last color is an error color
     private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE), Color.rgba8888(Color.RED)};
 
@@ -62,6 +64,8 @@ public class ClientUI implements Disposable {
         createMinimap();
         createESCMenu();
         createMap();
+
+
 
     }
 
@@ -173,7 +177,7 @@ public class ClientUI implements Disposable {
         // create window
         miniMapWindow = new Window("Minimap", skin);
 
-        //set postion of window (-size)
+                //set postion of window (-size)
         miniMapWindow.setPosition((float) (Gdx.graphics.getWidth() - 200), (float) (Gdx.graphics.getHeight() - 200));
 
         //set size of window
@@ -318,6 +322,9 @@ public class ClientUI implements Disposable {
      * @param camera of stage view
      */
     public void startcalcThread(OrthographicCamera camera) {
+
+
+        minipixmap.setColor(Color.RED);
 
         pixmalcalcer = new UIclacThread(camera, minipixmap, bigpixmap, minimap, gdxApp);
 
