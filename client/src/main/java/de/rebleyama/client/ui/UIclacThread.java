@@ -109,7 +109,6 @@ public class UIclacThread extends Thread {
 
             // TODO use xy from pixmap (create new pixmap with window xy -> translate xy postions -> change transPos with multiplyer[40])
 
-
         }
     }
 
