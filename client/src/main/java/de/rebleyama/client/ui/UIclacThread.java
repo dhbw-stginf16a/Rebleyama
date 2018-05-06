@@ -25,6 +25,18 @@ public class UIclacThread extends Thread {
     private int halfwindow = minimapXY / 4;
     private int lineWidth;
 
+    //pre calc values
+    private float transposX;
+    private float transposY;
+    private int recPositionMinusX;
+    private int recPositionPlusX;
+    private int recPositionMinusY;
+    private int recPositionPlusY;
+    private int recPosMinFullX;
+    private int recPosPlusFullX;
+    private int recPosMinFullY;
+    private int recPosPlusFullY;
+
     /**
      * @param camera     of the main stage
      * @param minipixmap pixmap of the minimap
@@ -55,7 +67,7 @@ public class UIclacThread extends Thread {
     /**
      * end thread
      */
-    void end()  {
+    void end() {
         this.running = false;
 
         this.interrupt();
@@ -70,119 +82,108 @@ public class UIclacThread extends Thread {
 
     @Override
     public void run() {
-        //local variables
-        float transposX;
-        float transposY;
-
-        int minimapXMid;
-        int minimapYMid;
-        int recHalfX;
-        int recHalfY;
-        int recPositionMinusX;
-        int recPositionPlusX;
-        int recPositionMinusY;
-        int recPositionPlusY;
-        int recPosMinFullX;
-        int recPosPlusFullX;
-        int recPosMinFullY;
-        int recPosPlusFullY;
-
         while (running) {
-            //select correct display variant
-            if ((camera.position.x / 40) < halfwindow + 1) {
-                transposX = 0;
-                minimapXMid = (int)(camera.position.x / 20);
-            } else {
-                transposX = (camera.position.x / 40) - halfwindow;
-                minimapXMid = minimapXY/2;
 
-            }
-
-
-            if ((camera.position.y / 40) < halfwindow + 1) {
-                transposY = 0;
-                minimapYMid = (int)(camera.position.y / 20);
-            } else {
-                transposY = (camera.position.y / 40) - halfwindow;
-                minimapYMid = minimapXY/2;
-
-            }
-
-            transposX = transposX * 2;
-            transposY = transposY * 2;
-            gdxApp.log("Test","X: "+minimapXMid+"| Y: "+minimapYMid);
-
-            //anzahl an tiles für standard breite herausfinden
-
-
-            //variables for position rectangle calculation
-            //amount of view tiles
-            recHalfX = (int)((camera.viewportWidth *  camera.zoom)/40);
-            recHalfY = (int)((camera.viewportHeight *  camera.zoom)/40);
-
-            //position of rect lines
-            recPositionMinusX = minimapXMid-recHalfX;
-            recPositionPlusX = minimapXMid+recHalfX;
-
-            recPositionMinusY = minimapYMid-recHalfY;
-            recPositionPlusY = minimapYMid+recHalfY;
-            //postion + witdh
-            recPosMinFullX = recPositionMinusX-lineWidth;
-            recPosPlusFullX = recPositionPlusX+lineWidth;
-
-            recPosMinFullY = recPositionMinusY-lineWidth;
-            recPosPlusFullY = recPositionPlusY+lineWidth;
-
-
-
+            preCalc();
 
             //redraw pixmap
             for (int y = 0; y <= minimapXY; y++) {
                 for (int x = 0; x <= minimapXY; x++) {
-
-                    if      (
-                            (((x <= recPositionMinusX && x >recPosMinFullX) || (x >= recPositionPlusX && x <recPosPlusFullX)) && y < recPosPlusFullY && y > recPosMinFullY)
-                            ||
-                            (((y <= recPositionMinusY && y >recPosMinFullY) || (y >= recPositionPlusY && y <recPosPlusFullY)) && x < recPosPlusFullX && x > recPosMinFullX)
-                            )
-                    {
-
-                        minipixmap.drawPixel(x, minimapXY - y, Color.rgba8888(Color.BLACK));
-
-                    }else {
-                        minipixmap.drawPixel(x, minimapXY - y, bigpixmap.getPixel((int) transposX + x, 1024 - ((int) transposY + y)));
-                    }
-
-
+                    pixmapClac(x,y);
                 }
             }
-
 
 
             //Send to gdx render
             gdxApp.postRunnable(() -> minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minipixmap)))));
 
 
-
-
-            /*
-
-            //Possible to use this for less computing
-
+            //This reduces CPU load
             try {
-                sleep(2);
+                //keep between 15 (ca. 60fps) and 27 (ca. 30 fps)
+                sleep(20);
             } catch (InterruptedException e) {
-                Gdx.app.log("Minimap Calculator Thread", e.toString());
+                gdxApp.log("Minimap Calculator Thread", e.toString());
                 this.interrupt();
             }
-            */
-            // TODO use xy from pixmap (create new pixmap with window xy -> translate xy postions -> change transPos with multiplyer[40])
-            //TODO on each site problem (too much tiles on top area of minimap)
 
-            //TODO add thread start/close to all minimap window visiblity settings (map + xbutton + m)
+            // TODO use xy from pixmap (create new pixmap with window xy -> translate xy postions -> change transPos with multiplyer[40])
 
 
         }
     }
 
+    /**
+     * pre Calculates values for pixmap calculation (reduces cognitive complexity)
+     */
+    private void preCalc(){
+        //select correct display variant for X
+        int minimapXMid;
+        if ((camera.position.x / 40) < halfwindow + 1) {
+            transposX = 0;
+            minimapXMid = (int) (camera.position.x / 20);
+        } else if ((camera.position.x / 40) > minimapXY - halfwindow) {
+            transposX = (float) (minimapXY - halfwindow * 2);
+            minimapXMid = (int)((camera.position.x / 20) - minimapXY);
+        } else {
+            transposX = (camera.position.x / 40) - halfwindow;
+            minimapXMid = minimapXY / 2;
+
+        }
+
+
+        //Y
+        int minimapYMid;
+        if ((camera.position.y / 40) < halfwindow + 1) {
+            transposY = 0;
+            minimapYMid = (int) (camera.position.y / 20);
+        } else if ((camera.position.y / 40) > minimapXY - halfwindow) {
+            transposY = (float) (minimapXY - halfwindow * 2);
+            minimapYMid = (int)((camera.position.y / 20) - minimapXY);
+        } else {
+            transposY = (camera.position.y / 40) - halfwindow;
+            minimapYMid = minimapXY / 2;
+
+        }
+
+        //transform to bigmap
+        transposX = transposX * 2;
+        transposY = transposY * 2;
+
+
+        //variables for position rectangle calculation
+        //amount of view tiles
+        int recHalfX = (int) ((camera.viewportWidth * camera.zoom) / 40);
+        int recHalfY = (int) ((camera.viewportHeight * camera.zoom) / 40);
+
+        //position of rect lines
+        recPositionMinusX = minimapXMid - recHalfX;
+        recPositionPlusX = minimapXMid + recHalfX;
+
+        recPositionMinusY = minimapYMid - recHalfY;
+        recPositionPlusY = minimapYMid + recHalfY;
+        //postion + witdh
+        recPosMinFullX = recPositionMinusX - lineWidth;
+        recPosPlusFullX = recPositionPlusX + lineWidth;
+
+        recPosMinFullY = recPositionMinusY - lineWidth;
+        recPosPlusFullY = recPositionPlusY + lineWidth;
+    }
+
+    /**
+     * all needed pixmap calculations
+     * @param x position in minimap
+     * @param y position in minimap
+     */
+    private void pixmapClac(int x, int y){
+        if ((((x <= recPositionMinusX && x > recPosMinFullX) || (x >= recPositionPlusX && x < recPosPlusFullX)) && y < recPosPlusFullY && y > recPosMinFullY)
+                ||
+                (((y <= recPositionMinusY && y > recPosMinFullY) || (y >= recPositionPlusY && y < recPosPlusFullY)) && x < recPosPlusFullX && x > recPosMinFullX)) {
+
+            minipixmap.drawPixel(x, minimapXY - y, Color.rgba8888(Color.BLACK));
+
+        } else {
+            minipixmap.drawPixel(x, minimapXY - y, bigpixmap.getPixel((int) transposX + x, 1024 - ((int) transposY + y)));
+        }
+    }
 }

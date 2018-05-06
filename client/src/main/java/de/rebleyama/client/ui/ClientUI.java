@@ -34,16 +34,17 @@ public class ClientUI implements Disposable {
     private Image minimap;
     private Application gdxApp;
     private UIclacThread pixmalcalcer;
-
+    private OrthographicCamera camera;
 
 
     //creation of array for Minimap Colors, last color is an error color
     private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE), Color.rgba8888(Color.RED)};
 
     // create methods
-    public ClientUI(TiledMap tiledmap, Application gdxApp) {
+    public ClientUI(TiledMap tiledmap, Application gdxApp,OrthographicCamera camera) {
         this.tiledMap = tiledmap;
         this.gdxApp = gdxApp;
+        this.camera = camera;
         //Calls method that is responsible to create UI elements
         createUI();
     }
@@ -59,6 +60,7 @@ public class ClientUI implements Disposable {
         //create pixmaps
         bigpixmap = createPixmap(1024, true);
         minipixmap = new Pixmap(512, 512, Pixmap.Format.RGBA8888);
+        minipixmap.setColor(Color.RED);
 
         //Create UI Elements here
         createMinimap();
@@ -105,6 +107,9 @@ public class ClientUI implements Disposable {
                 miniMapWindow.setVisible(!miniMapWindow.isVisible());
                 if (miniMapWindow.isVisible()) {
                     miniMapWindow.toFront();
+                    startcalcThread();
+                }else {
+                    endcalcThread();
                 }
             }
         });
@@ -166,6 +171,7 @@ public class ClientUI implements Disposable {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 window.setVisible(false);
+
             }
         });
     }
@@ -185,9 +191,21 @@ public class ClientUI implements Disposable {
         //create image
         minimap = new Image();
 
-        //add Xbuton in top bar of minimap
-        createXButton(miniMapWindow);
+        //add Xbuton in top bar of minimap with extras
+        final TextButton buttonX = new TextButton("X", skin);
+        //ad butto to top bar of window
+        miniMapWindow.getTitleTable().add(buttonX).height(miniMapWindow.getPadTop());
+        //setup event listener for X button
+        buttonX.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                miniMapWindow.setVisible(false);
 
+                //close render
+                endcalcThread();
+
+            }
+        });
 
         //aspect ratio button
         final TextButton buttonScale = new TextButton("+", skin);
@@ -319,15 +337,9 @@ public class ClientUI implements Disposable {
     /**
      * starts the thread which calculates the pixmap changes
      *
-     * @param camera of stage view
      */
-    public void startcalcThread(OrthographicCamera camera) {
-
-
-        minipixmap.setColor(Color.RED);
-
+    public void startcalcThread() {
         pixmalcalcer = new UIclacThread(camera, minipixmap, bigpixmap, minimap, gdxApp);
-
         pixmalcalcer.begin();
 
     }

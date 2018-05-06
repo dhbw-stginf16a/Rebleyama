@@ -56,12 +56,12 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
         Stage stage = new TiledMapStage(tiledMap);
         //create ui class
-        clientUI = new ClientUI(tiledMap, Gdx.app);
+        clientUI = new ClientUI(tiledMap, Gdx.app,camera);
 
         //Creation of a Multiplexer which allows multi layer event handling (UI Layer and TiledMap Layer) (UI layer needs to be first ORDER IS IMPORTANT)
         InputMultiplexer inputMultiplexer = new InputMultiplexer(clientUI.getStage(), this, stage);
         Gdx.input.setInputProcessor(inputMultiplexer);
-        clientUI.startcalcThread(camera);
+        clientUI.startcalcThread();
 
 
 
@@ -121,7 +121,13 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
     @Override
     public void resize(int width, int height) {
         clientUI.stageResize(width, height);
+
+        //workaround for camera position reset
+        float tmpx = camera.position.x;
+        float tmpy = camera.position.y;
+        float tmpz = camera.position.z;
         camera.setToOrtho(false, width, height);
+        camera.position.set(tmpx,tmpy,tmpz);
 
     }
 
