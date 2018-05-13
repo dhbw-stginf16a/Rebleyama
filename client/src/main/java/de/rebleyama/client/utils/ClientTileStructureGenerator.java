@@ -23,38 +23,6 @@ public class ClientTileStructureGenerator {
     }
 
     /**
-     * Generate a DataInfusedTileMap using a TiledMap.
-     * @deprecated Only for debugging and testing purposes.
-     *             Will be removed after generation of TileMaps is no longer needed
-     *             because maps are no longer loaded with TMX but with auto generation.
-     * @param tiledMap The tiledMap that we should get the tile information from.
-     * @return A list of lists of Tiles. Please note that the coordinate system between
-     *         libGDX and Tiled differs: (0;0) is the lower left corner in libGDX, while in
-     *         Tiled, it is the upper left corner. This method will use libGDX indexes.
-     */
-    @Deprecated
-    public static DataInfusedTileMap generateTiles(TiledMap tiledMap) {
-        //Get the layer
-        final TiledMapTileLayer tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Ground");
-
-        //check if layer is valid
-        if (tileLayer == null) {
-            throw new IllegalArgumentException("The specified TiledMap does not contain an appropriate layer!");
-        }
-
-        //iterate through the map
-        final int height = tileLayer.getHeight();
-        final int width = tileLayer.getWidth();
-
-        //generate temp object
-        DataInfusedTileMap result = new DataInfusedTileMap(width, height);
-
-        putTilesInMap(result, tiledMap);
-
-        return result;
-    }
-
-    /**
      * Reads the terrain mapping out of a TSX Tileset File.
      * @param rootElem The root of the TSX XML DOM ({@code <tileset>})
      * @return A map from terrain IDs to TileTypes. {@code null} if a problem occured.
@@ -109,26 +77,5 @@ public class ClientTileStructureGenerator {
         return null;
     }
 
-    public static void putTilesInMap(TileMap destination, TiledMap source) {
-        //Get the layer
-        final TiledMapTileLayer tileLayer = (TiledMapTileLayer) source.getLayers().get("Ground");
 
-        //check if layer is valid
-        if (tileLayer == null) {
-            throw new IllegalArgumentException("The specified TiledMap does not contain an appropriate layer!");
-        }
-
-        //iterate through the map
-        final int height = tileLayer.getHeight();
-        final int width = tileLayer.getWidth();
-
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; y++) {
-                TiledMapTile tile = tileLayer.getCell(x, y).getTile();
-                TileType tileType = (TileType) tile.getProperties().get("rebleyamaTerrain");
-
-                destination.setTile(x, y, new Tile(tileType, x, y));
-            }
-        }
-    }
 }
