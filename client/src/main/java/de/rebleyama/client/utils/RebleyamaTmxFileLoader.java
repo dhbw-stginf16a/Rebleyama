@@ -1,5 +1,6 @@
 package de.rebleyama.client.utils;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.ImageResolver;
@@ -33,8 +34,7 @@ public class RebleyamaTmxFileLoader extends TmxMapLoader {
 
             if (terrains != null) {
                 //Generate a terrain to TileType mapping
-                Map<Integer, TileType> terrainMapping =
-                        ClientTileStructureGenerator.readTerrainIdToTileTypeMappingFromTSX(element);
+                Map<Integer, TileType> terrainMapping = readTerrainIdToTileTypeMappingFromTSX(element);
                 TiledMapTileSet tileSet = map.getTileSets().getTileSet(element.get("name", null));
                 tileSet.getProperties().put("rebleyamaTerrainMapping", terrainMapping);
 
@@ -97,4 +97,60 @@ public class RebleyamaTmxFileLoader extends TmxMapLoader {
 
         return result;
     }
+
+    /**
+     * Reads the terrain mapping out of a TSX Tileset File.
+     * @param rootElem The root of the TSX XML DOM ({@code <tileset>})
+     * @return A map from terrain IDs to TileTypes. {@code null} if a problem occured.
+     */
+    private Map<Integer, TileType> readTerrainIdToTileTypeMappingFromTSX(XmlReader.Element rootElem) {
+        //check if it really is a TSX file
+        if (!rootElem.getName().equals("tileset")) {
+            return null;
+        }
+
+        XmlReader.Element terrains = rootElem.getChildByName("terraintypes");
+        if (terrains != null) {
+
+            Array<XmlReader.Element> terrainArray = terrains.getChildrenByName("terrain");
+            Map<Integer, TileType> terrainMapping = new HashMap<Integer, TileType>(10, 0.8f);
+
+            for (int i = 0; i < terrainArray.size; ++i) {
+                switch (terrainArray.get(i).get("name")) {
+                    case "Stone":
+                        terrainMapping.put(i, TileType.MOUNTAINS);
+                        break;
+                    case "Iron":
+                        terrainMapping.put(i, TileType.IRON);
+                        break;
+                    case "Coal":
+                        terrainMapping.put(i, TileType.COAL);
+                        break;
+                    case "Sand":
+                        terrainMapping.put(i, TileType.DESERT);
+                        break;
+                    case "Shallow Water":
+                        terrainMapping.put(i, TileType.SHALLOW_WATER);
+                        break;
+                    case "Deep Water":
+                        terrainMapping.put(i, TileType.RIVER);
+                        break;
+                    case "Forrest": //sic!, TODO: FIX IN TILESET
+                        terrainMapping.put(i, TileType.FOREST);
+                        break;
+                    case "Grass":
+                        terrainMapping.put(i, TileType.GRASSLANDS);
+                        break;
+                    default:
+                        Gdx.app.log("FIXME", "One of the terrains is not mapped to a TileType!");
+                        terrainMapping.put(i, TileType.GRASSLANDS);
+                }
+            }
+
+            return terrainMapping;
+        }
+
+        return null;
+    }
+
 }
