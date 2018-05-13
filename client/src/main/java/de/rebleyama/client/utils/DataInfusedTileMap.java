@@ -8,7 +8,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.GdxRuntimeException;
 import de.rebleyama.lib.game.Tile;
 import de.rebleyama.lib.game.TileMap;
 import de.rebleyama.lib.game.TileType;
