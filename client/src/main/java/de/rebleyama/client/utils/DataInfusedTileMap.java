@@ -8,6 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import de.rebleyama.lib.game.Tile;
 import de.rebleyama.lib.game.TileMap;
 import de.rebleyama.lib.game.TileType;
@@ -159,7 +160,12 @@ public class DataInfusedTileMap extends TileMap implements Disposable {
                 TiledMapTile tile = tileLayer.getCell(x, y).getTile();
                 TileType tileType = (TileType) tile.getProperties().get("rebleyamaTerrain");
 
-                setTile(x, y, new Tile(tileType, x, y));
+                if (tileType == null) {
+                    throw new NullPointerException("The rebleyamaTerrain of a tile in the TileMap has not been set." +
+                            "Please use this class only for TiledMaps loaded with our RebleyamaTmxFileLoader!");
+                }
+
+                super.setTile(x, y, new Tile(tileType, x, y));
             }
         }
     }
