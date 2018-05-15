@@ -299,6 +299,8 @@ public class ClientUI implements Disposable {
         //create Pixmap
         Pixmap tmppixmap = new Pixmap(minimapXY, minimapXY, Pixmap.Format.RGBA8888);
         //get our tiledMap layer
+
+
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
         //loop through all map (for each tile)
         for (int x = 0; x < layer.getWidth(); x++) {
@@ -331,6 +333,7 @@ public class ClientUI implements Disposable {
             }
             pX += 2;
         }
+
         //tmppixmap gets disposed by java
         return tmppixmap;
     }

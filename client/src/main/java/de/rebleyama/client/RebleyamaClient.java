@@ -62,7 +62,7 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
         tileCamera.position.y = MAPSIZE_PIXELS / 2;
 
         //create ui class
-        clientUI = new ClientUI(tiledMap, Gdx.app,camera);
+        clientUI = new ClientUI(tiledMap, Gdx.app,tileCamera);
 
         //Creation of a Multiplexer which allows multi layer event handling (UI Layer and TiledMap Layer) (UI layer needs to be first ORDER IS IMPORTANT)
         InputMultiplexer inputMultiplexer = new InputMultiplexer(clientUI.getStage(),this, tiledMapStage);
@@ -109,7 +109,7 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
 
         //post-initialize
         if (postint == 0) {
-            camera.position.set(10240, 10240, 1);
+            tileCamera.position.set(10240, 10240, 1);
             postint++;
         }
     }
@@ -147,11 +147,11 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
         tiledMapStage.getViewport().update((int) w, (int) h, true);
 
         //workaround for camera position reset
-        float tmpx = camera.position.x;
-        float tmpy = camera.position.y;
-        float tmpz = camera.position.z;
-        camera.setToOrtho(false, width, height);
-        camera.position.set(tmpx,tmpy,tmpz);
+        float tmpx = tileCamera.position.x;
+        float tmpy = tileCamera.position.y;
+        float tmpz = tileCamera.position.z;
+        tileCamera.setToOrtho(false, width, height);
+        tileCamera.position.set(tmpx,tmpy,tmpz);
 
     }
 
