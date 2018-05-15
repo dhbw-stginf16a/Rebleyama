@@ -6,25 +6,11 @@
  * user guide available at https://docs.gradle.org/4.6/userguide/tutorial_java_projects.html
  */
 
-task run {
-    dependsOn "client:run"
-}
-
-task build {
-    dependsOn "client:build"
-}
-
-task assemble {
-    dependsOn "client:assemble"
-}
-
-task check {
-    dependsOn "client:check"
-}
-
-task sonarqube {
-    dependsOn "client:sonarqube"
-}
+task run(dependsOn: "client:run")
+task build(dependsOn: "client:build")
+task assemble(dependsOn: "client:assemble")
+task check(dependsOn: "client:check")
+task sonarqube(dependsOn: "client:sonarqube")
 
  subprojects {
     task "create-dirs" {

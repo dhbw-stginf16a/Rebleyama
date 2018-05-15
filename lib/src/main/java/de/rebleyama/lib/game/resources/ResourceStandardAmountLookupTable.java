@@ -22,4 +22,8 @@ public class ResourceStandardAmountLookupTable {
      * The standard amount of metal.
      */
     public static final int AMOUNT_METAL = 2000;
+    /**
+     * The standard amount of coke.
+     */
+    public static final int AMOUNT_COAL = 2000;
 }
