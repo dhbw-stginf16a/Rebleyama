@@ -17,11 +17,15 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import de.rebleyama.client.ui.TileColor;
+import de.rebleyama.client.utils.DataInfusedTileMap;
+import de.rebleyama.lib.game.TileType;
+
+import static de.rebleyama.lib.game.TileType.*;
 
 
 public class ClientUI implements Disposable {
     //Global Variables from Client CLass
-    private TiledMap tiledMap;
+    private DataInfusedTileMap tiledMap;
 
     //Global Variable for UI
     private Stage stage;
@@ -39,10 +43,10 @@ public class ClientUI implements Disposable {
 
 
     //creation of array for Minimap Colors, last color is an error color
-        private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE), Color.rgba8888(Color.RED)};
+    private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE), Color.rgba8888(Color.RED)};
 
     // create methods
-    public ClientUI(TiledMap tiledmap, Application gdxApp,OrthographicCamera camera) {
+    public ClientUI(DataInfusedTileMap tiledmap, Application gdxApp, OrthographicCamera camera) {
         this.tiledMap = tiledmap;
         this.gdxApp = gdxApp;
         this.camera = camera;
@@ -68,7 +72,6 @@ public class ClientUI implements Disposable {
         createMinimap();
         createESCMenu();
         createMap();
-
 
 
     }
@@ -110,7 +113,7 @@ public class ClientUI implements Disposable {
                 if (miniMapWindow.isVisible()) {
                     miniMapWindow.toFront();
                     startcalcThread();
-                }else {
+                } else {
                     endcalcThread();
                 }
             }
@@ -186,7 +189,7 @@ public class ClientUI implements Disposable {
         // create window
         miniMapWindow = new Window("Minimap", skin);
 
-                //set postion of window (-size)
+        //set postion of window (-size)
         miniMapWindow.setPosition((float) (Gdx.graphics.getWidth() - 200), (float) (Gdx.graphics.getHeight() - 200));
 
         //set size of window
@@ -298,35 +301,30 @@ public class ClientUI implements Disposable {
 
         //create Pixmap
         Pixmap tmppixmap = new Pixmap(minimapXY, minimapXY, Pixmap.Format.RGBA8888);
-        //get our tiledMap layer
 
 
-        TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
         //loop through all map (for each tile)
-        for (int x = 0; x < layer.getWidth(); x++) {
+        for (int x = 0; x < tiledMap.getWidth(); x++) {
             pY = 0;
-            for (int y = 0; y < layer.getHeight(); y++) {
+            for (int y = 0; y < tiledMap.getHeight(); y++) {
+                //get tiletype of current cell
+                int tmpColor = tileColorSelect(tiledMap.getTile(x, y).getType());
 
-                //get current cell id
-                int tmpid = layer.getCell(x, y).getTile().getId();
-                //set color of pixmap pixel similar to the color of the tile on our tiledmap
+                //create a rectangle of 2px x 2px
+                tmppixmap.drawPixel(pX, minimapXY - pY, tmpColor);
 
-                if (tmpid <= minimapcolors.length) {
-                    int tmpColor = minimapcolors[tmpid - 1];
+                tmppixmap.drawPixel(pX + 1, minimapXY - pY, tmpColor);
 
-                        //create a rectangle of 2px x 2px
-                        tmppixmap.drawPixel(pX, minimapXY - pY, tmpColor);
+                tmppixmap.drawPixel(pX, minimapXY - ++pY, tmpColor);
 
-                        tmppixmap.drawPixel(pX + 1, minimapXY - pY, tmpColor);
+                tmppixmap.drawPixel(pX + 1, minimapXY - pY, tmpColor);
 
-                        tmppixmap.drawPixel(pX, minimapXY - ++pY, tmpColor);
-
-                        tmppixmap.drawPixel(pX + 1, minimapXY - pY, tmpColor);
-
-                } else {
-                    //Changer Logger/Error exception if uniform method is used
-                    Gdx.app.log("Pixmap_creation", "ERROR - Color ID Unknown. ID: " + tmpid);
+                if(tmpColor == Color.rgba8888(Color.RED)){
+                    Gdx.app.log("Pixmap_creation", "ERROR - Color ID Unknown. Tile: (" + x+"|"+y+")");
                 }
+
+
+                //Changer Logger/Error exception if uniform method is used
 
 
                 pY++;
@@ -340,16 +338,27 @@ public class ClientUI implements Disposable {
 
     /**
      * Selects correct TileType
+     *
      * @return int of Tile Color
      */
-    private int tileColorSelect(){
-        return 0;
+    private int tileColorSelect(TileType tileType) {
+        switch (tileType) {
+            case COAL:  return TileColor.COAL.getColor();
+            case DESERT: return TileColor.DESERT.getColor();
+            case FOREST:  return TileColor.FOREST.getColor();
+            case MOUNTAINS:  return TileColor.MOUNTAINS.getColor();
+            case SHALLOW_WATER:  return TileColor.SHALLOW_WATER.getColor();
+            case RIVER:  return TileColor.RIVER.getColor();
+            case GRASSLANDS:  return TileColor.GRASSLANDS.getColor();
+            case IRON:  return TileColor.IRON.getColor();
+            default: return Color.rgba8888(Color.RED);
+        }
+
     }
 
 
     /**
      * starts the thread which calculates the pixmap changes
-     *
      */
     public void startcalcThread() {
         pixmalcalcer = new UIclacThread(camera, minipixmap, bigpixmap, minimap, gdxApp);
