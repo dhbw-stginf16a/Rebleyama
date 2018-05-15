@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -35,6 +37,7 @@ public class ClientUI implements Disposable {
     private Window miniMapWindow;
     private Window mapWindow;
     private Window escMenuWindow;
+    private Window aboutWindow;
     private Image map;
     private Image minimap;
     private Application gdxApp;
@@ -52,6 +55,7 @@ public class ClientUI implements Disposable {
         this.camera = camera;
         //Calls method that is responsible to create UI elements
         createUI();
+
     }
 
     /**
@@ -70,9 +74,10 @@ public class ClientUI implements Disposable {
 
         //Create UI Elements here
         createMinimap();
-        createESCMenu();
+        createAbout();
         createMap();
 
+        createESCMenu();
 
     }
 
@@ -86,7 +91,7 @@ public class ClientUI implements Disposable {
         final TextButton buttonExit = new TextButton("Continue", skin);
         final TextButton change = new TextButton("ChangePixel_TEST", skin);
         final TextButton exit = new TextButton("Exit", skin);
-
+        final TextButton buttonAbout = new TextButton("About", skin);
 
         escMenuWindow = new Window("Menu", skin);
         createXButton(escMenuWindow);
@@ -98,6 +103,8 @@ public class ClientUI implements Disposable {
         escMenuWindow.add(change);
         escMenuWindow.row().fill().expandX();
         escMenuWindow.add(buttonExit);
+        escMenuWindow.row().fill().expandX();
+        escMenuWindow.add(buttonAbout);
         escMenuWindow.row().fill().expandX();
         escMenuWindow.add(exit);
         escMenuWindow.pack();
@@ -160,6 +167,111 @@ public class ClientUI implements Disposable {
             }
         });
 
+        buttonAbout.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                aboutWindow.setVisible(!aboutWindow.isVisible());
+                if (aboutWindow.isVisible()) {
+                    aboutWindow.toFront();
+                }
+            }
+        });
+    }
+
+    /**
+     * creates the about window
+     */
+    private void createAbout() {
+        //create window
+        aboutWindow = new Window("About", skin);
+        createXButton(aboutWindow);
+
+        //create Image and sets size
+        Texture texture = new Texture(Gdx.files.internal("assets/textures/logo/titlebannerFullRes.jpg"));
+        Image image1 = new Image(texture);
+        image1.setSize(texture.getWidth() / 3, texture.getHeight() / 2);
+
+        //label with titel
+        Label titel = new Label("Rebleyama Version 0.01", skin);
+        titel.setAlignment(Align.center);
+
+        //labels with short description
+        Label description = new Label("A simple strategic Open Source Game", skin);
+        description.setAlignment(Align.center);
+
+        //label with disclaimer
+        Label disclaimer = new Label("Rebleyama is a non-commercial product and was created \n  as part of a student project at the DHBW Stuttgart", skin);
+        disclaimer.setAlignment(Align.center);
+        disclaimer.setWrap(true);
+
+        //label with copyright
+        Label copyright = new Label("Copyright © 2018 Licensed under GNU General Public License v3.0", skin);
+        copyright.setAlignment(Align.center);
+
+        //label with contributors
+        Label contributors = new Label("Contributors:             Jan-Robin Aumann, Ivan Bogicevic, Paul Thore Flachbart, \n                                    Lennard Oswald Purucker, Alexander Tobias Marstaller, \n                                    Johanna Sommer, Thore Kruess , Alex Schaefer, Cathleen \n                                    Schmalfuss, Dorian Czichotzki, Daniel Rutz", skin);
+        contributors.setAlignment(Align.left);
+        contributors.setWrap(true);
+
+        //label for the license
+        Label license = new Label("License:                     https://www.gnu.org/licenses/gpl-3.0.en.html", skin);
+        license.setAlignment(Align.left);
+        license.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.net.openURI("https://www.gnu.org/licenses/gpl-3.0.en.html");
+                return true;
+            }
+        });
+
+        //label for github page
+        Label github = new Label("Github-Project:         https://github.com/dhbw-stginf16a/Rebleyama", skin);
+        github.setAlignment(Align.left);
+        github.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.net.openURI("https://github.com/dhbw-stginf16a/Rebleyama");
+                return true;
+            }
+        });
+
+        //label for libraries
+        Label libraries = new Label("Used Libraries:         libGDX", skin);
+        libraries.setAlignment(Align.left);
+
+        //creates Table, adds Labels and image and partly sets the size
+        Table table = new Table();
+        table.add(image1).height((float) (Gdx.graphics.getHeight() * 0.2)).width((float) (Gdx.graphics.getWidth() * 0.3));
+        table.row();
+        table.add(titel);
+        table.row();
+        table.add(description);
+        table.row();
+        table.add(disclaimer).width((float) (Gdx.graphics.getWidth() * 0.35));
+        table.row();
+        table.add(copyright).width((float) (Gdx.graphics.getWidth() * 0.4));
+        table.row();
+        table.add(contributors).width((float) (Gdx.graphics.getWidth() * 0.45));
+        table.row();
+        table.add(license).width((float) (Gdx.graphics.getWidth() * 0.45));
+        table.row();
+        table.add(github).width((float) (Gdx.graphics.getWidth() * 0.45));
+        table.row();
+        table.add(libraries).width((float) (Gdx.graphics.getWidth() * 0.45));
+        table.row();
+
+        //fill inside of window with table
+        aboutWindow.add(table);
+
+        //set size of window
+        aboutWindow.setSize((float) (Gdx.graphics.getWidth() * 0.5), (float) (Gdx.graphics.getHeight() * 0.65));
+
+        //set position of window in the middle
+        aboutWindow.setPosition((float) (Gdx.graphics.getWidth() / 2.0) - aboutWindow.getWidth() / 2, (float) (Gdx.graphics.getHeight() / 2.0) - aboutWindow.getHeight() / 2);
+
+        //add aboutWindow to ui stage
+        stage.addActor(aboutWindow);
+
+        //hides Window on start
+        aboutWindow.setVisible(false);
     }
 
     /**
@@ -222,7 +334,6 @@ public class ClientUI implements Disposable {
             float oldWidth;
             float newwidth;
 
-
             @Override
             public void drag(InputEvent event, float x, float y, int pointer) {
                 oldY = miniMapWindow.getY();
@@ -256,8 +367,6 @@ public class ClientUI implements Disposable {
         stack.add(minimap);
         overlay.add(buttonScale).expand().bottom().left();
         stack.add(overlay);
-
-
         miniMapWindow.add(stack);
         //add minimap to ui stage
         stage.addActor(miniMapWindow);
@@ -319,8 +428,8 @@ public class ClientUI implements Disposable {
 
                 tmppixmap.drawPixel(pX + 1, minimapXY - pY, tmpColor);
 
-                if(tmpColor == Color.rgba8888(Color.RED)){
-                    Gdx.app.log("Pixmap_creation", "ERROR - Color ID Unknown. Tile: (" + x+"|"+y+")");
+                if (tmpColor == Color.rgba8888(Color.RED)) {
+                    Gdx.app.log("Pixmap_creation", "ERROR - Color ID Unknown. Tile: (" + x + "|" + y + ")");
                 }
 
 
@@ -343,15 +452,24 @@ public class ClientUI implements Disposable {
      */
     private int tileColorSelect(TileType tileType) {
         switch (tileType) {
-            case COAL:  return TileColor.COAL.getColor();
-            case DESERT: return TileColor.DESERT.getColor();
-            case FOREST:  return TileColor.FOREST.getColor();
-            case MOUNTAINS:  return TileColor.MOUNTAINS.getColor();
-            case SHALLOW_WATER:  return TileColor.SHALLOW_WATER.getColor();
-            case RIVER:  return TileColor.RIVER.getColor();
-            case GRASSLANDS:  return TileColor.GRASSLANDS.getColor();
-            case IRON:  return TileColor.IRON.getColor();
-            default: return Color.rgba8888(Color.RED);
+            case COAL:
+                return TileColor.COAL.getColor();
+            case DESERT:
+                return TileColor.DESERT.getColor();
+            case FOREST:
+                return TileColor.FOREST.getColor();
+            case MOUNTAINS:
+                return TileColor.MOUNTAINS.getColor();
+            case SHALLOW_WATER:
+                return TileColor.SHALLOW_WATER.getColor();
+            case RIVER:
+                return TileColor.RIVER.getColor();
+            case GRASSLANDS:
+                return TileColor.GRASSLANDS.getColor();
+            case IRON:
+                return TileColor.IRON.getColor();
+            default:
+                return Color.rgba8888(Color.RED);
         }
 
     }
@@ -410,6 +528,7 @@ public class ClientUI implements Disposable {
         resizeWindow(width, height, miniMapWindow);
         resizeWindow(width, height, escMenuWindow);
         resizeWindow(width, height, mapWindow);
+        resizeWindow(width, height, aboutWindow);
 
         //update viewport of stage
         stage.getViewport().update(width, height, true);
