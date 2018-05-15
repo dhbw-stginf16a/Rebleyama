@@ -42,7 +42,7 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
     public void create() {
         //load the map
         //also available: ../client/assets/custommaps/testMap.tmx
-        tiledMap = new RebleyamaTmxFileLoader().load("../client/assets/custommaps/500x500TestMap.tmx");
+        tiledMap = new RebleyamaTmxFileLoader().load("../client/assets/custommaps/512x512TestMap.tmx");
         tileMap = new DataInfusedTileMap(tiledMap);
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tileMap.getTiledMap());
         tiledMapStage = new TileMapStage(tileMap, worldViewport);
