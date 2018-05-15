@@ -13,6 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import de.rebleyama.client.utils.DataInfusedTileMap;
 import de.rebleyama.client.utils.RebleyamaTmxFileLoader;
+import de.rebleyama.client.ui.ClientUI;
+
 
 public class RebleyamaClient extends ApplicationAdapter implements ApplicationListener, InputProcessor {
 
@@ -37,9 +39,13 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
 
     //Global Vars for UI
     private ClientUI clientUI;
+    private int postint;
+
+
 
     @Override
     public void create() {
+        postint = 0;
         //load the map
         //also available: ../client/assets/custommaps/testMap.tmx
         tiledMap = new RebleyamaTmxFileLoader().load("../client/assets/custommaps/512x512TestMap.tmx");
@@ -56,11 +62,13 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
         tileCamera.position.y = MAPSIZE_PIXELS / 2;
 
         //create ui class
-        // clientUI = new ClientUI(tileMap.getTiledMap());
+        clientUI = new ClientUI(tileMap, Gdx.app,tileCamera);
 
         //Creation of a Multiplexer which allows multi layer event handling (UI Layer and TiledMap Layer) (UI layer needs to be first ORDER IS IMPORTANT)
-        InputMultiplexer inputMultiplexer = new InputMultiplexer(this, tiledMapStage);
+        InputMultiplexer inputMultiplexer = new InputMultiplexer(clientUI.getStage(),this, tiledMapStage);
         Gdx.input.setInputProcessor(inputMultiplexer);
+        clientUI.startcalcThread();
+
 
     }
 
@@ -90,9 +98,20 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
         tiledMapRenderer.setView(tileCamera);
         tiledMapStage.draw();
 
+
         // UI Render Part
-        // clientUI.getStage().act(Gdx.graphics.getDeltaTime());
-        // clientUI.getStage().draw();
+        clientUI.getStage().act(Gdx.graphics.getDeltaTime());
+        clientUI.getStage().draw();
+
+
+
+
+
+        //post-initialize
+        if (postint == 0) {
+            tileCamera.position.set(10240, 10240, 1);
+            postint++;
+        }
     }
 
     //start event methods
@@ -105,7 +124,7 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
      */
     @Override
     public void resize(int width, int height) {
-        // clientUI.stageResize(width, height);
+        clientUI.stageResize(width, height);
 
         // calculate new viewport
         float aspectRatio = (float) width / (float) height;
@@ -126,6 +145,9 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
         viewport = new Rectangle(crop.x, crop.y, w, h);
 
         tiledMapStage.getViewport().update((int) w, (int) h, true);
+
+
+
     }
 
     /**
@@ -138,12 +160,12 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
     public boolean keyDown(int keycode) {
         //If ESC is pressed, show Menu
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            // clientUI.uiKeypressed("escMenuWindow");
+            clientUI.uiKeypressed("escMenuWindow");
             return true;
         }
         //If m is pressed, show Map
         if (Gdx.input.isKeyPressed(Input.Keys.M)) {
-            // clientUI.uiKeypressed("mapWindow");
+            clientUI.uiKeypressed("mapWindow");
             return true;
         }
         return false;
@@ -152,6 +174,7 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
     /**
      * Stub method for recognizing keypress
      * This triggers when any key is released
+     *
      * @param keycode keycode of the key that was released
      */
     @Override
@@ -181,6 +204,7 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
             onLeftMouseDown(screenX, screenY);
         }
         return false;
+
     }
 
     /**
@@ -201,6 +225,7 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
         return false;
     }
 
+
     /**
      * Stub method for recognizing mouse movement
      * This triggers when the mouse is moved
@@ -213,6 +238,7 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
     /**
      * Stub method for recognizing keypress
      * This triggers when the scrollwheel is scrolled
+     *
      * @param amount amount that the scrollwheel was moved
      */
     @Override
@@ -235,9 +261,13 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
      */
     @Override
     public void dispose() {
+        clientUI.endcalcThread();
         tiledMap.dispose();
         batch.dispose();
-        // clientUI.dispose();
+        clientUI.dispose();
+
+
+
     }
 
     /**
@@ -293,11 +323,11 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
         */
         if (Gdx.input.isKeyPressed(Input.Keys.EQUALS)
                 && ((tileCamera.viewportWidth * (tileCamera.zoom + 0.1)) > 480)) {
-            tileCamera.zoom -= 0.1; 
+            tileCamera.zoom -= 0.1;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.MINUS)
                 && ((tileCamera.viewportWidth * (tileCamera.zoom + 0.1)) < MAPSIZE_PIXELS)) {
-            tileCamera.zoom += 0.1; 
+            tileCamera.zoom += 0.1;
         }
     }
 
@@ -332,5 +362,6 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
         Gdx.app.log(COORDINATE_LOGGER, "Mouse (X): " + mousePositionX);
         Gdx.app.log(COORDINATE_LOGGER, "tileCamera Tile (Y): " + tileCamera.position.y / 40);
         Gdx.app.log(COORDINATE_LOGGER, "Mouse (Y): " + mousePositionY);
+
     }
 }

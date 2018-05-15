@@ -1,4 +1,4 @@
-package de.rebleyama.client;
+package de.rebleyama.client.ui;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
@@ -11,15 +11,21 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import de.rebleyama.client.ui.TileColor;
+import de.rebleyama.client.utils.DataInfusedTileMap;
+import de.rebleyama.lib.game.TileType;
+
+import static de.rebleyama.lib.game.TileType.*;
 
 
 public class ClientUI implements Disposable {
     //Global Variables from Client CLass
-    private TiledMap tiledMap;
+    private DataInfusedTileMap tiledMap;
 
     //Global Variable for UI
     private Stage stage;
@@ -31,14 +37,19 @@ public class ClientUI implements Disposable {
     private Window escMenuWindow;
     private Image map;
     private Image minimap;
+    private Application gdxApp;
+    private UIclacThread pixmalcalcer;
+    private OrthographicCamera camera;
+
 
     //creation of array for Minimap Colors, last color is an error color
     private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE), Color.rgba8888(Color.RED)};
 
     // create methods
-    ClientUI(TiledMap tiledmap) {
+    public ClientUI(DataInfusedTileMap tiledmap, Application gdxApp, OrthographicCamera camera) {
         this.tiledMap = tiledmap;
-
+        this.gdxApp = gdxApp;
+        this.camera = camera;
         //Calls method that is responsible to create UI elements
         createUI();
     }
@@ -51,10 +62,17 @@ public class ClientUI implements Disposable {
         skin = new Skin(Gdx.files.internal("assets/uiskin/skin/uiskin.json"));
         stage = new Stage(new ScreenViewport());
 
+        //create pixmaps
+        bigpixmap = createPixmap();
+        minipixmap = new Pixmap(512, 512, Pixmap.Format.RGBA8888);
+
+        minipixmap.setColor(Color.RED);
+
         //Create UI Elements here
         createMinimap();
         createESCMenu();
         createMap();
+
 
     }
 
@@ -67,22 +85,26 @@ public class ClientUI implements Disposable {
         final TextButton buttonMap = new TextButton("Map", skin);
         final TextButton buttonExit = new TextButton("Continue", skin);
         final TextButton change = new TextButton("ChangePixel_TEST", skin);
+        final TextButton exit = new TextButton("Exit", skin);
 
 
         escMenuWindow = new Window("Menu", skin);
         createXButton(escMenuWindow);
         escMenuWindow.row().fill().expandX();
         escMenuWindow.add(buttonMap);
-        escMenuWindow.row();
+        escMenuWindow.row().fill().expandX();
         escMenuWindow.add(buttonMiniMap);
-        escMenuWindow.row();
+        escMenuWindow.row().fill().expandX();
         escMenuWindow.add(change);
-        escMenuWindow.row();
+        escMenuWindow.row().fill().expandX();
         escMenuWindow.add(buttonExit);
+        escMenuWindow.row().fill().expandX();
+        escMenuWindow.add(exit);
         escMenuWindow.pack();
         escMenuWindow.setPosition((float) (Gdx.graphics.getWidth() / 2.0) - escMenuWindow.getWidth() / 2, (float) (Gdx.graphics.getHeight() / 2.0) - escMenuWindow.getHeight() / 2);
         stage.addActor(escMenuWindow);
         escMenuWindow.setVisible(false);
+
         //create Listener
         buttonMiniMap.addListener(new ChangeListener() {
             @Override
@@ -90,6 +112,9 @@ public class ClientUI implements Disposable {
                 miniMapWindow.setVisible(!miniMapWindow.isVisible());
                 if (miniMapWindow.isVisible()) {
                     miniMapWindow.toFront();
+                    startcalcThread();
+                } else {
+                    endcalcThread();
                 }
             }
         });
@@ -110,6 +135,13 @@ public class ClientUI implements Disposable {
             }
         });
 
+        exit.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                gdxApp.exit();
+            }
+        });
+
         change.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -119,6 +151,7 @@ public class ClientUI implements Disposable {
                         tilechanged(x, y, 6);
                     }
                 }
+
                 //update drawable inside windows
                 minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minipixmap))));
                 map.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(bigpixmap))));
@@ -126,6 +159,7 @@ public class ClientUI implements Disposable {
 
             }
         });
+
     }
 
     /**
@@ -143,6 +177,7 @@ public class ClientUI implements Disposable {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 window.setVisible(false);
+
             }
         });
     }
@@ -158,25 +193,75 @@ public class ClientUI implements Disposable {
         miniMapWindow.setPosition((float) (Gdx.graphics.getWidth() - 200), (float) (Gdx.graphics.getHeight() - 200));
 
         //set size of window
-        miniMapWindow.setSize(200, 200);
-
-
-        //allow the window to be resized
-        miniMapWindow.setResizable(true);
-
-        //call method that creates a pixmap of our tiledmap
-        minipixmap = createPixmap(512, false);
-
+        miniMapWindow.setSize(256, 256);
         //create image
         minimap = new Image();
-        minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minipixmap))));
+
+        //add Xbuton in top bar of minimap with extras
+        final TextButton buttonX = new TextButton("X", skin);
+        //ad butto to top bar of window
+        miniMapWindow.getTitleTable().add(buttonX).height(miniMapWindow.getPadTop());
+        //setup event listener for X button
+        buttonX.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                miniMapWindow.setVisible(false);
+
+                //close render
+                endcalcThread();
+
+            }
+        });
+
+        //aspect ratio button
+        final TextButton buttonScale = new TextButton("+", skin);
+        //listener with logic inside
+        buttonScale.addListener(new DragListener() {
+            float oldY;
+            float oldX;
+            float oldWidth;
+            float newwidth;
 
 
-        //fill inside of window with minimap
-        miniMapWindow.add(minimap);
+            @Override
+            public void drag(InputEvent event, float x, float y, int pointer) {
+                oldY = miniMapWindow.getY();
+                oldX = miniMapWindow.getX();
+                oldWidth = miniMapWindow.getWidth();
+
+                //logic for minimap resizing
+                if ((x > 0) && (y > 0) && (oldWidth > 128)) {
+                    if (oldWidth - x < 128) {
+                        newwidth = 128;
+                    } else {
+                        newwidth = oldWidth - x;
+                    }
+                } else if ((x < 0) && (y < 0) && (oldWidth < 512)) {
+                    if (oldWidth - x > 512) {
+                        newwidth = 512;
+                    } else {
+                        newwidth = oldWidth - x;
+                    }
+                }
+                miniMapWindow.setPosition(oldX + oldWidth - newwidth, oldY + oldWidth - newwidth);
+                miniMapWindow.setSize(newwidth, newwidth);
+            }
+
+
+        });
+
+        //stack actor over each other
+        Stack stack = new Stack();
+        Table overlay = new Table();
+        stack.add(minimap);
+        overlay.add(buttonScale).expand().bottom().left();
+        stack.add(overlay);
+
+
+        miniMapWindow.add(stack);
         //add minimap to ui stage
-        createXButton(miniMapWindow);
         stage.addActor(miniMapWindow);
+
     }
 
     /**
@@ -186,8 +271,6 @@ public class ClientUI implements Disposable {
         //create window
         mapWindow = new Window("Map", skin);
 
-        //call method that creates a pixmap of our tiledmap
-        bigpixmap = createPixmap(1024, true);
         //create image
         map = new Image();
         map.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(bigpixmap))));
@@ -210,52 +293,87 @@ public class ClientUI implements Disposable {
     /**
      * creates a pixmap of our tiledmap
      * A pixmap is similar to a bitmap or bufferedimage
-     *
-     * @param minimapXY xy height/width of pixmap
-     * @param big       boolen if the big or small map shall be created
      */
-    private Pixmap createPixmap(int minimapXY, boolean big) {
-        //optional para for size, xy , pixmap (ref or value),
-        //create Pixmap
-        Pixmap tmppixmap = new Pixmap(minimapXY, minimapXY, Pixmap.Format.RGBA8888);
-        //get our tiledMap layer
-        TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-        //own x/y coordinates for pixmap manipulation
+    private Pixmap createPixmap() {
+        int minimapXY = 1024;
         int pX = 0;
         int pY;
+
+        //create Pixmap
+        Pixmap tmppixmap = new Pixmap(minimapXY, minimapXY, Pixmap.Format.RGBA8888);
+
+
         //loop through all map (for each tile)
-        for (int x = 0; x < layer.getWidth(); x++) {
+        for (int x = 0; x < tiledMap.getWidth(); x++) {
             pY = 0;
-            for (int y = 0; y < layer.getHeight(); y++) {
-                //get current cell id
-                int tmpid = layer.getCell(x, y).getTile().getId();
-                //set color of pixmap pixel similar to the color of the tile on our tiledmap
-                if (tmpid <= minimapcolors.length) {
-                    int tmpColor = minimapcolors[tmpid - 1];
-                    if (!big) {
-                        tmppixmap.drawPixel(x, minimapXY - y, tmpColor);
-                    } else {
-                        //create a rectangle of 2px x 2px
-                        tmppixmap.drawPixel(pX, minimapXY - pY, tmpColor);
+            for (int y = 0; y < tiledMap.getHeight(); y++) {
+                //get tiletype of current cell
+                int tmpColor = tileColorSelect(tiledMap.getTile(x, y).getType());
 
-                        tmppixmap.drawPixel(pX + 1, minimapXY - pY, tmpColor);
+                //create a rectangle of 2px x 2px
+                tmppixmap.drawPixel(pX, minimapXY - pY, tmpColor);
 
-                        tmppixmap.drawPixel(pX, minimapXY - ++pY, tmpColor);
+                tmppixmap.drawPixel(pX + 1, minimapXY - pY, tmpColor);
 
-                        tmppixmap.drawPixel(pX + 1, minimapXY - pY, tmpColor);
-                    }
-                } else {
-                    //Changer Logger/Error exception if uniform method is used
-                    Gdx.app.log("Pixmap_creation", "ERROR - Color ID Unknown. ID: " + tmpid);
+                tmppixmap.drawPixel(pX, minimapXY - ++pY, tmpColor);
+
+                tmppixmap.drawPixel(pX + 1, minimapXY - pY, tmpColor);
+
+                if(tmpColor == Color.rgba8888(Color.RED)){
+                    Gdx.app.log("Pixmap_creation", "ERROR - Color ID Unknown. Tile: (" + x+"|"+y+")");
                 }
+
+
+                //Changer Logger/Error exception if uniform method is used
+
 
                 pY++;
             }
             pX += 2;
         }
+
         //tmppixmap gets disposed by java
         return tmppixmap;
     }
+
+    /**
+     * Selects correct TileType
+     *
+     * @return int of Tile Color
+     */
+    private int tileColorSelect(TileType tileType) {
+        switch (tileType) {
+            case COAL:  return TileColor.COAL.getColor();
+            case DESERT: return TileColor.DESERT.getColor();
+            case FOREST:  return TileColor.FOREST.getColor();
+            case MOUNTAINS:  return TileColor.MOUNTAINS.getColor();
+            case SHALLOW_WATER:  return TileColor.SHALLOW_WATER.getColor();
+            case RIVER:  return TileColor.RIVER.getColor();
+            case GRASSLANDS:  return TileColor.GRASSLANDS.getColor();
+            case IRON:  return TileColor.IRON.getColor();
+            default: return Color.rgba8888(Color.RED);
+        }
+
+    }
+
+
+    /**
+     * starts the thread which calculates the pixmap changes
+     */
+    public void startcalcThread() {
+        pixmalcalcer = new UIclacThread(camera, minipixmap, bigpixmap, minimap, gdxApp);
+        pixmalcalcer.begin();
+
+    }
+
+    /**
+     * end the thread which calculates the pixmap changes
+     */
+    public void endcalcThread() {
+        pixmalcalcer.end();
+
+    }
+
 
     // change methods
 
@@ -327,14 +445,13 @@ public class ClientUI implements Disposable {
 
     }
 
+
     /**
      * Reacts on window relevant key presses
      *
      * @param windowName name of window that shall react
      */
-    void uiKeypressed(String windowName) {
-        //TODO REFACTOR
-
+    public void uiKeypressed(String windowName) {
         //select which window (please suggest better selector ways)
         if (windowName.equals("mapWindow")) {
             //set Window visible and to front
@@ -362,6 +479,8 @@ public class ClientUI implements Disposable {
         stage.dispose();
         minipixmap.dispose();
         bigpixmap.dispose();
+
+
     }
 
     // getter/setter
@@ -371,12 +490,9 @@ public class ClientUI implements Disposable {
      *
      * @return Stage that the UI uses
      */
-    Stage getStage() {
+    public Stage getStage() {
         return stage;
     }
 
 
 }
-
-
-
