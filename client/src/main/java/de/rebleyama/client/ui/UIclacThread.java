@@ -107,7 +107,6 @@ public class UIclacThread extends Thread {
                 this.interrupt();
             }
 
-
         }
     }
 

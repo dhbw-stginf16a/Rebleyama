@@ -79,7 +79,6 @@ public class ClientUI implements Disposable {
 
         createESCMenu();
 
-
     }
 
     /**
@@ -93,7 +92,6 @@ public class ClientUI implements Disposable {
         final TextButton change = new TextButton("ChangePixel_TEST", skin);
         final TextButton exit = new TextButton("Exit", skin);
         final TextButton buttonAbout = new TextButton("About", skin);
-
 
         escMenuWindow = new Window("Menu", skin);
         createXButton(escMenuWindow);
@@ -169,7 +167,6 @@ public class ClientUI implements Disposable {
             }
         });
 
-
         buttonAbout.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -184,7 +181,7 @@ public class ClientUI implements Disposable {
     /**
      * creates the about window
      */
-    private void createAbout(){
+    private void createAbout() {
         //create window
         aboutWindow = new Window("About", skin);
         createXButton(aboutWindow);
@@ -192,7 +189,7 @@ public class ClientUI implements Disposable {
         //create Image and sets size
         Texture texture = new Texture(Gdx.files.internal("assets/textures/logo/titlebannerFullRes.jpg"));
         Image image1 = new Image(texture);
-        image1.setSize(texture.getWidth()/3,texture.getHeight()/2);
+        image1.setSize(texture.getWidth() / 3, texture.getHeight() / 2);
 
         //label with titel
         Label titel = new Label("Rebleyama Version 0.01", skin);
@@ -219,8 +216,8 @@ public class ClientUI implements Disposable {
         //label for the license
         Label license = new Label("License:                     https://www.gnu.org/licenses/gpl-3.0.en.html", skin);
         license.setAlignment(Align.left);
-        license.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y,int pointer, int button) {
+        license.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 Gdx.net.openURI("https://www.gnu.org/licenses/gpl-3.0.en.html");
                 return true;
             }
@@ -229,8 +226,8 @@ public class ClientUI implements Disposable {
         //label for github page
         Label github = new Label("Github-Project:         https://github.com/dhbw-stginf16a/Rebleyama", skin);
         github.setAlignment(Align.left);
-        github.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y,int pointer, int button) {
+        github.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 Gdx.net.openURI("https://github.com/dhbw-stginf16a/Rebleyama");
                 return true;
             }
@@ -337,7 +334,6 @@ public class ClientUI implements Disposable {
             float oldWidth;
             float newwidth;
 
-
             @Override
             public void drag(InputEvent event, float x, float y, int pointer) {
                 oldY = miniMapWindow.getY();
@@ -371,8 +367,6 @@ public class ClientUI implements Disposable {
         stack.add(minimap);
         overlay.add(buttonScale).expand().bottom().left();
         stack.add(overlay);
-
-
         miniMapWindow.add(stack);
         //add minimap to ui stage
         stage.addActor(miniMapWindow);
@@ -434,8 +428,8 @@ public class ClientUI implements Disposable {
 
                 tmppixmap.drawPixel(pX + 1, minimapXY - pY, tmpColor);
 
-                if(tmpColor == Color.rgba8888(Color.RED)){
-                    Gdx.app.log("Pixmap_creation", "ERROR - Color ID Unknown. Tile: (" + x+"|"+y+")");
+                if (tmpColor == Color.rgba8888(Color.RED)) {
+                    Gdx.app.log("Pixmap_creation", "ERROR - Color ID Unknown. Tile: (" + x + "|" + y + ")");
                 }
 
 
@@ -458,15 +452,24 @@ public class ClientUI implements Disposable {
      */
     private int tileColorSelect(TileType tileType) {
         switch (tileType) {
-            case COAL:  return TileColor.COAL.getColor();
-            case DESERT: return TileColor.DESERT.getColor();
-            case FOREST:  return TileColor.FOREST.getColor();
-            case MOUNTAINS:  return TileColor.MOUNTAINS.getColor();
-            case SHALLOW_WATER:  return TileColor.SHALLOW_WATER.getColor();
-            case RIVER:  return TileColor.RIVER.getColor();
-            case GRASSLANDS:  return TileColor.GRASSLANDS.getColor();
-            case IRON:  return TileColor.IRON.getColor();
-            default: return Color.rgba8888(Color.RED);
+            case COAL:
+                return TileColor.COAL.getColor();
+            case DESERT:
+                return TileColor.DESERT.getColor();
+            case FOREST:
+                return TileColor.FOREST.getColor();
+            case MOUNTAINS:
+                return TileColor.MOUNTAINS.getColor();
+            case SHALLOW_WATER:
+                return TileColor.SHALLOW_WATER.getColor();
+            case RIVER:
+                return TileColor.RIVER.getColor();
+            case GRASSLANDS:
+                return TileColor.GRASSLANDS.getColor();
+            case IRON:
+                return TileColor.IRON.getColor();
+            default:
+                return Color.rgba8888(Color.RED);
         }
 
     }
@@ -525,7 +528,7 @@ public class ClientUI implements Disposable {
         resizeWindow(width, height, miniMapWindow);
         resizeWindow(width, height, escMenuWindow);
         resizeWindow(width, height, mapWindow);
-        resizeWindow(width,height,aboutWindow);
+        resizeWindow(width, height, aboutWindow);
 
         //update viewport of stage
         stage.getViewport().update(width, height, true);
