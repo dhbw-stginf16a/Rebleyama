@@ -105,7 +105,6 @@ public class GameManager extends Thread {
             }
         }
         log.info("Shutting down game manager.");
-
     }
 
     /**

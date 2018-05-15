@@ -1,6 +1,7 @@
 package de.rebleyama.server.gamestate;
 
 import de.rebleyama.lib.Log;
+import de.rebleyama.lib.game.Tile;
 import de.rebleyama.lib.gamestate.GameState;
 import de.rebleyama.lib.gamestate.GameStateUpdate;
 import de.rebleyama.server.connection.ClientManager;
@@ -8,7 +9,7 @@ import de.rebleyama.server.connection.ClientManager;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
-public class GameTimer extends TimerTask{
+public class GameTimer extends TimerTask {
     private GameManager gameManager;
     private static final Logger log = Logger.getLogger(ClientManager.class.getName());
 

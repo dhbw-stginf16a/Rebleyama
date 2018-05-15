@@ -27,6 +27,9 @@ public class GameState {
      * @return Success of the update
      */
     public boolean applyUpdate(GameStateUpdate gameStateUpdate) {
+        this.players.forEach((playerId, player) -> {
+            // Do some resource updates
+        });
         // We will see
         return true;
     }
