@@ -95,6 +95,14 @@ public class DataInfusedTileMap extends TileMap implements Disposable {
         fillTiledMap();
     }
 
+    public DataInfusedTileMap(TiledMap map) {
+        super(map.getProperties().get("width", -1, Integer.class), map.getProperties().get("height", -1, Integer.class));
+
+        tiledMap = map;
+
+        putTilesInMap(tiledMap);
+    }
+
     /**
      * Returns a representation of the TileMap.
      * @return A TiledMap that represents the current TileMap.
@@ -131,6 +139,34 @@ public class DataInfusedTileMap extends TileMap implements Disposable {
         super.setTile(x, y, tile);
 
         setCellAccordingToTileType(x, y, tile.getType());
+    }
+
+    private void putTilesInMap(TiledMap source) {
+        //Get the layer
+        final TiledMapTileLayer tileLayer = (TiledMapTileLayer) source.getLayers().get("Ground");
+
+        //check if layer is valid
+        if (tileLayer == null) {
+            throw new IllegalArgumentException("The specified TiledMap does not contain an appropriate layer!");
+        }
+
+        //iterate through the map
+        final int height = tileLayer.getHeight();
+        final int width = tileLayer.getWidth();
+
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; y++) {
+                TiledMapTile tile = tileLayer.getCell(x, y).getTile();
+                TileType tileType = (TileType) tile.getProperties().get("rebleyamaTerrain");
+
+                if (tileType == null) {
+                    throw new NullPointerException("The rebleyamaTerrain of a tile in the TileMap has not been set." +
+                            "Please use this class only for TiledMaps loaded with our RebleyamaTmxFileLoader!");
+                }
+
+                super.setTile(x, y, new Tile(tileType, x, y));
+            }
+        }
     }
 
     private TiledMap tiledMap;
