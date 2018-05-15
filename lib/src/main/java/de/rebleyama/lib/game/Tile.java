@@ -11,14 +11,25 @@ public class Tile {
     private TileType type;
     private Resource res;
     private TilePlacable elementOnTile;
+    private int x, y;
 
     /**
      * Constructs a tile.
      * @param type Type of the tile.
      */
-    public Tile(TileType type) {
+    public Tile(TileType type, int x, int y) {
         this.type = type;
         res = type.getNewAssociatedResource();
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     /**
