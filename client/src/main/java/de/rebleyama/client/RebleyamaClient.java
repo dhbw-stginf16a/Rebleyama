@@ -53,7 +53,6 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tileMap.getTiledMap());
         tiledMapStage = new TileMapStage(tileMap, worldViewport);
         tileCamera = ((OrthographicCamera) tiledMapStage.getCamera());
-
         batch = new SpriteBatch();
         worldViewport = new FitViewport(MAPSIZE_PIXELS, MAPSIZE_PIXELS, tileCamera);
 
