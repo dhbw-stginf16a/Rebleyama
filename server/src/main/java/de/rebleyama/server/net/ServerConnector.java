@@ -53,8 +53,8 @@ public class ServerConnector extends Connector{
         }
         Message message = internalPackage.getMessage();
         if(message instanceof HandshakeMessage){
-            byte id = idCreator.registerClient();
-            message = new HandshakeMessage(id);
+            byte id = idCreator.registerClient(((HandshakeMessage) message).getPlayerName());
+            message = new HandshakeMessage(id, ((HandshakeMessage) message).getPlayerName());
             clientMap.put(id, internalPackage.getSocketAddress());
         }
         return message;
@@ -63,5 +63,5 @@ public class ServerConnector extends Connector{
 }
 
 interface ClientIdCreator {
-    byte registerClient();
+    byte registerClient(String playerName);
 }

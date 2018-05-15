@@ -25,7 +25,7 @@ public class ClientManagerTest {
         this.clientId = (byte) 1;
         this.gameManager = new GameManager();
         this.messageManager = new MessageManager(21012);
-        this.clientManager = new ClientManager(clientId, gameManager, messageManager);
+        this.clientManager = new ClientManager(clientId, "Arthur Dent", gameManager, messageManager);
         this.clientManager.begin();
     }
 

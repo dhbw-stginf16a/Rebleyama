@@ -16,7 +16,7 @@ class ByteUtilTest {
 
     @Test
     void messageSerializationTest_HandShakeMessage() throws IOException, ClassNotFoundException {
-        HandshakeMessage message = new HandshakeMessage();
+        HandshakeMessage message = new HandshakeMessage("Arthur Dent");
 
         byte[] data = ByteUtil.toByteArray(message);
 

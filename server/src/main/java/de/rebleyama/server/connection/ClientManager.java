@@ -20,6 +20,7 @@ public class ClientManager extends Thread {
     private GameManager gameManager;
     private MessageManager messageManager;
     private BlockingQueue<Message> clientQueue;
+    private String playerName;
     private static final Logger log = Logger.getLogger(ClientManager.class.getName());
 
     /**
@@ -28,11 +29,13 @@ public class ClientManager extends Thread {
      * @param gameManager The game manager to get access to its queue
      * @param messageManager The message manager to be able to send data
      */
-    public ClientManager(byte clientId, GameManager gameManager, MessageManager messageManager) {
+    public ClientManager(byte clientId, String playerName, GameManager gameManager, MessageManager messageManager) {
         this.gameManager = gameManager;
         this.messageManager = messageManager;
         this.clientId = clientId;
+        this.playerName = playerName;
         this.clientQueue = new LinkedBlockingQueue<>();
+        this.gameManager.getGameState().addPlayer(this.clientId, this.playerName);
         Log.setup();
     }
 

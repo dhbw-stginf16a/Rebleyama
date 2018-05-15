@@ -143,13 +143,13 @@ public class MessageManager extends Thread implements ClientIdCreator {
      * @return The id of the new client
      */
 	@Override
-	public byte registerClient() {
+	public byte registerClient(String playerName) {
 		Random rand = new Random();
         int clientIntId = rand.nextInt(253) + 1;
         byte clientId = (byte) clientIntId;
 
         // create a new client worker thread
-        this.clientMap.put(clientId, new ClientManager(clientId, this.gameManager, this));
+        this.clientMap.put(clientId, new ClientManager(clientId, playerName, this.gameManager, this));
         this.clientMap.get(clientId).begin();
 
         return clientId;

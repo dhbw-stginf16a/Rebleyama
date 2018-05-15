@@ -26,7 +26,7 @@ public class ServerConnection extends Thread {
         this.connector.connect();
         this.running = true;
         this.start();
-        this.connector.send(new HandshakeMessage());
+        this.connector.send(new HandshakeMessage("Arthur Legend"));
     }
 
     public void disconnect(){

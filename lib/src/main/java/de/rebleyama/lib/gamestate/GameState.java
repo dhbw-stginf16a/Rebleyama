@@ -12,6 +12,7 @@ import java.util.Map;
 public class GameState {
     private TileMap tileMap;
     private Map<Byte, Player> players;
+
     /**
      * Creates a new GameState object
      */

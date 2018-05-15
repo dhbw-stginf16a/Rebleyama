@@ -101,6 +101,7 @@ public class GameManager extends Thread {
             update = this.gameStateUpdates.poll();
             if (update != null) {
                 this.gameState.applyUpdate(update);
+                this.updateCache.put(gameState.getHash(), update);
             }
         }
         log.info("Shutting down game manager.");
