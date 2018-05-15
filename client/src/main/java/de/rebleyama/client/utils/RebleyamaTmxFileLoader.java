@@ -30,16 +30,18 @@ public class RebleyamaTmxFileLoader extends TmxMapLoader {
                 element = xml.parse(tsx);
             }
 
-            XmlReader.Element terrains = element.getChildByName("terrain");
+            XmlReader.Element terraintypes = element.getChildByName("terraintypes");
+            if (terraintypes == null) return;
+            Array<XmlReader.Element> terrains = terraintypes.getChildrenByName("terrain");
 
-            if (terrains != null) {
+            if (terrains.size != 0) {
                 //Generate a terrain to TileType mapping
-                Map<Integer, TileType> terrainMapping = readTerrainIdToTileTypeMappingFromTSX(element);
+                Map<Integer, TileType> terrainMapping = readTerrainIdToTileTypeMappingFromTSX(terrains);
                 TiledMapTileSet tileSet = map.getTileSets().getTileSet(element.get("name", null));
                 tileSet.getProperties().put("rebleyamaTerrainMapping", terrainMapping);
 
                 //Give every tile a TileType
-                tileSet.forEach((tile) -> {
+                tileSet.forEach(tile -> {
                     MapProperties tileProp = tile.getProperties();
                     String terrainProp = tileProp.get("terrain", null);
                     if (terrainProp != null) {
@@ -47,6 +49,7 @@ public class RebleyamaTmxFileLoader extends TmxMapLoader {
                         Map<Integer, Integer> countInts = new HashMap<>(6, 0.8f);
 
                         for (String terr : splitTiledTerrain) {
+                            if (terr.isEmpty()) continue;
                             int terrToInt = Integer.parseInt(terr);
                             if (countInts.get(terrToInt) != null) {
                                 countInts.replace(terrToInt, countInts.get(terrToInt),
@@ -100,57 +103,48 @@ public class RebleyamaTmxFileLoader extends TmxMapLoader {
 
     /**
      * Reads the terrain mapping out of a TSX Tileset File.
-     * @param rootElem The root of the TSX XML DOM ({@code <tileset>})
+     * @param terrainArray An array of terrains({@code <tileset>})
      * @return A map from terrain IDs to TileTypes. {@code null} if a problem occured.
      */
-    private Map<Integer, TileType> readTerrainIdToTileTypeMappingFromTSX(XmlReader.Element rootElem) {
-        //check if it really is a TSX file
-        if (!rootElem.getName().equals("tileset")) {
-            return null;
-        }
+    private Map<Integer, TileType> readTerrainIdToTileTypeMappingFromTSX(Array<XmlReader.Element> terrainArray) {
 
-        XmlReader.Element terrains = rootElem.getChildByName("terraintypes");
-        if (terrains != null) {
+        if (terrainArray.size == 0) return null;
+        Map<Integer, TileType> terrainMapping = new HashMap<>(10, 0.8f);
 
-            Array<XmlReader.Element> terrainArray = terrains.getChildrenByName("terrain");
-            Map<Integer, TileType> terrainMapping = new HashMap<Integer, TileType>(10, 0.8f);
-
-            for (int i = 0; i < terrainArray.size; ++i) {
-                switch (terrainArray.get(i).get("name")) {
-                    case "Stone":
-                        terrainMapping.put(i, TileType.MOUNTAINS);
-                        break;
-                    case "Iron":
-                        terrainMapping.put(i, TileType.IRON);
-                        break;
-                    case "Coal":
-                        terrainMapping.put(i, TileType.COAL);
-                        break;
-                    case "Sand":
-                        terrainMapping.put(i, TileType.DESERT);
-                        break;
-                    case "Shallow Water":
-                        terrainMapping.put(i, TileType.SHALLOW_WATER);
-                        break;
-                    case "Deep Water":
-                        terrainMapping.put(i, TileType.RIVER);
-                        break;
-                    case "Forrest": //sic!, TODO: FIX IN TILESET
-                        terrainMapping.put(i, TileType.FOREST);
-                        break;
-                    case "Grass":
-                        terrainMapping.put(i, TileType.GRASSLANDS);
-                        break;
-                    default:
-                        Gdx.app.log("FIXME", "One of the terrains is not mapped to a TileType!");
-                        terrainMapping.put(i, TileType.GRASSLANDS);
-                }
+        for (int i = 0; i < terrainArray.size; ++i) {
+            if (!terrainArray.get(i).getName().equals("terrain")) return null;
+            switch (terrainArray.get(i).get("name")) {
+                case "Stone":
+                    terrainMapping.put(i, TileType.MOUNTAINS);
+                    break;
+                case "Iron":
+                    terrainMapping.put(i, TileType.IRON);
+                    break;
+                case "Coal":
+                    terrainMapping.put(i, TileType.COAL);
+                    break;
+                case "Sand":
+                    terrainMapping.put(i, TileType.DESERT);
+                    break;
+                case "Shallow Water":
+                    terrainMapping.put(i, TileType.SHALLOW_WATER);
+                    break;
+                case "Deep Water":
+                    terrainMapping.put(i, TileType.RIVER);
+                    break;
+                case "Forrest": //sic!, TODO: FIX IN TILESET
+                    terrainMapping.put(i, TileType.FOREST);
+                    break;
+                case "Grass":
+                    terrainMapping.put(i, TileType.GRASSLANDS);
+                    break;
+                default:
+                    Gdx.app.log("FIXME", "One of the terrains is not mapped to a TileType!");
+                    terrainMapping.put(i, TileType.GRASSLANDS);
             }
-
-            return terrainMapping;
         }
 
-        return null;
+        return terrainMapping;
     }
 
 }
