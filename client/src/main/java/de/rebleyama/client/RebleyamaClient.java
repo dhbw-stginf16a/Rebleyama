@@ -1,25 +1,18 @@
 package de.rebleyama.client;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
-import de.rebleyama.client.utils.ClientTileStructureGenerator;
 import de.rebleyama.client.utils.DataInfusedTileMap;
+import de.rebleyama.client.utils.RebleyamaTmxFileLoader;
 
 public class RebleyamaClient extends ApplicationAdapter implements ApplicationListener, InputProcessor {
 
@@ -49,8 +42,8 @@ public class RebleyamaClient extends ApplicationAdapter implements ApplicationLi
     public void create() {
         //load the map
         //also available: ../client/assets/custommaps/testMap.tmx
-        tiledMap = new TmxMapLoader().load("../client/assets/custommaps/default.tmx");
-        tileMap = ClientTileStructureGenerator.generateTiles(tiledMap);
+        tiledMap = new RebleyamaTmxFileLoader().load("../client/assets/custommaps/500x500TestMap.tmx");
+        tileMap = new DataInfusedTileMap(tiledMap);
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tileMap.getTiledMap());
         tiledMapStage = new TileMapStage(tileMap, worldViewport);
         tileCamera = ((OrthographicCamera) tiledMapStage.getCamera());
