@@ -67,7 +67,6 @@ public class RebleyamaClient extends ApplicationAdapter implements InputProcesso
 
     }
 
-    //start render method
 
 
     @Override

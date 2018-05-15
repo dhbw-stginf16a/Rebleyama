@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import de.rebleyama.client.ui.TileColor;
 
 
 public class ClientUI implements Disposable {
@@ -38,7 +39,7 @@ public class ClientUI implements Disposable {
 
 
     //creation of array for Minimap Colors, last color is an error color
-    private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE), Color.rgba8888(Color.RED)};
+        private int[] minimapcolors = {Color.rgba8888(Color.DARK_GRAY), Color.rgba8888(Color.FOREST), Color.rgba8888(Color.LIGHT_GRAY), Color.rgba8888(Color.GRAY), Color.rgba8888(Color.BLUE), Color.rgba8888(Color.RED)};
 
     // create methods
     public ClientUI(TiledMap tiledmap, Application gdxApp,OrthographicCamera camera) {
@@ -58,8 +59,9 @@ public class ClientUI implements Disposable {
         stage = new Stage(new ScreenViewport());
 
         //create pixmaps
-        bigpixmap = createPixmap(1024, true);
+        bigpixmap = createPixmap();
         minipixmap = new Pixmap(512, 512, Pixmap.Format.RGBA8888);
+
         minipixmap.setColor(Color.RED);
 
         //Create UI Elements here
@@ -146,6 +148,7 @@ public class ClientUI implements Disposable {
                         tilechanged(x, y, 6);
                     }
                 }
+
                 //update drawable inside windows
                 minimap.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(minipixmap))));
                 map.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(bigpixmap))));
@@ -287,31 +290,28 @@ public class ClientUI implements Disposable {
     /**
      * creates a pixmap of our tiledmap
      * A pixmap is similar to a bitmap or bufferedimage
-     *
-     * @param minimapXY xy height/width of pixmap
-     * @param big       boolen if the big or small map shall be created
      */
-    private Pixmap createPixmap(int minimapXY, boolean big) {
-        //optional para for size, xy , pixmap (ref or value),
+    private Pixmap createPixmap() {
+        int minimapXY = 1024;
+        int pX = 0;
+        int pY;
+
         //create Pixmap
         Pixmap tmppixmap = new Pixmap(minimapXY, minimapXY, Pixmap.Format.RGBA8888);
         //get our tiledMap layer
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-        //own x/y coordinates for pixmap manipulation
-        int pX = 0;
-        int pY;
         //loop through all map (for each tile)
         for (int x = 0; x < layer.getWidth(); x++) {
             pY = 0;
             for (int y = 0; y < layer.getHeight(); y++) {
+
                 //get current cell id
                 int tmpid = layer.getCell(x, y).getTile().getId();
                 //set color of pixmap pixel similar to the color of the tile on our tiledmap
+
                 if (tmpid <= minimapcolors.length) {
                     int tmpColor = minimapcolors[tmpid - 1];
-                    if (!big) {
-                        tmppixmap.drawPixel(x, minimapXY - y, tmpColor);
-                    } else {
+
                         //create a rectangle of 2px x 2px
                         tmppixmap.drawPixel(pX, minimapXY - pY, tmpColor);
 
@@ -320,11 +320,12 @@ public class ClientUI implements Disposable {
                         tmppixmap.drawPixel(pX, minimapXY - ++pY, tmpColor);
 
                         tmppixmap.drawPixel(pX + 1, minimapXY - pY, tmpColor);
-                    }
+
                 } else {
                     //Changer Logger/Error exception if uniform method is used
                     Gdx.app.log("Pixmap_creation", "ERROR - Color ID Unknown. ID: " + tmpid);
                 }
+
 
                 pY++;
             }
@@ -333,6 +334,15 @@ public class ClientUI implements Disposable {
         //tmppixmap gets disposed by java
         return tmppixmap;
     }
+
+    /**
+     * Selects correct TileType
+     * @return int of Tile Color
+     */
+    private int tileColorSelect(){
+        return 0;
+    }
+
 
     /**
      * starts the thread which calculates the pixmap changes
