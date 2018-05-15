@@ -22,7 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.viewport.ScreenViewport
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.Align;
 
 
@@ -98,6 +98,7 @@ public class MenuScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if (!created) {
 			Gdx.app.log("bla", "creating");
 			create();
