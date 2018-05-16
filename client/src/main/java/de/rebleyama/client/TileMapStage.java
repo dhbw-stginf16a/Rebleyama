@@ -26,11 +26,11 @@ public class TileMapStage extends Stage {
 
     private void createActors(DataInfusedTileMap tileMap) {
         Gdx.app.log("path logger",Gdx.files.internal(".").file().getAbsolutePath());
-        Texture border = new Texture(Gdx.files.internal("assets/textures/tiles/border.png"));
+        //Texture border = new Texture(Gdx.files.internal("assets/textures/tiles/border.png"));
         for (int x = 0; x < tileMap.getWidth(); x++) {
             for (int y = 0; y < tileMap.getHeight(); y++) {
                 Tile tile = tileMap.getTile(x, y);
-                InteractiveTile interactiveTile = new InteractiveTile(tile, border, x, y);
+                InteractiveTile interactiveTile = new InteractiveTile(tile, x, y);
                 int tileWidth = tileMap.getTiledMap().getProperties().get("tilewidth", Integer.class);
                 int tileHeight = tileMap.getTiledMap().getProperties().get("tileheight", Integer.class);
                 interactiveTile.setBounds(x * tileWidth, y * tileHeight,
