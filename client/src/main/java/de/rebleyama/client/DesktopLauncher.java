@@ -20,8 +20,8 @@ public class DesktopLauncher {
     public static void main(String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.title = "Rebleyama";
-        config.width = 1280;
-        config.height = 720;
+        config.width = 2560;
+        config.height = 1460;
         //allows to exit app without errors and finishes dispose etc.
         config.forceExit = false;
 

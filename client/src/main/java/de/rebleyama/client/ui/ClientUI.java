@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import java.util.logging.*;
 import de.rebleyama.client.ui.TileColor;
 import de.rebleyama.client.utils.DataInfusedTileMap;
 import de.rebleyama.lib.game.TileType;
